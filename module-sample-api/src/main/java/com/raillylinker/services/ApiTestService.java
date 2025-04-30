@@ -477,4 +477,28 @@ public class ApiTestService {
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
     }
+
+
+    // ----
+    // (text/string 반환 샘플)
+    public @Nullable String returnTextStringTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+
+        return "test Complete!";
+    }
+
+
+    // ----
+    // (text/html 반환 샘플)
+    public @Nullable ModelAndView returnTextHtmlTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        @NotNull ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("return_text_html_test/html_response_example");
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return modelAndView;
+    }
 }

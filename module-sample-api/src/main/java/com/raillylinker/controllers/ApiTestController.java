@@ -1216,4 +1216,62 @@ public class ApiTestController {
                 delayTimeSec
         );
     }
+
+
+    // ----
+    // UTF-8 설정을 적용하려면,
+    // produces = ["text/plain;charset=utf-8"]
+    // produces = ["text/html;charset=utf-8"]
+    @Operation(
+            summary = "text/string 반환 샘플",
+            description = "text/string 형식의 Response Body 를 반환합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/return-text-string"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.TEXT_PLAIN_VALUE}
+    )
+    @ResponseBody
+    public @Nullable String returnTextStringTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        return service.returnTextStringTest(httpServletResponse);
+    }
+
+
+    // ----
+    @Operation(
+            summary = "text/html 반환 샘플",
+            description = "text/html 형식의 Response Body 를 반환합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/return-text-html"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.TEXT_HTML_VALUE}
+    )
+    public @Nullable ModelAndView returnTextHtmlTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        return service.returnTextHtmlTest(httpServletResponse);
+    }
 }
