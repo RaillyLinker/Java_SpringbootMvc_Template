@@ -48,31 +48,37 @@ public class CustomUtil {
             @Nullable String fileName,
             // 저장할 MultipartFile
             @NotNull MultipartFile multipartFile
-    ) throws IOException {
+    ) {
+        @NotNull String savedFileName = "";
+
         // 파일 저장 기본 디렉토리 생성
-        Files.createDirectories(saveDirectoryPath);
+        try {
+            Files.createDirectories(saveDirectoryPath);
 
-        // 원본 파일명(with suffix)
-        @NotNull String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+            // 원본 파일명(with suffix)
+            @NotNull String originalFilename = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
 
-        @NotNull FilePathParts fileNameSplit = splitFilePath(originalFilename);
+            @NotNull FilePathParts fileNameSplit = splitFilePath(originalFilename);
 
-        // 확장자 없는 파일명
-        @NotNull String fileNameWithoutExtension = (fileName != null) ? fileName : fileNameSplit.getFileName();
+            // 확장자 없는 파일명
+            @NotNull String fileNameWithoutExtension = (fileName != null) ? fileName : fileNameSplit.getFileName();
 
-        // 확장자
-        @NotNull String fileExtension = (fileNameSplit.getExtension() != null) ? "." + fileNameSplit.getExtension() : "";
+            // 확장자
+            @NotNull String fileExtension = (fileNameSplit.getExtension() != null) ? "." + fileNameSplit.getExtension() : "";
 
-        // 저장할 파일명 생성
-        @NotNull String savedFileName =
-                fileNameWithoutExtension + "(" +
-                        LocalDateTime.now().atZone(ZoneId.systemDefault())
-                                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")) +
-                        ")" + fileExtension;
+            // 저장할 파일명 생성
+            savedFileName =
+                    fileNameWithoutExtension + "(" +
+                            LocalDateTime.now().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")) +
+                            ")" + fileExtension;
 
-        // 파일 저장
-        @NotNull Path targetPath = saveDirectoryPath.resolve(savedFileName).normalize();
-        multipartFile.transferTo(targetPath.toFile());
+            // 파일 저장
+            @NotNull Path targetPath = saveDirectoryPath.resolve(savedFileName).normalize();
+            multipartFile.transferTo(targetPath.toFile());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return savedFileName;
     }

@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -222,6 +224,48 @@ public class ApiTestService {
     ) {
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return new ApiTestController.PostRequestTestWithFormTypeRequestBodyOutputVo(
+                inputVo.getRequestFormString(),
+                inputVo.getRequestFormStringNullable(),
+                inputVo.getRequestFormInt(),
+                inputVo.getRequestFormIntNullable(),
+                inputVo.getRequestFormDouble(),
+                inputVo.getRequestFormDoubleNullable(),
+                inputVo.getRequestFormBoolean(),
+                inputVo.getRequestFormBooleanNullable(),
+                inputVo.getRequestFormStringList(),
+                inputVo.getRequestFormStringListNullable()
+        );
+    }
+
+
+    // ----
+    // (Post 요청 테스트 (multipart/form-data))
+    public @Nullable ApiTestController.PostRequestTestWithMultipartFormTypeRequestBodyOutputVo postRequestTestWithMultipartFormTypeRequestBody(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull ApiTestController.PostRequestTestWithMultipartFormTypeRequestBodyInputVo inputVo
+    ) {
+        // 파일 저장 기본 디렉토리 경로
+        @NotNull Path saveDirectoryPath = Paths.get("./by_product_files/sample_api/test")
+                .toAbsolutePath()
+                .normalize();
+
+        customUtil.multipartFileLocalSave(
+                saveDirectoryPath,
+                null,
+                inputVo.getMultipartFile()
+        );
+
+        if (inputVo.getMultipartFileNullable() != null) {
+            customUtil.multipartFileLocalSave(
+                    saveDirectoryPath,
+                    null,
+                    inputVo.getMultipartFileNullable()
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+
+        return new ApiTestController.PostRequestTestWithMultipartFormTypeRequestBodyOutputVo(
                 inputVo.getRequestFormString(),
                 inputVo.getRequestFormStringNullable(),
                 inputVo.getRequestFormInt(),
