@@ -103,4 +103,17 @@ public class ApiTestService {
                 queryParamStringListNullable
         );
     }
+
+
+    // ----
+    // (Get 요청 테스트 (Path Parameter))
+    public @Nullable ApiTestController.GetRequestTestWithPathParamOutputVo getRequestTestWithPathParam(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Integer pathParamInt
+    ) {
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ApiTestController.GetRequestTestWithPathParamOutputVo(
+                pathParamInt
+        );
+    }
 }

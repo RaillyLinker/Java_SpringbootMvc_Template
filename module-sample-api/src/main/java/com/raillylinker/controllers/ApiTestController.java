@@ -15,10 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -228,5 +225,46 @@ public class ApiTestController {
         @Schema(description = "입력한 StringList Nullable Query 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
         @JsonProperty("queryParamStringListNullable")
         private final @Nullable List<String> queryParamStringListNullable;
+    }
+
+
+    // ----
+    @Operation(
+            summary = "Get 요청 테스트 (Path Parameter)",
+            description = "Path Parameter 를 받는 Get 메소드 요청 테스트"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/get-request/{pathParamInt}"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE}
+    )
+    @ResponseBody
+    public @Nullable GetRequestTestWithPathParamOutputVo getRequestTestWithPathParam(
+            @Parameter(hidden = true)
+            HttpServletResponse httpServletResponse,
+            @Parameter(name = "pathParamInt", description = "Int Path 파라미터", example = "1")
+            @PathVariable("pathParamInt")
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull Integer pathParamInt
+    ) {
+        return service.getRequestTestWithPathParam(
+                httpServletResponse,
+                pathParamInt
+        );
+    }
+
+    @Data
+    public static class GetRequestTestWithPathParamOutputVo {
+        @Schema(description = "입력한 Int Path 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("pathParamInt")
+        private final @NotNull Integer pathParamInt;
     }
 }
