@@ -477,4 +477,34 @@ public class ApiTestController {
             }
         }
     }
+
+
+    // ----
+    @Operation(
+            summary = "Post 요청 테스트 (입출력값 없음)",
+            description = "입출력값이 없는 Post 메소드 요청 테스트"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/post-request-application-json-with-no-param"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void postRequestTestWithNoInputAndOutput(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        service.postRequestTestWithNoInputAndOutput(
+                httpServletResponse
+        );
+    }
 }

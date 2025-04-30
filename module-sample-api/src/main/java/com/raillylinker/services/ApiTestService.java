@@ -203,4 +203,13 @@ public class ApiTestService {
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return outputVo;
     }
+
+
+    // ----
+    // (Post 요청 테스트 (입출력값 없음))
+    public void postRequestTestWithNoInputAndOutput(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+    }
 }
