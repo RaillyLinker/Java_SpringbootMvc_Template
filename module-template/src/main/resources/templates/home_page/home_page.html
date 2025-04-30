@@ -48,14 +48,14 @@
 </h2>
 
 <span>
-    구동 환경 프로필 : <span th:text="${viewModel.env}">dev</span>
+    구동 환경 프로필 : <span th:text="${viewModel.getEnv()}">dev</span>
 </span>
 
-<h2 th:if="${viewModel.showApiDocumentBtn}">
+<h2 th:if="${viewModel.getShowApiDocumentBtn()}">
     API 문서
 </h2>
 
-<button th:if="${viewModel.showApiDocumentBtn}"
+<button th:if="${viewModel.getShowApiDocumentBtn()}"
         id="go_to_swagger_btn"
         type="button"
         class="sample_btn"

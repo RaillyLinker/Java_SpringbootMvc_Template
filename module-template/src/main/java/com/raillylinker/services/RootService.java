@@ -1,6 +1,7 @@
 package com.raillylinker.services;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Data;
 import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,16 +51,9 @@ public class RootService {
     }
 
     // 데이터 클래스 GetHome을 Java POJO로 변환
+    @Data
     public static class GetHome {
-        public GetHome(
-                @NotNull String env,
-                @NotNull Boolean showApiDocumentBtn
-        ) {
-            this.env = env;
-            this.showApiDocumentBtn = showApiDocumentBtn;
-        }
-
-        public @NotNull String env;
-        public @NotNull Boolean showApiDocumentBtn;
+        private final @NotNull String env;
+        private final @NotNull Boolean showApiDocumentBtn;
     }
 }
