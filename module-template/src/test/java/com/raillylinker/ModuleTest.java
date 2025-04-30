@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public class ModuleTest {
+    @org.jetbrains.annotations.NotNull
     private static final Logger classLogger = LoggerFactory.getLogger(ModuleTest.class);
 
     @Test

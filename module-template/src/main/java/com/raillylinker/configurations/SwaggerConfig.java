@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.jetbrains.annotations.*;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,15 +22,15 @@ public class SwaggerConfig {
     public SwaggerConfig(
             // (버전 정보)
             @Value("${custom-config.swagger.document-version}")
-            String documentVersion,
+            @NotNull String documentVersion,
 
             // (문서 제목)
             @Value("${custom-config.swagger.document-title}")
-            String documentTitle,
+            @NotNull String documentTitle,
 
             // (문서 설명)
             @Value("${custom-config.swagger.document-description}")
-            String documentDescription
+            @NotNull String documentDescription
     ) {
         this.documentVersion = documentVersion;
         this.documentTitle = documentTitle;
@@ -37,17 +38,17 @@ public class SwaggerConfig {
     }
 
     // <멤버 변수 공간>
-    private final String documentVersion;
-    private final String documentTitle;
-    private final String documentDescription;
+    private final @NotNull String documentVersion;
+    private final @NotNull String documentTitle;
+    private final @NotNull String documentDescription;
 
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
     // 공개 메소드
     @Bean
-    public OpenAPI openAPI() {
-        Components component =
+    public @NotNull OpenAPI openAPI() {
+        @NotNull Components component =
                 new Components().addSecuritySchemes(
                         "JWT",
                         new SecurityScheme()
@@ -58,10 +59,10 @@ public class SwaggerConfig {
                                 .name(HttpHeaders.AUTHORIZATION)
                 );
 
-        SecurityRequirement securityRequirement = new SecurityRequirement();
+        @NotNull SecurityRequirement securityRequirement = new SecurityRequirement();
         securityRequirement.addList("JWT");
 
-        Info documentInfo = new Info()
+        @NotNull Info documentInfo = new Info()
                 .title(documentTitle)
                 .version(documentVersion)
                 .description(documentDescription);
@@ -73,8 +74,8 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public OpenApiCustomizer openApiCustomizer() {
-        Consumer<Operation> pathItemConsumer =
+    public @NotNull OpenApiCustomizer openApiCustomizer() {
+        @NotNull Consumer<Operation> pathItemConsumer =
                 operation -> {
                     operation.getResponses()
                             .addApiResponse(

@@ -11,16 +11,21 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.jetbrains.annotations.*;
+import org.springframework.validation.annotation.Validated;
 
 @Tag(name = "root APIs", description = "Root 경로에 대한 API 컨트롤러")
 @Controller
+@Validated
 public class RootController {
-    public RootController(RootService service) {
+    public RootController(
+            @NotNull RootService service
+    ) {
         this.service = service;
     }
 
     // <멤버 변수 공간>
-    private final RootService service;
+    private final @NotNull RootService service;
 
 
     // ---------------------------------------------------------------------------------------------
@@ -42,9 +47,10 @@ public class RootController {
             consumes = MediaType.ALL_VALUE,
             produces = MediaType.TEXT_HTML_VALUE
     )
-    public ModelAndView getRootInfo(
+    public @Nullable ModelAndView getRootInfo(
             @Parameter(hidden = true)
-            HttpServletResponse httpServletResponse
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse
     ) {
         return service.getRootInfo(httpServletResponse);
     }

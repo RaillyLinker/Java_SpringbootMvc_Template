@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
+import org.jetbrains.annotations.*;
 
 import java.util.TimeZone;
 
@@ -19,7 +20,7 @@ import java.util.TimeZone;
 )
 public class ApplicationMain {
     @Bean
-    public CommandLineRunner init() {
+    public @NotNull CommandLineRunner init() {
         return args -> {
             // 서버 타임존 명시적 설정 (UTC, Asia/Seoul, ...)
             TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
@@ -27,7 +28,9 @@ public class ApplicationMain {
         };
     }
 
-    public static void main(String[] args) {
+    public static void main(
+            @NotNull String[] args
+    ) {
         SpringApplication.run(ApplicationMain.class, args);
     }
 }
