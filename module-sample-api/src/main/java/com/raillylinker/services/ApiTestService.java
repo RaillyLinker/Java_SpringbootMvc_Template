@@ -9,8 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -266,6 +269,54 @@ public class ApiTestService {
         httpServletResponse.setStatus(HttpStatus.OK.value());
 
         return new ApiTestController.PostRequestTestWithMultipartFormTypeRequestBodyOutputVo(
+                inputVo.getRequestFormString(),
+                inputVo.getRequestFormStringNullable(),
+                inputVo.getRequestFormInt(),
+                inputVo.getRequestFormIntNullable(),
+                inputVo.getRequestFormDouble(),
+                inputVo.getRequestFormDoubleNullable(),
+                inputVo.getRequestFormBoolean(),
+                inputVo.getRequestFormBooleanNullable(),
+                inputVo.getRequestFormStringList(),
+                inputVo.getRequestFormStringListNullable()
+        );
+    }
+
+
+    // ----
+    // (Post 요청 테스트2 (multipart/form-data))
+    public @Nullable ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody2OutputVo postRequestTestWithMultipartFormTypeRequestBody2(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody2InputVo inputVo
+    ) throws IOException {
+        // 파일 저장 기본 디렉토리 경로
+        @NotNull Path saveDirectoryPath = Paths.get("./by_product_files/sample_api/test")
+                .toAbsolutePath()
+                .normalize();
+
+        // 파일 저장 기본 디렉토리 생성
+        Files.createDirectories(saveDirectoryPath);
+
+        for (@NotNull MultipartFile multipartFile : inputVo.getMultipartFileList()) {
+            customUtil.multipartFileLocalSave(
+                    saveDirectoryPath,
+                    null,
+                    multipartFile
+            );
+        }
+
+        if (inputVo.getMultipartFileNullableList() != null) {
+            for (@NotNull MultipartFile multipartFileNullable : inputVo.getMultipartFileNullableList()) {
+                customUtil.multipartFileLocalSave(
+                        saveDirectoryPath,
+                        null,
+                        multipartFileNullable
+                );
+            }
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody2OutputVo(
                 inputVo.getRequestFormString(),
                 inputVo.getRequestFormStringNullable(),
                 inputVo.getRequestFormInt(),
