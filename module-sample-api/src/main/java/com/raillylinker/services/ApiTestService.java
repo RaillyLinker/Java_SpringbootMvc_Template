@@ -10,8 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -622,6 +627,66 @@ public class ApiTestService {
         return new ApiTestController.EmptyListRequestTestOutputVo(
                 stringList,
                 inputVo.getRequestBodyStringList()
+        );
+    }
+
+
+    // ----
+    // (by_product_files 폴더로 파일 업로드)
+    public @Nullable ApiTestController.UploadToServerTestOutputVo uploadToServerTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull ApiTestController.UploadToServerTestInputVo inputVo
+    ) {
+        // 파일 저장 기본 디렉토리 경로
+        @NotNull Path saveDirectoryPath = Paths.get("./by_product_files/sample_api/test")
+                .toAbsolutePath()
+                .normalize();
+
+        @NotNull String savedFileName = customUtil.multipartFileLocalSave(
+                saveDirectoryPath,
+                null,
+                inputVo.getMultipartFile()
+        );
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+
+        return new ApiTestController.UploadToServerTestOutputVo(
+                "http://127.0.0.1:12006/api-test/download-from-server/" + savedFileName
+        );
+    }
+
+
+    // ----
+    // (by_product_files 폴더에서 파일 다운받기)
+    public @Nullable ResponseEntity<Resource> fileDownloadTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull String fileName
+    ) throws IOException {
+        // 프로젝트 루트 경로 (settings.gradle이 있는 루트 경로)
+        @NotNull String projectRootAbsolutePathString = new File("").getAbsolutePath();
+
+        // 파일 절대 경로
+        @NotNull Path serverFilePathObject = Paths.get(projectRootAbsolutePathString, "by_product_files", "sample_api", "test", fileName);
+
+        if (Files.isDirectory(serverFilePathObject) || Files.notExists(serverFilePathObject)) {
+            httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+            httpServletResponse.setHeader("api-result-code", "1");
+            return null;
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDisposition(
+                ContentDisposition.builder("attachment")
+                        .filename(fileName, StandardCharsets.UTF_8)
+                        .build()
+        );
+        headers.add(HttpHeaders.CONTENT_TYPE, Files.probeContentType(serverFilePathObject));
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ResponseEntity<>(
+                new InputStreamResource(Files.newInputStream(serverFilePathObject)),
+                headers,
+                HttpStatus.OK
         );
     }
 }

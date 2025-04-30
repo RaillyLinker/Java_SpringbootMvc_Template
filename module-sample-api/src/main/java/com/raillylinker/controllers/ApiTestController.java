@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -1484,5 +1485,103 @@ public class ApiTestController {
         @Schema(description = "입력한 StringList Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
         @JsonProperty("requestBodyStringList")
         private final @NotNull List<String> requestBodyStringList;
+    }
+
+
+    // ----
+    @Operation(
+            summary = "by_product_files 폴더로 파일 업로드",
+            description = "multipart File 을 하나 업로드하여 서버의 by_product_files 폴더에 저장"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/upload-to-server"},
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable UploadToServerTestOutputVo uploadToServerTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
+            @ModelAttribute
+            @RequestBody
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull UploadToServerTestInputVo inputVo
+    ) {
+        return service.uploadToServerTest(
+                httpServletResponse,
+                inputVo
+        );
+    }
+
+    @Data
+    public static class UploadToServerTestInputVo {
+        @Schema(description = "업로드 파일", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("multipartFile")
+        private final @NotNull MultipartFile multipartFile;
+    }
+
+    @Data
+    public static class UploadToServerTestOutputVo {
+        @Schema(description = "파일 다운로드 경로", requiredMode = Schema.RequiredMode.REQUIRED, example = "http://127.0.0.1:8080/service1/tk/v1/file-test/download-from-server/file.txt")
+        @JsonProperty("fileDownloadFullUrl")
+        private final @NotNull String fileDownloadFullUrl;
+    }
+
+
+    // ----
+    @Operation(
+            summary = "by_product_files 폴더에서 파일 다운받기",
+            description = "업로드 API 를 사용하여 by_product_files 로 업로드한 파일을 다운로드"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "204",
+                            content = {@Content},
+                            description = "Response Body 가 없습니다.<br>" +
+                                    "Response Headers 를 확인하세요.",
+                            headers = {
+                                    @Header(
+                                            name = "api-result-code",
+                                            description = "(Response Code 반환 원인) - Required<br>" +
+                                                    "1 : fileName 에 해당하는 파일이 존재하지 않습니다.",
+                                            schema = @Schema(type = "string")
+                                    )
+                            }
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/download-from-server/{fileName}"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE}
+    )
+    @ResponseBody
+    public @Nullable ResponseEntity<Resource> fileDownloadTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "fileName", description = "by_product_files/test 폴더 안의 파일명", example = "sample.txt")
+            @PathVariable(value = "fileName")
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull String fileName
+    ) throws IOException {
+        return service.fileDownloadTest(
+                httpServletResponse,
+                fileName
+        );
     }
 }
