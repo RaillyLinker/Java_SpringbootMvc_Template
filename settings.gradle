@@ -6,3 +6,6 @@ rootProject.name = 'Java_SpringbootMvc_Template'
 // Springboot 프로젝트 모듈 템플릿 (10000)
 include 'module-template'
 
+// API 테스트 샘플 (12006)
+include 'module-sample-api'
+

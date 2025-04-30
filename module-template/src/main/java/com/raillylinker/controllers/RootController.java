@@ -44,8 +44,8 @@ public class RootController {
     )
     @GetMapping(
             path = {"/", ""},
-            consumes = MediaType.ALL_VALUE,
-            produces = MediaType.TEXT_HTML_VALUE
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.TEXT_HTML_VALUE}
     )
     public @Nullable ModelAndView getRootInfo(
             @Parameter(hidden = true)

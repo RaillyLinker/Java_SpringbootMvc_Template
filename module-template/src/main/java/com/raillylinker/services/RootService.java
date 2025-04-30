@@ -33,6 +33,7 @@ public class RootService {
 
     private final @NotNull Logger classLogger = LoggerFactory.getLogger(RootService.class);
 
+
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
     // (루트 홈페이지 반환 함수)
