@@ -1,5 +1,7 @@
 package com.raillylinker.services;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.raillylinker.controllers.ApiTestController;
 import com.raillylinker.util_components.CustomUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -327,6 +329,56 @@ public class ApiTestService {
                 inputVo.getRequestFormBooleanNullable(),
                 inputVo.getRequestFormStringList(),
                 inputVo.getRequestFormStringListNullable()
+        );
+    }
+
+
+    // ----
+    // (Post 요청 테스트 (multipart/form-data - JsonString))
+    public @Nullable ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody3OutputVo postRequestTestWithMultipartFormTypeRequestBody3(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody3InputVo inputVo
+    ) {
+        // JSON String을 객체로 변환
+        @NotNull Gson gson = new Gson();
+        @NotNull ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody3InputVo.InputJsonObject inputJsonObject =
+                gson.fromJson(
+                        inputVo.getJsonString(),
+                        new TypeToken<ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody3InputVo.InputJsonObject>() {
+                        }.getType()
+                );
+
+        // 파일 저장 기본 디렉토리 경로
+        @NotNull Path saveDirectoryPath = Paths.get("./by_product_files/sample_api/test")
+                .toAbsolutePath()
+                .normalize();
+
+        customUtil.multipartFileLocalSave(
+                saveDirectoryPath,
+                null,
+                inputVo.getMultipartFile()
+        );
+
+        if (inputVo.getMultipartFileNullable() != null) {
+            customUtil.multipartFileLocalSave(
+                    saveDirectoryPath,
+                    null,
+                    inputVo.getMultipartFileNullable()
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody3OutputVo(
+                inputJsonObject.getRequestFormString(),
+                inputJsonObject.getRequestFormStringNullable(),
+                inputJsonObject.getRequestFormInt(),
+                inputJsonObject.getRequestFormIntNullable(),
+                inputJsonObject.getRequestFormDouble(),
+                inputJsonObject.getRequestFormDoubleNullable(),
+                inputJsonObject.getRequestFormBoolean(),
+                inputJsonObject.getRequestFormBooleanNullable(),
+                inputJsonObject.getRequestFormStringList(),
+                inputJsonObject.getRequestFormStringListNullable()
         );
     }
 }
