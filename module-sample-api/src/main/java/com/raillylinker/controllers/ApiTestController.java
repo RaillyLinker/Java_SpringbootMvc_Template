@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -1208,8 +1209,8 @@ public class ApiTestController {
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull HttpServletResponse httpServletResponse,
             @Parameter(name = "delayTimeSec", description = "지연 시간(초)", example = "1")
-            @RequestParam(value = "delayTimeSec", required = false)
-            @Nullable Long delayTimeSec
+            @RequestParam(value = "delayTimeSec")
+            @NotNull Long delayTimeSec
     ) {
         service.responseDelayTest(
                 httpServletResponse,
@@ -1273,5 +1274,40 @@ public class ApiTestController {
             @NotNull HttpServletResponse httpServletResponse
     ) {
         return service.returnTextHtmlTest(httpServletResponse);
+    }
+
+
+    // ----
+    @Operation(
+            summary = "byte 반환 샘플",
+            description = " byte array('a', .. , 'f') 에서 아래와 같은 요청으로 원하는 바이트를 요청 가능<br>" +
+                    "    >> curl http://localhost:8080/my-service/tk/sample/request-test/byte -i -H \"Range: bytes=2-4\""
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/byte"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.TEXT_PLAIN_VALUE}
+    )
+    @ResponseBody
+    public @Nullable Resource returnByteDataTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "Range", description = "byte array('a', 'b', 'c', 'd', 'e', 'f') 중 가져올 범위(0 부터 시작되는 인덱스)", example = "Bytes=2-4")
+            @RequestHeader("Range")
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull String range
+    ) {
+        return service.returnByteDataTest(
+                httpServletResponse
+        );
     }
 }

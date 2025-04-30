@@ -9,6 +9,8 @@ import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -500,5 +502,24 @@ public class ApiTestService {
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return modelAndView;
+    }
+
+
+    // ----
+    // (byte 반환 샘플)
+    public @Nullable Resource returnByteDataTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ByteArrayResource(
+                new byte[]{
+                        'a',
+                        'b',
+                        'c',
+                        'd',
+                        'e',
+                        'f'
+                }
+        );
     }
 }
