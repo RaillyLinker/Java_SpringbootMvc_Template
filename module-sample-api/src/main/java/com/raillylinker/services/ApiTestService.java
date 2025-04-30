@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -521,5 +524,59 @@ public class ApiTestService {
                         'f'
                 }
         );
+    }
+
+
+    // ----
+    // (비디오 스트리밍 샘플)
+    public @Nullable Resource videoStreamingTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull ApiTestController.VideoStreamingTestVideoHeight videoHeight
+    ) throws IOException {
+        // 프로젝트 루트 경로 (프로젝트 settings.gradle 이 있는 경로)
+        @NotNull String projectRootAbsolutePathString = new File("").getAbsolutePath();
+
+        // 파일 절대 경로 및 파일명
+        @NotNull String serverFileAbsolutePathString =
+                projectRootAbsolutePathString + "/module-sample-api/src/main/resources/static/video_streaming_test";
+
+        @NotNull String serverFileNameString = switch (videoHeight) {
+            case H240 -> "test_240p.mp4";
+            case H360 -> "test_360p.mp4";
+            case H480 -> "test_480p.mp4";
+            case H720 -> "test_720p.mp4";
+        };
+
+        byte[] fileByteArray;
+        try (@NotNull FileInputStream fileInputStream = new FileInputStream(serverFileAbsolutePathString + "/" + serverFileNameString)) {
+            fileByteArray = fileInputStream.readAllBytes();
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ByteArrayResource(fileByteArray);
+    }
+
+
+    // ----
+    // (오디오 스트리밍 샘플)
+    public @Nullable Resource audioStreamingTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) throws IOException {
+        // 프로젝트 루트 경로 (프로젝트 settings.gradle 이 있는 경로)
+        @NotNull String projectRootAbsolutePathString = new File("").getAbsolutePath();
+
+        // 파일 절대 경로 및 파일명
+        @NotNull String serverFileAbsolutePathString =
+                projectRootAbsolutePathString + "/module-sample-api/src/main/resources/static/audio_streaming_test";
+        @NotNull String serverFileNameString = "test.mp3";
+
+        // 반환값에 전해줄 FIS
+        byte[] fileByteArray;
+        try (@NotNull FileInputStream fileInputStream = new FileInputStream(serverFileAbsolutePathString + "/" + serverFileNameString)) {
+            fileByteArray = fileInputStream.readAllBytes();
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ByteArrayResource(fileByteArray);
     }
 }

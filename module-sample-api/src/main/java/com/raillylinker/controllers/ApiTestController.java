@@ -1310,4 +1310,79 @@ public class ApiTestController {
                 httpServletResponse
         );
     }
+
+
+    // ----
+    @Operation(
+            summary = "비디오 스트리밍 샘플",
+            description = "비디오 스트리밍 샘플<br>" +
+                    "테스트는 프로젝트 파일 경로의 external_files/files_for_api_test/html_file_sample 안의 video-streaming.html 파일을 사용하세요."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/video-streaming"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE}
+    )
+    @ResponseBody
+    public @Nullable Resource videoStreamingTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
+
+            @Parameter(name = "videoHeight", description = "비디오 높이", example = "H240")
+            @RequestParam(value = "videoHeight")
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull VideoStreamingTestVideoHeight videoHeight
+    ) throws IOException {
+        return service.videoStreamingTest(
+                httpServletResponse,
+                videoHeight
+        );
+    }
+
+    public enum VideoStreamingTestVideoHeight {
+        H240,
+        H360,
+        H480,
+        H720
+    }
+
+
+    // ----
+    @Operation(
+            summary = "오디오 스트리밍 샘플",
+            description = "오디오 스트리밍 샘플<br>" +
+                    "테스트는 프로젝트 파일 경로의 external_files/files_for_api_test/html_file_sample 안의 audio-streaming.html 파일을 사용하세요."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/audio-streaming"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE}
+    )
+    @ResponseBody
+    public @Nullable Resource audioStreamingTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse
+    ) throws IOException {
+        return service.audioStreamingTest(
+                httpServletResponse
+        );
+    }
 }
