@@ -53,7 +53,7 @@ public class ApiTestController {
             }
     )
     @GetMapping(
-            path = "",
+            path = {""},
             consumes = {MediaType.ALL_VALUE},
             produces = {MediaType.TEXT_PLAIN_VALUE}
     )
@@ -81,7 +81,7 @@ public class ApiTestController {
             }
     )
     @GetMapping(
-            path = "/redirect-to-blank",
+            path = {"/redirect-to-blank"},
             consumes = {MediaType.ALL_VALUE},
             produces = {MediaType.ALL_VALUE}
     )
@@ -109,7 +109,7 @@ public class ApiTestController {
             }
     )
     @GetMapping(
-            path = "/forward-to-blank",
+            path = {"/forward-to-blank"},
             consumes = {MediaType.ALL_VALUE},
             produces = {MediaType.ALL_VALUE}
     )
@@ -137,7 +137,7 @@ public class ApiTestController {
             }
     )
     @GetMapping(
-            path = "/get-request",
+            path = {"/get-request"},
             consumes = {MediaType.ALL_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE}
     )
