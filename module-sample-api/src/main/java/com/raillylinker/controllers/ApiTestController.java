@@ -1424,4 +1424,65 @@ public class ApiTestController {
         @JsonProperty("resultMessage")
         private final @NotNull String resultMessage;
     }
+
+
+    // ----
+    /*
+         결론적으로 아래 파라미터는, Query Param 의 경우는 리스트 입력이 ?stringList=string&stringList=string 이런식이므로,
+         리스트 파라미터가 Not NULL 이라면 빈 리스트를 보낼 수 없으며,
+         Body Param 의 경우는 JSON 으로 "requestBodyStringList" : [] 이렇게 보내면 빈 리스트를 보낼 수 있습니다.
+     */
+    @Operation(
+            summary = "빈 리스트 받기 테스트",
+            description = "Query 파라미터에 NotNull List 와 Body 파라미터의 NotNull List 에 빈 리스트를 넣었을 때의 현상을 관측하기 위한 테스트"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/empty-list-param-test"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable EmptyListRequestTestOutputVo emptyListRequestTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "stringList", description = "String List Query 파라미터", example = "[\"testString1\", \"testString2\"]")
+            @RequestParam(value = "stringList")
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull List<String> stringList,
+            @RequestBody
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull EmptyListRequestTestInputVo inputVo
+    ) {
+        return service.emptyListRequestTest(
+                httpServletResponse,
+                stringList,
+                inputVo
+        );
+    }
+
+    @Data
+    public static class EmptyListRequestTestInputVo {
+        @Schema(description = "StringList Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
+        @JsonProperty("requestBodyStringList")
+        private final @NotNull List<String> requestBodyStringList;
+    }
+
+    @Data
+    public static class EmptyListRequestTestOutputVo {
+        @Schema(description = "StringList Query 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
+        @JsonProperty("requestQueryStringList")
+        private final @NotNull List<String> requestQueryStringList;
+        @Schema(description = "입력한 StringList Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
+        @JsonProperty("requestBodyStringList")
+        private final @NotNull List<String> requestBodyStringList;
+    }
 }

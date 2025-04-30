@@ -19,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -609,5 +608,20 @@ public class ApiTestService {
         // 결과 대기 객체를 먼저 반환
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return deferredResult;
+    }
+
+
+    // ----
+    // (빈 리스트 받기 테스트)
+    public @Nullable ApiTestController.EmptyListRequestTestOutputVo emptyListRequestTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull List<String> stringList,
+            @NotNull ApiTestController.EmptyListRequestTestInputVo inputVo
+    ) {
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ApiTestController.EmptyListRequestTestOutputVo(
+                stringList,
+                inputVo.getRequestBodyStringList()
+        );
     }
 }
