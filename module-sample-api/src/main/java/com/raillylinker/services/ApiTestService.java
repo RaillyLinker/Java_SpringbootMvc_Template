@@ -58,4 +58,16 @@ public class ApiTestService {
 
         return mv;
     }
+
+
+    // ----
+    // (요청 Redirect 테스트)
+    public @Nullable ModelAndView forwardTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        @NotNull ModelAndView mv = new ModelAndView();
+        mv.setViewName("forward:/api-test");
+
+        return mv;
+    }
 }

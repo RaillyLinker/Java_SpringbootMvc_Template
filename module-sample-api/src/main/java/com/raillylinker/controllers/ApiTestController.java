@@ -87,4 +87,32 @@ public class ApiTestController {
     ) {
         return service.redirectTest(httpServletResponse);
     }
+
+
+    // ----
+    @Operation(
+            summary = "요청 Forward 테스트 API",
+            description = "이 API 를 요청하면 /my-service/tk/sample/request-test 로 Forward 됩니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = "/forward-to-blank",
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.ALL_VALUE}
+    )
+    @ResponseBody
+    public @Nullable ModelAndView forwardTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        return service.forwardTest(httpServletResponse);
+    }
 }
