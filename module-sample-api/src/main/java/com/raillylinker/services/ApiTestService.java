@@ -212,4 +212,26 @@ public class ApiTestService {
     ) {
         httpServletResponse.setStatus(HttpStatus.OK.value());
     }
+
+
+    // ----
+    // (Post 요청 테스트 (x-www-form-urlencoded))
+    public @Nullable ApiTestController.PostRequestTestWithFormTypeRequestBodyOutputVo postRequestTestWithFormTypeRequestBody(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull ApiTestController.PostRequestTestWithFormTypeRequestBodyInputVo inputVo
+    ) {
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ApiTestController.PostRequestTestWithFormTypeRequestBodyOutputVo(
+                inputVo.getRequestFormString(),
+                inputVo.getRequestFormStringNullable(),
+                inputVo.getRequestFormInt(),
+                inputVo.getRequestFormIntNullable(),
+                inputVo.getRequestFormDouble(),
+                inputVo.getRequestFormDoubleNullable(),
+                inputVo.getRequestFormBoolean(),
+                inputVo.getRequestFormBooleanNullable(),
+                inputVo.getRequestFormStringList(),
+                inputVo.getRequestFormStringListNullable()
+        );
+    }
 }
