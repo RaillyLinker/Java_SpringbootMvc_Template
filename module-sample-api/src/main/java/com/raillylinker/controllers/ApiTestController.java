@@ -149,35 +149,35 @@ public class ApiTestController {
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull HttpServletResponse httpServletResponse,
             @Parameter(name = "queryParamString", description = "String Query 파라미터", example = "testString")
-            @RequestParam("queryParamString")
+            @RequestParam(value = "queryParamString")
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull String queryParamString,
             @Parameter(name = "queryParamStringNullable", description = "String Query 파라미터 Nullable", example = "testString")
             @RequestParam(value = "queryParamStringNullable", required = false)
             @Nullable String queryParamStringNullable,
             @Parameter(name = "queryParamInt", description = "Int Query 파라미터", example = "1")
-            @RequestParam("queryParamInt")
+            @RequestParam(value = "queryParamInt")
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull Integer queryParamInt,
             @Parameter(name = "queryParamIntNullable", description = "Int Query 파라미터 Nullable", example = "1")
             @RequestParam(value = "queryParamIntNullable", required = false)
             @Nullable Integer queryParamIntNullable,
             @Parameter(name = "queryParamDouble", description = "Double Query 파라미터", example = "1.1")
-            @RequestParam("queryParamDouble")
+            @RequestParam(value = "queryParamDouble")
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull Double queryParamDouble,
             @Parameter(name = "queryParamDoubleNullable", description = "Double Query 파라미터 Nullable", example = "1.1")
             @RequestParam(value = "queryParamDoubleNullable", required = false)
             @Nullable Double queryParamDoubleNullable,
             @Parameter(name = "queryParamBoolean", description = "Boolean Query 파라미터", example = "true")
-            @RequestParam("queryParamBoolean")
+            @RequestParam(value = "queryParamBoolean")
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull Boolean queryParamBoolean,
             @Parameter(name = "queryParamBooleanNullable", description = "Boolean Query 파라미터 Nullable", example = "true")
             @RequestParam(value = "queryParamBooleanNullable", required = false)
             @Nullable Boolean queryParamBooleanNullable,
             @Parameter(name = "queryParamStringList", description = "StringList Query 파라미터", example = "[\"testString1\", \"testString2\"]")
-            @RequestParam("queryParamStringList")
+            @RequestParam(value = "queryParamStringList")
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull List<String> queryParamStringList,
             @Parameter(name = "queryParamStringListNullable", description = "StringList Query 파라미터 Nullable", example = "[\"testString1\", \"testString2\"]")
@@ -258,7 +258,7 @@ public class ApiTestController {
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull HttpServletResponse httpServletResponse,
             @Parameter(name = "pathParamInt", description = "Int Path 파라미터", example = "1")
-            @PathVariable("pathParamInt")
+            @PathVariable(value = "pathParamInt")
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull Integer pathParamInt
     ) {
@@ -1302,7 +1302,7 @@ public class ApiTestController {
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull HttpServletResponse httpServletResponse,
             @Parameter(name = "Range", description = "byte array('a', 'b', 'c', 'd', 'e', 'f') 중 가져올 범위(0 부터 시작되는 인덱스)", example = "Bytes=2-4")
-            @RequestHeader("Range")
+            @RequestHeader(value = "Range")
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull String range
     ) {
