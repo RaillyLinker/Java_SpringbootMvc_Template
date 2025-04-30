@@ -116,4 +116,26 @@ public class ApiTestService {
                 pathParamInt
         );
     }
+
+
+    // ----
+    // (Post 요청 테스트 (application-json))
+    public @Nullable ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBodyOutputVo postRequestTestWithApplicationJsonTypeRequestBody(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBodyInputVo inputVo
+    ) {
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBodyOutputVo(
+                inputVo.getRequestBodyString(),
+                inputVo.getRequestBodyStringNullable(),
+                inputVo.getRequestBodyInt(),
+                inputVo.getRequestBodyIntNullable(),
+                inputVo.getRequestBodyDouble(),
+                inputVo.getRequestBodyDoubleNullable(),
+                inputVo.getRequestBodyBoolean(),
+                inputVo.getRequestBodyBooleanNullable(),
+                inputVo.getRequestBodyStringList(),
+                inputVo.getRequestBodyStringListNullable()
+        );
+    }
 }

@@ -141,7 +141,8 @@ public class ApiTestController {
     @ResponseBody
     public @Nullable GetRequestTestOutputVo getRequestTest(
             @Parameter(hidden = true)
-            HttpServletResponse httpServletResponse,
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
             @Parameter(name = "queryParamString", description = "String Query 파라미터", example = "testString")
             @RequestParam("queryParamString")
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
@@ -249,7 +250,8 @@ public class ApiTestController {
     @ResponseBody
     public @Nullable GetRequestTestWithPathParamOutputVo getRequestTestWithPathParam(
             @Parameter(hidden = true)
-            HttpServletResponse httpServletResponse,
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
             @Parameter(name = "pathParamInt", description = "Int Path 파라미터", example = "1")
             @PathVariable("pathParamInt")
             @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
@@ -266,5 +268,107 @@ public class ApiTestController {
         @Schema(description = "입력한 Int Path 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
         @JsonProperty("pathParamInt")
         private final @NotNull Integer pathParamInt;
+    }
+
+
+    // ----
+    @Operation(
+            summary = "Post 요청 테스트 (application-json)",
+            description = "application-json 형태의 Request Body 를 받는 Post 메소드 요청 테스트"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/post-request-application-json"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable PostRequestTestWithApplicationJsonTypeRequestBodyOutputVo postRequestTestWithApplicationJsonTypeRequestBody(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
+            @RequestBody
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull PostRequestTestWithApplicationJsonTypeRequestBodyInputVo inputVo
+    ) {
+        return service.postRequestTestWithApplicationJsonTypeRequestBody(
+                httpServletResponse,
+                inputVo
+        );
+    }
+
+    @Data
+    public static class PostRequestTestWithApplicationJsonTypeRequestBodyInputVo {
+        @Schema(description = "String Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
+        @JsonProperty("requestBodyString")
+        private final @NotNull String requestBodyString;
+        @Schema(description = "String Nullable Body 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "testString")
+        @JsonProperty("requestBodyStringNullable")
+        private final @Nullable String requestBodyStringNullable;
+        @Schema(description = "Int Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("requestBodyInt")
+        private final @NotNull Integer requestBodyInt;
+        @Schema(description = "Int Nullable Body 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
+        @JsonProperty("requestBodyIntNullable")
+        private final @Nullable Integer requestBodyIntNullable;
+        @Schema(description = "Double Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("requestBodyDouble")
+        private final @NotNull Double requestBodyDouble;
+        @Schema(description = "Double Nullable Body 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.1")
+        @JsonProperty("requestBodyDoubleNullable")
+        private final @Nullable Double requestBodyDoubleNullable;
+        @Schema(description = "Boolean Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+        @JsonProperty("requestBodyBoolean")
+        private final @NotNull Boolean requestBodyBoolean;
+        @Schema(description = "Boolean Nullable Body 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "true")
+        @JsonProperty("requestBodyBooleanNullable")
+        private final @Nullable Boolean requestBodyBooleanNullable;
+        @Schema(description = "StringList Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
+        @JsonProperty("requestBodyStringList")
+        private final @NotNull List<String> requestBodyStringList;
+        @Schema(description = "StringList Nullable Body 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
+        @JsonProperty("requestBodyStringListNullable")
+        private final @Nullable List<String> requestBodyStringListNullable;
+    }
+
+    @Data
+    public static class PostRequestTestWithApplicationJsonTypeRequestBodyOutputVo {
+        @Schema(description = "입력한 String Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
+        @JsonProperty("requestBodyString")
+        private final @NotNull String requestBodyString;
+        @Schema(description = "입력한 String Nullable Body 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "testString")
+        @JsonProperty("requestBodyStringNullable")
+        private final @Nullable String requestBodyStringNullable;
+        @Schema(description = "입력한 Int Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("requestBodyInt")
+        private final @NotNull Integer requestBodyInt;
+        @Schema(description = "입력한 Int Nullable Body 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
+        @JsonProperty("requestBodyIntNullable")
+        private final @Nullable Integer requestBodyIntNullable;
+        @Schema(description = "입력한 Double Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("requestBodyDouble")
+        private final @NotNull Double requestBodyDouble;
+        @Schema(description = "입력한 Double Nullable Body 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.1")
+        @JsonProperty("requestBodyDoubleNullable")
+        private final @Nullable Double requestBodyDoubleNullable;
+        @Schema(description = "입력한 Boolean Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+        @JsonProperty("requestBodyBoolean")
+        private final @NotNull Boolean requestBodyBoolean;
+        @Schema(description = "입력한 Boolean Nullable Body 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "true")
+        @JsonProperty("requestBodyBooleanNullable")
+        private final @Nullable Boolean requestBodyBooleanNullable;
+        @Schema(description = "입력한 StringList Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
+        @JsonProperty("requestBodyStringList")
+        private final @NotNull List<String> requestBodyStringList;
+        @Schema(description = "입력한 StringList Nullable Body 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
+        @JsonProperty("requestBodyStringListNullable")
+        private final @Nullable List<String> requestBodyStringListNullable;
     }
 }
