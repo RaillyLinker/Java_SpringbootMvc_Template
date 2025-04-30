@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -1384,5 +1385,43 @@ public class ApiTestController {
         return service.audioStreamingTest(
                 httpServletResponse
         );
+    }
+
+
+    // ----
+    @Operation(
+            summary = "비동기 처리 결과 반환 샘플",
+            description = "API 호출시 함수 내에서 별도 스레드로 작업을 수행하고,<br>" +
+                    "비동기 작업 완료 후 그 처리 결과가 반환됨"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/async-result"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE}
+    )
+    @ResponseBody
+    public @Nullable DeferredResult<AsynchronousResponseTestOutputVo> asynchronousResponseTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        return service.asynchronousResponseTest(
+                httpServletResponse
+        );
+    }
+
+    @Data
+    public static class AsynchronousResponseTestOutputVo {
+        @Schema(description = "결과 메세지", requiredMode = Schema.RequiredMode.REQUIRED, example = "n 초 경과 후 반환했습니다.")
+        @JsonProperty("resultMessage")
+        private final @NotNull String resultMessage;
     }
 }

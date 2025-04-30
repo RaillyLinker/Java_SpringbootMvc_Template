@@ -13,6 +13,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -578,5 +579,35 @@ public class ApiTestService {
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return new ByteArrayResource(fileByteArray);
+    }
+
+
+    // ----
+    // (비동기 처리 결과 반환 샘플)
+    public @Nullable DeferredResult<ApiTestController.AsynchronousResponseTestOutputVo> asynchronousResponseTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        // 연결 타임아웃 밀리초
+        @NotNull Long deferredResultTimeoutMs = 1000L * 60;
+        @NotNull DeferredResult<ApiTestController.AsynchronousResponseTestOutputVo> deferredResult =
+                new DeferredResult<>(deferredResultTimeoutMs);
+
+        // 비동기 처리
+        executorService.execute(() -> {
+            @NotNull Long delayMs = 5000L;
+            try {
+                // 지연시간 대기
+                Thread.sleep(delayMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            // 결과 반환
+            deferredResult.setResult(new ApiTestController.AsynchronousResponseTestOutputVo((delayMs / 1000) + " 초 경과 후 반환했습니다."));
+        });
+
+        // 결과 대기 객체를 먼저 반환
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return deferredResult;
     }
 }
