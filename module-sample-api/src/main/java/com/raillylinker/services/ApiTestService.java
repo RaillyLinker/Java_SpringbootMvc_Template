@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,5 +45,17 @@ public class ApiTestService {
         httpServletResponse.setStatus(HttpStatus.OK.value());
 
         return activeProfile;
+    }
+
+
+    // ----
+    // (요청 Redirect 테스트)
+    public @Nullable ModelAndView redirectTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        @NotNull ModelAndView mv = new ModelAndView();
+        mv.setViewName("redirect:/api-test");
+
+        return mv;
     }
 }
