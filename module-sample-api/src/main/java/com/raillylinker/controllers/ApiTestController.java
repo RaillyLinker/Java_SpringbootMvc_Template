@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.raillylinker.services.ApiTestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -1015,5 +1017,169 @@ public class ApiTestController {
         @Schema(description = "입력한 StringList Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
         @JsonProperty("requestFormStringListNullable")
         private final @Nullable List<String> requestFormStringListNullable;
+    }
+
+
+    // ----
+    @Operation(
+            summary = "Post 요청 테스트 (multipart/form-data - ObjectList)",
+            description = "multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트<br>" +
+                    "Form Data 의 Input Body 에는 Object 리스트 타입은 Swagger 테스터에서는 사용 불가능입니다.<br>" +
+                    "테스트 시에는 postman 과 같은 테스터에서 inputObjectList[0].requestFormString 이렇게 하여 값을 입력하면 됩니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/post-request-multipart-form-data-object-list"},
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable PostRequestTestWithMultipartFormTypeRequestBody4OutputVo postRequestTestWithMultipartFormTypeRequestBody4(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
+            @ModelAttribute
+            @RequestBody
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull PostRequestTestWithMultipartFormTypeRequestBody4InputVo inputVo
+    ) {
+        return service.postRequestTestWithMultipartFormTypeRequestBody4(
+                httpServletResponse,
+                inputVo
+        );
+    }
+
+    @Data
+    public static class PostRequestTestWithMultipartFormTypeRequestBody4InputVo {
+        @Schema(description = "Object List", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("inputObjectList")
+        private final @NotNull List<InputObject> inputObjectList;
+        @Schema(description = "멀티 파트 파일", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("multipartFile")
+        private final @NotNull MultipartFile multipartFile;
+        @Schema(description = "멀티 파트 파일 Nullable", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        @JsonProperty("multipartFileNullable")
+        private final @Nullable MultipartFile multipartFileNullable;
+
+        @Schema(description = "InputObject")
+        @Data
+        public static class InputObject {
+            @Schema(description = "입력한 String Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
+            @JsonProperty("requestFormString")
+            private final @NotNull String requestFormString;
+            @Schema(description = "입력한 Int Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+            @JsonProperty("requestFormInt")
+            private final @NotNull Integer requestFormInt;
+        }
+    }
+
+    @Data
+    public static class PostRequestTestWithMultipartFormTypeRequestBody4OutputVo {
+        @Schema(description = "Object List", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        @JsonProperty("inputObjectList")
+        private final @Nullable List<InputObject> inputObjectList;
+
+        @Schema(description = "InputObject")
+        @Data
+        public static class InputObject {
+            @Schema(description = "입력한 String Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
+            @JsonProperty("requestFormString")
+            private final @NotNull String requestFormString;
+            @Schema(description = "입력한 Int Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+            @JsonProperty("requestFormInt")
+            private final @NotNull Integer requestFormInt;
+        }
+    }
+
+
+    // ----
+    @Operation(
+            summary = "인위적 에러 발생 테스트",
+            description = "요청 받으면 인위적인 서버 에러를 발생시킵니다.(Http Response Status 500)"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/generate-error"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void generateErrorTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        service.generateErrorTest(
+                httpServletResponse
+        );
+    }
+
+
+    // ----
+    @Operation(
+            summary = "결과 코드 발생 테스트",
+            description = "Response Header 에 api-result-code 를 반환하는 테스트 API"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "204",
+                            content = {@Content},
+                            description = "Response Body 가 없습니다.<br>" +
+                                    "Response Headers 를 확인하세요.",
+                            headers = {
+                                    @Header(
+                                            name = "api-result-code",
+                                            description = "(Response Code 반환 원인) - Required<br>" +
+                                                    "1 : errorType 을 A 로 보냈습니다.<br>" +
+                                                    "2 : errorType 을 B 로 보냈습니다.<br>" +
+                                                    "3 : errorType 을 C 로 보냈습니다.",
+                                            schema = @Schema(type = "string")
+                                    )
+                            }
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/api-result-code-test"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void returnResultCodeThroughHeaders(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
+
+            @Parameter(name = "errorType", description = "정상적이지 않은 상황을 만들도록 가정된 변수입니다.", example = "A")
+            @RequestParam(value = "errorType", required = false)
+            @Nullable ReturnResultCodeThroughHeadersErrorTypeEnum errorType
+    ) {
+        service.returnResultCodeThroughHeaders(
+                httpServletResponse,
+                errorType
+        );
+    }
+
+    public enum ReturnResultCodeThroughHeadersErrorTypeEnum {
+        A, B, C
     }
 }

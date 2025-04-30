@@ -381,4 +381,80 @@ public class ApiTestService {
                 inputJsonObject.getRequestFormStringListNullable()
         );
     }
+
+
+    // ----
+    // (Post 요청 테스트 (multipart/form-data - ObjectList))
+    public @Nullable ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4OutputVo postRequestTestWithMultipartFormTypeRequestBody4(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4InputVo inputVo
+    ) {
+        // 파일 저장 기본 디렉토리 경로
+        @NotNull Path saveDirectoryPath = Paths.get("./by_product_files/sample_api/test")
+                .toAbsolutePath()
+                .normalize();
+
+        customUtil.multipartFileLocalSave(
+                saveDirectoryPath,
+                null,
+                inputVo.getMultipartFile()
+        );
+
+        if (inputVo.getMultipartFileNullable() != null) {
+            customUtil.multipartFileLocalSave(
+                    saveDirectoryPath,
+                    null,
+                    inputVo.getMultipartFileNullable()
+            );
+        }
+
+        @NotNull List<ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4OutputVo.InputObject> inputObjectList = new ArrayList<>();
+        for (@NotNull ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4InputVo.InputObject inputObject : inputVo.getInputObjectList()) {
+            inputObjectList.add(
+                    new ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4OutputVo.InputObject(
+                            inputObject.getRequestFormString(),
+                            inputObject.getRequestFormInt()
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4OutputVo(inputObjectList);
+    }
+
+
+    // ----
+    // (인위적 에러 발생 테스트)
+    public void generateErrorTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        throw new RuntimeException("Test Error");
+    }
+
+
+    // ----
+    // (결과 코드 발생 테스트)
+    public void returnResultCodeThroughHeaders(
+            @NotNull HttpServletResponse httpServletResponse,
+            @Nullable ApiTestController.ReturnResultCodeThroughHeadersErrorTypeEnum errorType
+    ) {
+        if (errorType == null) {
+            httpServletResponse.setStatus(HttpStatus.OK.value());
+        } else {
+            switch (errorType) {
+                case A:
+                    httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+                    httpServletResponse.setHeader("api-result-code", "1");
+                    break;
+                case B:
+                    httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+                    httpServletResponse.setHeader("api-result-code", "2");
+                    break;
+                case C:
+                    httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+                    httpServletResponse.setHeader("api-result-code", "3");
+                    break;
+            }
+        }
+    }
 }
