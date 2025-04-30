@@ -1,5 +1,6 @@
 package com.raillylinker.services;
 
+import com.raillylinker.controllers.ApiTestController;
 import com.raillylinker.util_components.CustomUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.*;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -69,5 +71,36 @@ public class ApiTestService {
         mv.setViewName("forward:/api-test");
 
         return mv;
+    }
+
+
+    // ----
+    // (Get 요청 테스트 (Query Parameter))
+    public @Nullable ApiTestController.GetRequestTestOutputVo getRequestTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull String queryParamString,
+            @Nullable String queryParamStringNullable,
+            @NotNull Integer queryParamInt,
+            @Nullable Integer queryParamIntNullable,
+            @NotNull Double queryParamDouble,
+            @Nullable Double queryParamDoubleNullable,
+            @NotNull Boolean queryParamBoolean,
+            @Nullable Boolean queryParamBooleanNullable,
+            @NotNull List<String> queryParamStringList,
+            @Nullable List<String> queryParamStringListNullable
+    ) {
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new ApiTestController.GetRequestTestOutputVo(
+                queryParamString,
+                queryParamStringNullable,
+                queryParamInt,
+                queryParamIntNullable,
+                queryParamDouble,
+                queryParamDoubleNullable,
+                queryParamBoolean,
+                queryParamBooleanNullable,
+                queryParamStringList,
+                queryParamStringListNullable
+        );
     }
 }
