@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -137,5 +138,69 @@ public class ApiTestService {
                 inputVo.getRequestBodyStringList(),
                 inputVo.getRequestBodyStringListNullable()
         );
+    }
+
+
+    // ----
+    // (Post 요청 테스트 (application-json, 객체 파라미터 포함))
+    public @Nullable ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo postRequestTestWithApplicationJsonTypeRequestBody2(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2InputVo inputVo
+    ) {
+        @NotNull ArrayList<ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo.ObjectVo> objectList =
+                new ArrayList<>();
+
+        for (@NotNull ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2InputVo.ObjectVo objectVo : inputVo.getObjectVoList()) {
+            @NotNull ArrayList<ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo.ObjectVo.SubObjectVo> subObjectVoList =
+                    new ArrayList<>();
+            for (@NotNull ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2InputVo.ObjectVo.SubObjectVo subObject : objectVo.getSubObjectVoList()) {
+                subObjectVoList.add(
+                        new ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo.ObjectVo.SubObjectVo(
+                                subObject.getRequestBodyString(),
+                                subObject.getRequestBodyStringList()
+                        )
+                );
+            }
+
+            objectList.add(
+                    new ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo.ObjectVo(
+                            objectVo.getRequestBodyString(),
+                            objectVo.getRequestBodyStringList(),
+                            new ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo.ObjectVo.SubObjectVo(
+                                    objectVo.getSubObjectVo().getRequestBodyString(),
+                                    objectVo.getSubObjectVo().getRequestBodyStringList()
+                            ),
+                            subObjectVoList
+                    )
+            );
+        }
+
+        @NotNull ArrayList<ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo.ObjectVo.SubObjectVo> subObjectVoList =
+                new ArrayList<>();
+        for (@NotNull ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2InputVo.ObjectVo.SubObjectVo subObject : inputVo.getObjectVo().getSubObjectVoList()) {
+            subObjectVoList.add(
+                    new ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo.ObjectVo.SubObjectVo(
+                            subObject.getRequestBodyString(),
+                            subObject.getRequestBodyStringList()
+                    )
+            );
+        }
+
+        @NotNull ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo outputVo =
+                new ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo(
+                        new ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo.ObjectVo(
+                                inputVo.getObjectVo().getRequestBodyString(),
+                                inputVo.getObjectVo().getRequestBodyStringList(),
+                                new ApiTestController.PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo.ObjectVo.SubObjectVo(
+                                        inputVo.getObjectVo().getSubObjectVo().getRequestBodyString(),
+                                        inputVo.getObjectVo().getSubObjectVo().getRequestBodyStringList()
+                                ),
+                                subObjectVoList
+                        ),
+                        objectList
+                );
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return outputVo;
     }
 }

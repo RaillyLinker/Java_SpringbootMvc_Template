@@ -371,4 +371,110 @@ public class ApiTestController {
         @JsonProperty("requestBodyStringListNullable")
         private final @Nullable List<String> requestBodyStringListNullable;
     }
+
+
+    // ----
+    @Operation(
+            summary = "Post 요청 테스트 (application-json, 객체 파라미터 포함)",
+            description = "application-json 형태의 Request Body(객체 파라미터 포함) 를 받는 Post 메소드 요청 테스트"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/post-request-application-json-with-object-param"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo postRequestTestWithApplicationJsonTypeRequestBody2(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
+            @RequestBody
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull PostRequestTestWithApplicationJsonTypeRequestBody2InputVo inputVo
+    ) {
+        return service.postRequestTestWithApplicationJsonTypeRequestBody2(
+                httpServletResponse,
+                inputVo
+        );
+    }
+
+    @Data
+    public static class PostRequestTestWithApplicationJsonTypeRequestBody2InputVo {
+        @Schema(description = "객체 타입 파라미터", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("objectVo")
+        private final @NotNull ObjectVo objectVo;
+        @Schema(description = "객체 타입 리스트 파라미터", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("objectVoList")
+        private final @NotNull List<ObjectVo> objectVoList;
+
+        @Data
+        public static class ObjectVo {
+            @Schema(description = "String Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
+            @JsonProperty("requestBodyString")
+            private final @NotNull String requestBodyString;
+            @Schema(description = "StringList Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
+            @JsonProperty("requestBodyStringList")
+            private final @NotNull List<String> requestBodyStringList;
+            @Schema(description = "서브 객체 타입 파라미터", requiredMode = Schema.RequiredMode.REQUIRED)
+            @JsonProperty("subObjectVo")
+            private final @NotNull SubObjectVo subObjectVo;
+            @Schema(description = "서브 객체 타입 리스트 파라미터", requiredMode = Schema.RequiredMode.REQUIRED)
+            @JsonProperty("subObjectVoList")
+            private final @NotNull List<SubObjectVo> subObjectVoList;
+
+            @Data
+            public static class SubObjectVo {
+                @Schema(description = "String Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
+                @JsonProperty("requestBodyString")
+                private final @NotNull String requestBodyString;
+                @Schema(description = "StringList Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
+                @JsonProperty("requestBodyStringList")
+                private final @NotNull List<String> requestBodyStringList;
+            }
+        }
+    }
+
+    @Data
+    public static class PostRequestTestWithApplicationJsonTypeRequestBody2OutputVo {
+        @Schema(description = "객체 타입 파라미터", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("objectVo")
+        private final @NotNull ObjectVo objectVo;
+        @Schema(description = "객체 타입 리스트 파라미터", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("objectVoList")
+        private final @NotNull List<ObjectVo> objectVoList;
+
+        @Data
+        public static class ObjectVo {
+            @Schema(description = "String Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
+            @JsonProperty("requestBodyString")
+            private final @NotNull String requestBodyString;
+            @Schema(description = "StringList Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
+            @JsonProperty("requestBodyStringList")
+            private final @NotNull List<String> requestBodyStringList;
+            @Schema(description = "서브 객체 타입 파라미터", requiredMode = Schema.RequiredMode.REQUIRED)
+            @JsonProperty("subObjectVo")
+            private final @NotNull ObjectVo.SubObjectVo subObjectVo;
+            @Schema(description = "서브 객체 타입 리스트 파라미터", requiredMode = Schema.RequiredMode.REQUIRED)
+            @JsonProperty("subObjectVoList")
+            private final @NotNull List<ObjectVo.SubObjectVo> subObjectVoList;
+
+            @Data
+            public static class SubObjectVo {
+                @Schema(description = "String Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
+                @JsonProperty("requestBodyString")
+                private final @NotNull String requestBodyString;
+                @Schema(description = "StringList Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
+                @JsonProperty("requestBodyStringList")
+                private final @NotNull List<String> requestBodyStringList;
+            }
+        }
+    }
 }
