@@ -1182,4 +1182,38 @@ public class ApiTestController {
     public enum ReturnResultCodeThroughHeadersErrorTypeEnum {
         A, B, C
     }
+
+
+    // ----
+    @Operation(
+            summary = "인위적 응답 지연 테스트",
+            description = "임의로 응답 시간을 지연시킵니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/time-delay-test"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void responseDelayTest(
+            @Parameter(hidden = true)
+            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "delayTimeSec", description = "지연 시간(초)", example = "1")
+            @RequestParam(value = "delayTimeSec", required = false)
+            @Nullable Long delayTimeSec
+    ) {
+        service.responseDelayTest(
+                httpServletResponse,
+                delayTimeSec
+        );
+    }
 }

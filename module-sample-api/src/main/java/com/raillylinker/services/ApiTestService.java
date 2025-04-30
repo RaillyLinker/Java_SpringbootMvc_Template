@@ -457,4 +457,24 @@ public class ApiTestService {
             }
         }
     }
+
+
+    // ----
+    // (인위적 응답 지연 테스트)
+    public void responseDelayTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Long delayTimeSec
+    ) {
+        @NotNull Long endTime = System.currentTimeMillis() + (delayTimeSec * 1000);
+
+        while (System.currentTimeMillis() < endTime) {
+            try {
+                Thread.sleep(100);  // 100ms마다 스레드를 잠들게 하여 CPU 사용률을 줄임
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+    }
 }
