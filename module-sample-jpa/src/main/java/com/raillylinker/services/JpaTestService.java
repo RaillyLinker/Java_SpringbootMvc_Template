@@ -298,38 +298,43 @@ public class JpaTestService {
     }
 
 
-//    // ----
-//    // (DB Rows 조회 테스트 (네이티브 쿼리 페이징))
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-//    public @Nullable JpaTestController.SelectRowsNativeQueryPageSampleOutputVo selectRowsNativeQueryPageSample(
-//            @NotNull HttpServletResponse httpServletResponse,
-//            @NotNull Integer page,
-//            @NotNull Integer pageElementsCount,
-//            @NotNull Integer num
-//    ) {
-//        Pageable pageable = PageRequest.of(page - 1, pageElementsCount);
-//        Page<Db1_Native_Repository.FindPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistanceOutputVo> voList = db1NativeRepository.findPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(num, pageable);
-//
-//        List<MyServiceTkSampleDatabaseTestController.SelectRowsNativeQueryPageSampleOutputVo.TestEntityVo> testEntityVoList = new ArrayList<>();
-//        for (Db1_Native_Repository.FindPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistanceOutputVo vo : voList) {
-//            testEntityVoList.add(new MyServiceTkSampleDatabaseTestController.SelectRowsNativeQueryPageSampleOutputVo.TestEntityVo(
-//                    vo.getUid(),
-//                    vo.getContent(),
-//                    vo.getRandomNum(),
-//                    vo.getTestDatetime().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    vo.getRowCreateDate().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    vo.getRowUpdateDate().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    vo.getDistance()
-//            ));
-//        }
-//
-//        httpServletResponse.setStatus(HttpStatus.OK.value());
-//        return new MyServiceTkSampleDatabaseTestController.SelectRowsNativeQueryPageSampleOutputVo(
-//                voList.getTotalElements(), testEntityVoList
-//        );
-//    }
-//
-//
+    // ----
+    // (DB Rows 조회 테스트 (네이티브 쿼리 페이징))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectRowsNativeQueryPageSampleOutputVo selectRowsNativeQueryPageSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Integer page,
+            @NotNull Integer pageElementsCount,
+            @NotNull Integer num
+    ) {
+        @NotNull Pageable pageable = PageRequest.of(page - 1, pageElementsCount);
+        @NotNull Page<Db1_Template_TestData_Repository.FindPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistanceOutputVo> voList =
+                db1TemplateTestDataRepository.findPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(
+                        num,
+                        pageable
+                );
+
+        @NotNull List<JpaTestController.SelectRowsNativeQueryPageSampleOutputVo.TestEntityVo> testEntityVoList = new ArrayList<>();
+        for (@NotNull Db1_Template_TestData_Repository.FindPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistanceOutputVo vo : voList) {
+            testEntityVoList.add(new JpaTestController.SelectRowsNativeQueryPageSampleOutputVo.TestEntityVo(
+                    vo.getUid(),
+                    vo.getContent(),
+                    vo.getRandomNum(),
+                    vo.getTestDatetime().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    vo.getRowCreateDate().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    vo.getRowUpdateDate().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    vo.getDistance()
+            ));
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectRowsNativeQueryPageSampleOutputVo(
+                voList.getTotalElements(),
+                testEntityVoList
+        );
+    }
+
+
 //    // ----
 //    // (DB Row 수정 테스트)
 //    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)

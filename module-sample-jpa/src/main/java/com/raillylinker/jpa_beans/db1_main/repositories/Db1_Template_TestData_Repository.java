@@ -135,6 +135,65 @@ public interface Db1_Template_TestData_Repository extends JpaRepository<Db1_Temp
             @NotNull Pageable pageable
     );
 
+
+    /// /
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT 
+                    test_data.uid AS uid, 
+                    test_data.row_create_date AS rowCreateDate, 
+                    test_data.row_update_date AS rowUpdateDate, 
+                    test_data.content AS content, 
+                    test_data.random_num AS randomNum, 
+                    test_data.test_datetime AS testDatetime, 
+                    ABS(test_data.random_num-:num) AS distance 
+                    FROM 
+                    template.test_data AS test_data 
+                    WHERE 
+                    test_data.row_delete_date_str = '/' 
+                    ORDER BY 
+                    distance
+                    """,
+            countQuery = """
+                    SELECT 
+                    COUNT(*) 
+                    FROM 
+                    template.test_data AS test_data 
+                    WHERE 
+                    test_data.row_delete_date_str = '/'
+                    """
+    )
+    @NotNull
+    Page<FindPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistanceOutputVo> findPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(
+            @Param("num")
+            @NotNull Integer num,
+            @NotNull Pageable pageable
+    );
+
+    interface FindPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistanceOutputVo {
+        @NotNull
+        Long getUid();
+
+        @NotNull
+        LocalDateTime getRowCreateDate();
+
+        @NotNull
+        LocalDateTime getRowUpdateDate();
+
+        @NotNull
+        String getContent();
+
+        @NotNull
+        Integer getRandomNum();
+
+        @NotNull
+        LocalDateTime getTestDatetime();
+
+        @NotNull
+        Integer getDistance();
+    }
+
 //    @Valid
 //    @NotNull
 //    @org.jetbrains.annotations.NotNull
