@@ -23,6 +23,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -1028,8 +1029,36 @@ public class JpaTestService {
     public @Nullable JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo selectFkTableRowsWithLatestChildSample(
             @NotNull HttpServletResponse httpServletResponse
     ) {
-        // todo
-        return null;
+        @NotNull List<Db1_Template_FkTestParent_Repository.FindAllFromTemplateFkTestParentWithNearestChildOnlyOutputVo> resultEntityList =
+                db1TemplateFkTestParentRepository.findAllFromTemplateFkTestParentWithNearestChildOnly();
+
+        @NotNull ArrayList<JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo.ParentEntityVo> entityVoList =
+                new ArrayList<>();
+        for (@NotNull Db1_Template_FkTestParent_Repository.FindAllFromTemplateFkTestParentWithNearestChildOnlyOutputVo resultEntity : resultEntityList) {
+            entityVoList.add(
+                    new JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo.ParentEntityVo(
+                            resultEntity.getParentUid(),
+                            resultEntity.getParentName(),
+                            resultEntity.getParentCreateDate().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.getParentUpdateDate().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.getChildUid() == null ? null : new JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo.ParentEntityVo.ChildEntityVo(
+                                    resultEntity.getChildUid(),
+                                    Objects.requireNonNull(resultEntity.getChildName()),
+                                    Objects.requireNonNull(resultEntity.getChildCreateDate()).atZone(ZoneId.systemDefault())
+                                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                                    Objects.requireNonNull(resultEntity.getChildUpdateDate()).atZone(ZoneId.systemDefault())
+                                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                            )
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo(
+                entityVoList
+        );
     }
 
 
