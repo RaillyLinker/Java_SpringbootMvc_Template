@@ -4,6 +4,7 @@ import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_TestData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -79,8 +80,6 @@ public interface Db1_Template_TestData_Repository extends JpaRepository<Db1_Temp
         Integer getDistance();
     }
 
-
-    /// /
     @Query(
             nativeQuery = true,
             value = """
@@ -135,8 +134,6 @@ public interface Db1_Template_TestData_Repository extends JpaRepository<Db1_Temp
             @NotNull Pageable pageable
     );
 
-
-    /// /
     @Query(
             nativeQuery = true,
             value = """
@@ -193,6 +190,28 @@ public interface Db1_Template_TestData_Repository extends JpaRepository<Db1_Temp
         @NotNull
         Integer getDistance();
     }
+
+    @Modifying
+    @Query(
+            nativeQuery = true, // Native Query 에서 Delete, Update 문은 이것을 붙여야함
+            value = """
+                    UPDATE 
+                    template.test_data 
+                    SET 
+                    content = :content, 
+                    test_datetime = :testDatetime 
+                    WHERE 
+                    uid = :uid
+                    """
+    )
+    void updateToTemplateTestDataSetContentAndTestDateTimeByUid(
+            @Param("uid")
+            @NotNull Long uid,
+            @Param("content")
+            @NotNull String content,
+            @Param("testDatetime")
+            @NotNull LocalDateTime testDatetime
+    );
 
 //    @Valid
 //    @NotNull

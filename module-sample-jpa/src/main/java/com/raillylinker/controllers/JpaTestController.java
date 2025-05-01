@@ -532,140 +532,140 @@ public class JpaTestController {
     }
 
 
-//    ////
-//    @Operation(
-//            summary = "DB Row 수정 테스트",
-//            description = "테스트 테이블의 Row 하나를 수정합니다."
-//    )
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description = "정상 동작"
-//                    ),
-//                    @ApiResponse(
-//                            responseCode = "204",
-//                            content = {@Content},
-//                            description = "Response Body 가 없습니다.<br>" +
-//                                    "Response Headers 를 확인하세요.",
-//                            headers = {
-//                                    @Header(
-//                                            name = "api-result-code",
-//                                            description = "(Response Code 반환 원인) - Required<br>" +
-//                                                    "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-//                                            schema = @Schema(type = "string")
-//                                    )
-//                            }
-//                    )
-//            }
-//    )
-//    @PatchMapping(
-//            path = {"/row/{testTableUid}"},
-//            consumes = MediaType.APPLICATION_JSON_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    @ResponseBody
-//    public @Nullable UpdateRowSampleOutputVo updateRowSample(
-//            @Parameter(hidden = true)
-//            @NotNull HttpServletResponse httpServletResponse,
-//            @Parameter(name = "testTableUid", description = "test 테이블의 uid", example = "1")
-//            @PathVariable(value = "testTableUid")
-//            @NotNull Long testTableUid,
-//            @RequestBody
-//            @NotNull UpdateRowSampleInputVo inputVo
-//    ) {
-//        return service.updateRowSample(httpServletResponse, testTableUid, inputVo);
-//    }
-//
-//    @Data
-//    public static class UpdateRowSampleInputVo {
-//        @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트 수정글입니다.")
-//        @JsonProperty("content")
-//        private final @NotNull String content;
-//        @Schema(description = "원하는 날짜(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//        @JsonProperty("dateString")
-//        private final @NotNull String dateString;
-//    }
-//
-//    @Data
-//    public static class UpdateRowSampleOutputVo {
-//        @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
-//        @JsonProperty("uid")
-//        private final @NotNull Long uid;
-//        @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트입니다.")
-//        @JsonProperty("content")
-//        private final @NotNull String content;
-//        @Schema(description = "자동 생성 숫자", requiredMode = Schema.RequiredMode.REQUIRED, example = "21345")
-//        @JsonProperty("randomNum")
-//        private final @NotNull Integer randomNum;
-//        @Schema(description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//        @JsonProperty("testDatetime")
-//        private final @NotNull String testDatetime;
-//        @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//        @JsonProperty("createDate")
-//        private final @NotNull String createDate;
-//        @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//        @JsonProperty("updateDate")
-//        private final @NotNull String updateDate;
-//    }
-//
-//
-//    ////
-//    @Operation(
-//            summary = "DB Row 수정 테스트 (네이티브 쿼리)",
-//            description = "테스트 테이블의 Row 하나를 네이티브 쿼리로 수정합니다."
-//    )
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description = "정상 동작"
-//                    ),
-//                    @ApiResponse(
-//                            responseCode = "204",
-//                            content = {@Content},
-//                            description = "Response Body 가 없습니다.<br>" +
-//                                    "Response Headers 를 확인하세요.",
-//                            headers = {
-//                                    @Header(
-//                                            name = "api-result-code",
-//                                            description = "(Response Code 반환 원인) - Required<br>" +
-//                                                    "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-//                                            schema = @Schema(type = "string")
-//                                    )
-//                            }
-//                    )
-//            }
-//    )
-//    @PatchMapping(
-//            path = {"/row/{testTableUid}/native-query"},
-//            consumes = MediaType.APPLICATION_JSON_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    @ResponseBody
-//    public void updateRowNativeQuerySample(
-//            @Parameter(hidden = true)
-//            @NotNull HttpServletResponse httpServletResponse,
-//            @Parameter(name = "testTableUid", description = "test 테이블의 uid", example = "1")
-//            @PathVariable(value = "testTableUid")
-//            @NotNull Long testTableUid,
-//            @RequestBody
-//            @NotNull UpdateRowNativeQuerySampleInputVo inputVo
-//    ) {
-//        service.updateRowNativeQuerySample(httpServletResponse, testTableUid, inputVo);
-//    }
-//
-//    @Data
-//    public static class UpdateRowNativeQuerySampleInputVo {
-//        @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트 수정글입니다.")
-//        @JsonProperty("content")
-//        private final @NotNull String content;
-//        @Schema(description = "원하는 날짜(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//        @JsonProperty("dateString")
-//        private final @NotNull String dateString;
-//    }
-//
-//
+    ////
+    @Operation(
+            summary = "DB Row 수정 테스트",
+            description = "테스트 테이블의 Row 하나를 수정합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "204",
+                            content = {@Content},
+                            description = "Response Body 가 없습니다.<br>" +
+                                    "Response Headers 를 확인하세요.",
+                            headers = {
+                                    @Header(
+                                            name = "api-result-code",
+                                            description = "(Response Code 반환 원인) - Required<br>" +
+                                                    "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                            schema = @Schema(type = "string")
+                                    )
+                            }
+                    )
+            }
+    )
+    @PatchMapping(
+            path = {"/row/{testTableUid}"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable UpdateRowSampleOutputVo updateRowSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "testTableUid", description = "test 테이블의 uid", example = "1")
+            @PathVariable(value = "testTableUid")
+            @NotNull Long testTableUid,
+            @RequestBody
+            @NotNull UpdateRowSampleInputVo inputVo
+    ) {
+        return service.updateRowSample(httpServletResponse, testTableUid, inputVo);
+    }
+
+    @Data
+    public static class UpdateRowSampleInputVo {
+        @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트 수정글입니다.")
+        @JsonProperty("content")
+        private final @NotNull String content;
+        @Schema(description = "원하는 날짜(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("dateString")
+        private final @NotNull String dateString;
+    }
+
+    @Data
+    public static class UpdateRowSampleOutputVo {
+        @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+        @JsonProperty("uid")
+        private final @NotNull Long uid;
+        @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트입니다.")
+        @JsonProperty("content")
+        private final @NotNull String content;
+        @Schema(description = "자동 생성 숫자", requiredMode = Schema.RequiredMode.REQUIRED, example = "21345")
+        @JsonProperty("randomNum")
+        private final @NotNull Integer randomNum;
+        @Schema(description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("testDatetime")
+        private final @NotNull String testDatetime;
+        @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("createDate")
+        private final @NotNull String createDate;
+        @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("updateDate")
+        private final @NotNull String updateDate;
+    }
+
+
+    ////
+    @Operation(
+            summary = "DB Row 수정 테스트 (네이티브 쿼리)",
+            description = "테스트 테이블의 Row 하나를 네이티브 쿼리로 수정합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "204",
+                            content = {@Content},
+                            description = "Response Body 가 없습니다.<br>" +
+                                    "Response Headers 를 확인하세요.",
+                            headers = {
+                                    @Header(
+                                            name = "api-result-code",
+                                            description = "(Response Code 반환 원인) - Required<br>" +
+                                                    "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                            schema = @Schema(type = "string")
+                                    )
+                            }
+                    )
+            }
+    )
+    @PatchMapping(
+            path = {"/row/{testTableUid}/native-query"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public void updateRowNativeQuerySample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "testTableUid", description = "test 테이블의 uid", example = "1")
+            @PathVariable(value = "testTableUid")
+            @NotNull Long testTableUid,
+            @RequestBody
+            @NotNull UpdateRowNativeQuerySampleInputVo inputVo
+    ) {
+        service.updateRowNativeQuerySample(httpServletResponse, testTableUid, inputVo);
+    }
+
+    @Data
+    public static class UpdateRowNativeQuerySampleInputVo {
+        @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트 수정글입니다.")
+        @JsonProperty("content")
+        private final @NotNull String content;
+        @Schema(description = "원하는 날짜(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("dateString")
+        private final @NotNull String dateString;
+    }
+
+
 //    ////
 //    @Operation(
 //            summary = "DB 정보 검색 테스트",
