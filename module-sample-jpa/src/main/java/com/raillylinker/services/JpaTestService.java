@@ -2,14 +2,8 @@ package com.raillylinker.services;
 
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig;
 import com.raillylinker.controllers.JpaTestController;
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_FkTestManyToOneChild;
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_FkTestParent;
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_LogicalDeleteUniqueData;
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_TestData;
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_FkTestManyToOneChild_Repository;
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_FkTestParent_Repository;
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_LogicalDeleteUniqueData_Repository;
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestData_Repository;
+import com.raillylinker.jpa_beans.db1_main.entities.*;
+import com.raillylinker.jpa_beans.db1_main.repositories.*;
 import com.raillylinker.util_components.CustomUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.*;
@@ -43,7 +37,8 @@ public class JpaTestService {
             @NotNull Db1_Template_TestData_Repository db1TemplateTestDataRepository,
             @NotNull Db1_Template_LogicalDeleteUniqueData_Repository db1TemplateLogicalDeleteUniqueDataRepository,
             @NotNull Db1_Template_FkTestParent_Repository db1TemplateFkTestParentRepository,
-            @NotNull Db1_Template_FkTestManyToOneChild_Repository db1TemplateFkTestManyToOneChildRepository
+            @NotNull Db1_Template_FkTestManyToOneChild_Repository db1TemplateFkTestManyToOneChildRepository,
+            @NotNull Db1_Template_JustBooleanTest_Repository db1TemplateJustBooleanTestRepository
     ) {
         this.activeProfile = activeProfile;
         this.customUtil = customUtil;
@@ -51,6 +46,7 @@ public class JpaTestService {
         this.db1TemplateLogicalDeleteUniqueDataRepository = db1TemplateLogicalDeleteUniqueDataRepository;
         this.db1TemplateFkTestParentRepository = db1TemplateFkTestParentRepository;
         this.db1TemplateFkTestManyToOneChildRepository = db1TemplateFkTestManyToOneChildRepository;
+        this.db1TemplateJustBooleanTestRepository = db1TemplateJustBooleanTestRepository;
     }
 
     // <멤버 변수 공간>
@@ -66,6 +62,7 @@ public class JpaTestService {
     private final @NotNull Db1_Template_LogicalDeleteUniqueData_Repository db1TemplateLogicalDeleteUniqueDataRepository;
     private final @NotNull Db1_Template_FkTestParent_Repository db1TemplateFkTestParentRepository;
     private final @NotNull Db1_Template_FkTestManyToOneChild_Repository db1TemplateFkTestManyToOneChildRepository;
+    private final @NotNull Db1_Template_JustBooleanTest_Repository db1TemplateJustBooleanTestRepository;
 
 
     // ---------------------------------------------------------------------------------------------
@@ -876,8 +873,30 @@ public class JpaTestService {
     public @Nullable JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo selectFkTestTableRowsByNativeQuerySample(
             @NotNull HttpServletResponse httpServletResponse
     ) {
-        // todo
-        return null;
+        @NotNull List<Db1_Template_FkTestManyToOneChild_Repository.FindAllFromTemplateFkTestManyToOneChildInnerJoinParentByNotDeletedOutputVo> resultEntityList =
+                db1TemplateFkTestManyToOneChildRepository.findAllFromTemplateFkTestManyToOneChildInnerJoinParentByNotDeleted();
+
+        @NotNull List<JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo.ChildEntityVo> entityVoList =
+                new ArrayList<>();
+        for (@NotNull Db1_Template_FkTestManyToOneChild_Repository.FindAllFromTemplateFkTestManyToOneChildInnerJoinParentByNotDeletedOutputVo resultEntity : resultEntityList) {
+            entityVoList.add(
+                    new JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo.ChildEntityVo(
+                            resultEntity.getChildUid(),
+                            resultEntity.getChildName(),
+                            resultEntity.getChildCreateDate().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.getChildUpdateDate().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.getParentUid(),
+                            resultEntity.getParentName()
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo(
+                entityVoList
+        );
     }
 
 
@@ -888,8 +907,24 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse,
             @NotNull Boolean inputVal
     ) {
-        // todo
-        return null;
+        // boolean 값을 갖고오기 위한 테스트 테이블이 존재하지 않는다면 하나 생성하기
+        var justBooleanEntity = db1TemplateJustBooleanTestRepository.findAll();
+        if (justBooleanEntity.isEmpty()) {
+            db1TemplateJustBooleanTestRepository.save(
+                    new Db1_Template_JustBooleanTest(true)
+            );
+        }
+
+        var resultEntity = db1TemplateJustBooleanTestRepository.multiCaseBooleanReturnTest(inputVal);
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.GetNativeQueryReturnValueTestOutputVo(
+                resultEntity.getNormalBoolValue() == 1L,
+                resultEntity.getFuncBoolValue() == 1L,
+                resultEntity.getIfBoolValue() == 1L,
+                resultEntity.getCaseBoolValue() == 1L,
+                resultEntity.getTableColumnBoolValue()
+        );
     }
 
 
