@@ -816,73 +816,73 @@ public class JpaTestController {
     }
 
 
-//    ////
-//    @Operation(
-//            summary = "DB Rows 조회 테스트 (중복 없는 네이티브 쿼리 페이징)",
-//            description = "테스트 테이블의 Rows 를 네이티브 쿼리로 중복없이 페이징하여 반환합니다.<br>" +
-//                    "num 을 기준으로 근사치 정렬도 수행합니다."
-//    )
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description = "정상 동작"
-//                    )
-//            }
-//    )
-//    @GetMapping(
-//            path = {"/rows/native-paging-no-duplication"},
-//            consumes = MediaType.ALL_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    @ResponseBody
-//    public @Nullable SelectRowsNoDuplicatePagingSampleOutputVo selectRowsNoDuplicatePagingSample(
-//            @Parameter(hidden = true)
-//            @NotNull HttpServletResponse httpServletResponse,
-//            @Parameter(name = "lastItemUid", description = "이전 페이지에서 받은 마지막 아이템의 Uid (첫 요청이면 null)", example = "1")
-//            @RequestParam(value = "lastItemUid", required = false)
-//            @Nullable Long lastItemUid,
-//            @Parameter(name = "pageElementsCount", description = "페이지 아이템 개수", example = "10")
-//            @RequestParam(value = "pageElementsCount")
-//            @NotNull Integer pageElementsCount
-//    ) {
-//        return service.selectRowsNoDuplicatePagingSample(httpServletResponse, lastItemUid, pageElementsCount);
-//    }
-//
-//    @Data
-//    public static class SelectRowsNoDuplicatePagingSampleOutputVo {
-//        @Schema(description = "아이템 전체 개수", requiredMode = Schema.RequiredMode.REQUIRED, example = "100")
-//        @JsonProperty("totalElements")
-//        private final @NotNull Long totalElements;
-//        @Schema(description = "아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
-//        @JsonProperty("testEntityVoList")
-//        private final @NotNull List<TestEntityVo> testEntityVoList;
-//
-//        @Schema(description = "아이템")
-//        @Data
-//        public static class TestEntityVo {
-//            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-//            @JsonProperty("uid")
-//            private final @NotNull Long uid;
-//            @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트입니다.")
-//            @JsonProperty("content")
-//            private final @NotNull String content;
-//            @Schema(description = "자동 생성 숫자", requiredMode = Schema.RequiredMode.REQUIRED, example = "21345")
-//            @JsonProperty("randomNum")
-//            private final @NotNull Integer randomNum;
-//            @Schema(description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//            @JsonProperty("testDatetime")
-//            private final @NotNull String testDatetime;
-//            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//            @JsonProperty("createDate")
-//            private final @NotNull String createDate;
-//            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//            @JsonProperty("updateDate")
-//            private final @NotNull String updateDate;
-//        }
-//    }
-//
-//
+    ////
+    @Operation(
+            summary = "DB Rows 조회 테스트 (중복 없는 네이티브 쿼리 페이징)",
+            description = "테스트 테이블의 Rows 를 네이티브 쿼리로 중복없이 페이징하여 반환합니다.<br>" +
+                    "num 을 기준으로 근사치 정렬도 수행합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/rows/native-paging-no-duplication"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable SelectRowsNoDuplicatePagingSampleOutputVo selectRowsNoDuplicatePagingSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "lastItemUid", description = "이전 페이지에서 받은 마지막 아이템의 Uid (첫 요청이면 null)", example = "1")
+            @RequestParam(value = "lastItemUid", required = false)
+            @Nullable Long lastItemUid,
+            @Parameter(name = "pageElementsCount", description = "페이지 아이템 개수", example = "10")
+            @RequestParam(value = "pageElementsCount")
+            @NotNull Integer pageElementsCount
+    ) {
+        return service.selectRowsNoDuplicatePagingSample(httpServletResponse, lastItemUid, pageElementsCount);
+    }
+
+    @Data
+    public static class SelectRowsNoDuplicatePagingSampleOutputVo {
+        @Schema(description = "아이템 전체 개수", requiredMode = Schema.RequiredMode.REQUIRED, example = "100")
+        @JsonProperty("totalElements")
+        private final @NotNull Long totalElements;
+        @Schema(description = "아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("testEntityVoList")
+        private final @NotNull List<TestEntityVo> testEntityVoList;
+
+        @Schema(description = "아이템")
+        @Data
+        public static class TestEntityVo {
+            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+            @JsonProperty("uid")
+            private final @NotNull Long uid;
+            @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트입니다.")
+            @JsonProperty("content")
+            private final @NotNull String content;
+            @Schema(description = "자동 생성 숫자", requiredMode = Schema.RequiredMode.REQUIRED, example = "21345")
+            @JsonProperty("randomNum")
+            private final @NotNull Integer randomNum;
+            @Schema(description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("testDatetime")
+            private final @NotNull String testDatetime;
+            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("createDate")
+            private final @NotNull String createDate;
+            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("updateDate")
+            private final @NotNull String updateDate;
+        }
+    }
+
+
 //    ////
 //    @Operation(
 //            summary = "DB Rows 조회 테스트 (카운팅)",

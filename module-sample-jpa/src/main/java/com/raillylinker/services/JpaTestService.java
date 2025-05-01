@@ -492,37 +492,47 @@ public class JpaTestService {
     }
 
 
-//    // ----
-//    // (DB Rows 조회 테스트 (중복 없는 네이티브 쿼리 페이징))
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-//    public @Nullable JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo selectRowsNoDuplicatePagingSample(
-//            @NotNull HttpServletResponse httpServletResponse,
-//            @Nullable Long lastItemUid,
-//            @NotNull Integer pageElementsCount
-//    ) {
-//        List<Db1_Native_Repository.FindAllFromTemplateTestDataForNoDuplicatedPagingOutputVo> voList = db1NativeRepository.findAllFromTemplateTestDataForNoDuplicatedPaging(lastItemUid, pageElementsCount);
-//        Long count = db1NativeRepository.countFromTemplateTestDataByNotDeleted();
-//
-//        List<MyServiceTkSampleDatabaseTestController.SelectRowsNoDuplicatePagingSampleOutputVo.TestEntityVo> testEntityVoList = new ArrayList<>();
-//        for (Db1_Native_Repository.FindAllFromTemplateTestDataForNoDuplicatedPagingOutputVo vo : voList) {
-//            testEntityVoList.add(new MyServiceTkSampleDatabaseTestController.SelectRowsNoDuplicatePagingSampleOutputVo.TestEntityVo(
-//                    vo.getUid(),
-//                    vo.getContent(),
-//                    vo.getRandomNum(),
-//                    vo.getTestDatetime().atZone(ZoneId.systemDefault())
-//                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    vo.getRowCreateDate().atZone(ZoneId.systemDefault())
-//                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    vo.getRowUpdateDate().atZone(ZoneId.systemDefault())
-//                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-//            ));
-//        }
-//
-//        httpServletResponse.setStatus(HttpStatus.OK.value());
-//        return new MyServiceTkSampleDatabaseTestController.SelectRowsNoDuplicatePagingSampleOutputVo(count, testEntityVoList);
-//    }
-//
-//
+    // ----
+    // (DB Rows 조회 테스트 (중복 없는 네이티브 쿼리 페이징))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo selectRowsNoDuplicatePagingSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @Nullable Long lastItemUid,
+            @NotNull Integer pageElementsCount
+    ) {
+        // 중복 없는 페이징 쿼리를 사용합니다.
+        @NotNull List<Db1_Template_TestData_Repository.FindAllFromTemplateTestDataForNoDuplicatedPagingOutputVo> voList =
+                db1TemplateTestDataRepository.findAllFromTemplateTestDataForNoDuplicatedPaging(
+                        lastItemUid,
+                        pageElementsCount
+                );
+
+        // 전체 개수 카운팅은 따로 해주어야 합니다.
+        @NotNull Long count = db1TemplateTestDataRepository.countFromTemplateTestDataByNotDeleted();
+
+        @NotNull List<JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo.TestEntityVo> testEntityVoList = new ArrayList<>();
+        for (@NotNull Db1_Template_TestData_Repository.FindAllFromTemplateTestDataForNoDuplicatedPagingOutputVo vo : voList) {
+            testEntityVoList.add(new JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo.TestEntityVo(
+                    vo.getUid(),
+                    vo.getContent(),
+                    vo.getRandomNum(),
+                    vo.getTestDatetime().atZone(ZoneId.systemDefault())
+                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    vo.getRowCreateDate().atZone(ZoneId.systemDefault())
+                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    vo.getRowUpdateDate().atZone(ZoneId.systemDefault())
+                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+            ));
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo(
+                count,
+                testEntityVoList
+        );
+    }
+
+
 //    // ----
 //    // (DB Rows 조회 테스트 (카운팅))
 //    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
