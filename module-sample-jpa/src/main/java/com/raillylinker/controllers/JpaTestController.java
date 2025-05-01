@@ -55,10 +55,8 @@ public class JpaTestController {
     @ResponseBody
     public @Nullable InsertDataSampleOutputVo insertDataSample(
             @Parameter(hidden = true)
-            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull HttpServletResponse httpServletResponse,
             @RequestBody
-            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull InsertDataSampleInputVo inputVo
     ) {
         return service.insertDataSample(httpServletResponse, inputVo);
@@ -155,11 +153,9 @@ public class JpaTestController {
     @ResponseBody
     public void deleteRowsSample(
             @Parameter(hidden = true)
-            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull HttpServletResponse httpServletResponse,
             @Parameter(name = "deleteLogically", description = "논리적 삭제 여부", example = "true")
             @RequestParam(value = "deleteLogically")
-            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull Boolean deleteLogically
     ) {
         service.deleteRowsSample(httpServletResponse, deleteLogically);
@@ -196,15 +192,12 @@ public class JpaTestController {
     @ResponseBody
     public void deleteRowSample(
             @Parameter(hidden = true)
-            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull HttpServletResponse httpServletResponse,
             @Parameter(name = "index", description = "글 인덱스", example = "1")
             @PathVariable("index")
-            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull Long index,
             @Parameter(name = "deleteLogically", description = "논리적 삭제 여부", example = "true")
             @RequestParam("deleteLogically")
-            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull Boolean deleteLogically
     ) {
         service.deleteRowSample(httpServletResponse, index, deleteLogically);
@@ -230,7 +223,6 @@ public class JpaTestController {
     @ResponseBody
     public @Nullable SelectRowsSampleOutputVo selectRowsSample(
             @Parameter(hidden = true)
-            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull HttpServletResponse httpServletResponse
     ) {
         return service.selectRowsSample(httpServletResponse);

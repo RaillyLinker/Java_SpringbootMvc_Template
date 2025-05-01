@@ -50,7 +50,6 @@ public class RootController {
     )
     public @Nullable ModelAndView getRootInfo(
             @Parameter(hidden = true)
-            @jakarta.validation.Valid @jakarta.validation.constraints.NotNull
             @NotNull HttpServletResponse httpServletResponse
     ) {
         return service.getRootInfo(httpServletResponse);
