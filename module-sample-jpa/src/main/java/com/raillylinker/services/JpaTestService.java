@@ -559,34 +559,33 @@ public class JpaTestService {
     }
 
 
-//    // ----
-//    // (DB Row 조회 테스트 (네이티브))
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-//    public @Nullable JpaTestController.SelectRowByNativeQuerySampleOutputVo selectRowByNativeQuerySample(
-//            @NotNull HttpServletResponse httpServletResponse,
-//            @NotNull Long testTableUid
-//    ) {
-//        Optional<Db1_Native_Repository.FindFromTemplateTestDataByNotDeletedAndUidOutputVo> entityOpt = db1NativeRepository.findFromTemplateTestDataByNotDeletedAndUid(testTableUid);
-//
-//        if (entityOpt.isEmpty()) {
-//            httpServletResponse.setStatus(HttpStatus.OK.value());
-//            httpServletResponse.setHeader("api-result-code", "1");
-//            return null;
-//        }
-//
-//        Db1_Native_Repository.FindFromTemplateTestDataByNotDeletedAndUidOutputVo entity = entityOpt.get();
-//
-//        httpServletResponse.setStatus(HttpStatus.OK.value());
-//        return new MyServiceTkSampleDatabaseTestController.SelectRowByNativeQuerySampleOutputVo(
-//                entity.getUid(),
-//                entity.getContent(),
-//                entity.getRandomNum(),
-//                entity.getTestDatetime().atZone(ZoneId.systemDefault())
-//                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                entity.getRowCreateDate().atZone(ZoneId.systemDefault())
-//                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                entity.getRowUpdateDate().atZone(ZoneId.systemDefault())
-//                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-//        );
-//    }
+    // ----
+    // (DB Row 조회 테스트 (네이티브))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectRowByNativeQuerySampleOutputVo selectRowByNativeQuerySample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Long testTableUid
+    ) {
+        @Nullable Db1_Template_TestData_Repository.FindFromTemplateTestDataByNotDeletedAndUidOutputVo entity =
+                db1TemplateTestDataRepository.findFromTemplateTestDataByNotDeletedAndUid(testTableUid);
+
+        if (entity == null) {
+            httpServletResponse.setStatus(HttpStatus.OK.value());
+            httpServletResponse.setHeader("api-result-code", "1");
+            return null;
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectRowByNativeQuerySampleOutputVo(
+                entity.getUid(),
+                entity.getContent(),
+                entity.getRandomNum(),
+                entity.getTestDatetime().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                entity.getRowCreateDate().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                entity.getRowUpdateDate().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        );
+    }
 }

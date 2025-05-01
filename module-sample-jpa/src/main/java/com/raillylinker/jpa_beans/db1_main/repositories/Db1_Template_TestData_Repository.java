@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.jetbrains.annotations.*;
 
@@ -420,6 +421,49 @@ public interface Db1_Template_TestData_Repository extends JpaRepository<Db1_Temp
     Long countByRowDeleteDateStr(
             @NotNull String rowDeleteDateStr
     );
+
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT 
+                    test_data.uid AS uid, 
+                    test_data.content AS content, 
+                    test_data.random_num AS randomNum, 
+                    test_data.test_datetime AS testDatetime, 
+                    test_data.row_create_date AS rowCreateDate, 
+                    test_data.row_update_date AS rowUpdateDate 
+                    FROM 
+                    template.test_data AS test_data 
+                    WHERE 
+                    test_data.row_delete_date_str = '/' AND 
+                    test_data.uid = :testTableUid
+                    """
+    )
+    @Nullable
+    FindFromTemplateTestDataByNotDeletedAndUidOutputVo findFromTemplateTestDataByNotDeletedAndUid(
+            @Param("testTableUid")
+            @NotNull Long testTableUid
+    );
+
+    interface FindFromTemplateTestDataByNotDeletedAndUidOutputVo {
+        @NotNull
+        Long getUid();
+
+        @NotNull
+        String getContent();
+
+        @NotNull
+        Integer getRandomNum();
+
+        @NotNull
+        LocalDateTime getTestDatetime();
+
+        @NotNull
+        LocalDateTime getRowCreateDate();
+
+        @NotNull
+        LocalDateTime getRowUpdateDate();
+    }
 
 //    @Valid
 //    @NotNull
