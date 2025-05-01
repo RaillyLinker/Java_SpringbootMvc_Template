@@ -2,7 +2,9 @@ package com.raillylinker.services;
 
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig;
 import com.raillylinker.controllers.JpaTestController;
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_LogicalDeleteUniqueData;
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_TestData;
+import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_LogicalDeleteUniqueData_Repository;
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestData_Repository;
 import com.raillylinker.util_components.CustomUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +25,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class JpaTestService {
@@ -33,11 +36,13 @@ public class JpaTestService {
 
             @NotNull CustomUtil customUtil,
 
-            @NotNull Db1_Template_TestData_Repository db1TemplateTestDataRepository
+            @NotNull Db1_Template_TestData_Repository db1TemplateTestDataRepository,
+            @NotNull Db1_Template_LogicalDeleteUniqueData_Repository db1TemplateLogicalDeleteUniqueDataRepository
     ) {
         this.activeProfile = activeProfile;
         this.customUtil = customUtil;
         this.db1TemplateTestDataRepository = db1TemplateTestDataRepository;
+        this.db1TemplateLogicalDeleteUniqueDataRepository = db1TemplateLogicalDeleteUniqueDataRepository;
     }
 
     // <멤버 변수 공간>
@@ -50,6 +55,7 @@ public class JpaTestService {
     private final @NotNull Logger classLogger = LoggerFactory.getLogger(RootService.class);
 
     private final @NotNull Db1_Template_TestData_Repository db1TemplateTestDataRepository;
+    private final @NotNull Db1_Template_LogicalDeleteUniqueData_Repository db1TemplateLogicalDeleteUniqueDataRepository;
 
 
     // ---------------------------------------------------------------------------------------------
@@ -587,5 +593,150 @@ public class JpaTestService {
                 entity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
         );
+    }
+
+
+    // ----
+    // (유니크 테스트 테이블 Row 입력 API)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public @Nullable JpaTestController.InsertUniqueTestTableRowSampleOutputVo insertUniqueTestTableRowSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull JpaTestController.InsertUniqueTestTableRowSampleInputVo inputVo
+    ) {
+        @NotNull Db1_Template_LogicalDeleteUniqueData result = db1TemplateLogicalDeleteUniqueDataRepository.save(
+                new Db1_Template_LogicalDeleteUniqueData(
+                        inputVo.getUniqueValue()
+                )
+        );
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.InsertUniqueTestTableRowSampleOutputVo(
+                result.uid,
+                result.uniqueValue,
+                result.rowCreateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                result.rowUpdateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                result.rowDeleteDateStr
+        );
+    }
+
+
+    // ----
+    // (유니크 테스트 테이블 Rows 조회 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectUniqueTestTableRowsSampleOutputVo selectUniqueTestTableRowsSample(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        @NotNull List<Db1_Template_LogicalDeleteUniqueData> resultEntityList =
+                db1TemplateLogicalDeleteUniqueDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/");
+        @NotNull List<JpaTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo> entityVoList = new ArrayList<>();
+        for (@NotNull Db1_Template_LogicalDeleteUniqueData resultEntity : resultEntityList) {
+            entityVoList.add(
+                    new JpaTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo(
+                            resultEntity.uid,
+                            resultEntity.uniqueValue,
+                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.rowDeleteDateStr
+                    )
+            );
+        }
+
+        @NotNull List<Db1_Template_LogicalDeleteUniqueData> logicalDeleteEntityVoList =
+                db1TemplateLogicalDeleteUniqueDataRepository.findAllByRowDeleteDateStrNotOrderByRowCreateDate("/");
+        @NotNull List<JpaTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo> logicalDeleteVoList = new ArrayList<>();
+        for (@NotNull Db1_Template_LogicalDeleteUniqueData resultEntity : logicalDeleteEntityVoList) {
+            logicalDeleteVoList.add(
+                    new JpaTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo(
+                            resultEntity.uid,
+                            resultEntity.uniqueValue,
+                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.rowDeleteDateStr
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectUniqueTestTableRowsSampleOutputVo(
+                entityVoList,
+                logicalDeleteVoList
+        );
+    }
+
+
+    // ----
+    // (유니크 테스트 테이블 Row 수정 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public @Nullable JpaTestController.UpdateUniqueTestTableRowSampleOutputVo updateUniqueTestTableRowSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Long uniqueTestTableUid,
+            @NotNull JpaTestController.UpdateUniqueTestTableRowSampleInputVo inputVo
+    ) {
+        @Nullable Db1_Template_LogicalDeleteUniqueData oldEntity =
+                db1TemplateLogicalDeleteUniqueDataRepository.findByUidAndRowDeleteDateStr(uniqueTestTableUid, "/");
+
+        if (oldEntity == null) {
+            httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+            httpServletResponse.setHeader("api-result-code", "1");
+            return null;
+        }
+
+        @Nullable Db1_Template_LogicalDeleteUniqueData uniqueValueEntity =
+                db1TemplateLogicalDeleteUniqueDataRepository.findByUniqueValueAndRowDeleteDateStr(
+                        inputVo.getUniqueValue(),
+                        "/"
+                );
+
+        if (uniqueValueEntity != null) {
+            httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+            httpServletResponse.setHeader("api-result-code", "2");
+            return null;
+        }
+
+        oldEntity.uniqueValue = inputVo.getUniqueValue();
+
+        @NotNull Db1_Template_LogicalDeleteUniqueData result =
+                db1TemplateLogicalDeleteUniqueDataRepository.save(oldEntity);
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.UpdateUniqueTestTableRowSampleOutputVo(
+                result.uid,
+                result.uniqueValue,
+                result.rowCreateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                result.rowUpdateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        );
+    }
+
+
+    // ----
+    // (유니크 테스트 테이블 Row 삭제 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public void deleteUniqueTestTableRowSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Long index
+    ) {
+        @Nullable Db1_Template_LogicalDeleteUniqueData entity =
+                db1TemplateLogicalDeleteUniqueDataRepository.findByUidAndRowDeleteDateStr(index, "/");
+
+        if (entity == null) {
+            httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+            httpServletResponse.setHeader("api-result-code", "1");
+            return;
+        }
+
+        entity.rowDeleteDateStr =
+                LocalDateTime.now().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"));
+        db1TemplateLogicalDeleteUniqueDataRepository.save(entity);
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
     }
 }
