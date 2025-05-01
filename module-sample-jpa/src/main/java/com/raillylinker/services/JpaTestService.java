@@ -4,6 +4,8 @@ import com.raillylinker.configurations.jpa_configs.Db1MainConfig;
 import com.raillylinker.controllers.JpaTestController;
 import com.raillylinker.jpa_beans.db1_main.entities.*;
 import com.raillylinker.jpa_beans.db1_main.repositories.*;
+import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_Template_FkTestManyToOneChild_RepositoryDsl;
+import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_Template_FkTestParent_RepositoryDsl;
 import com.raillylinker.util_components.CustomUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.*;
@@ -39,7 +41,9 @@ public class JpaTestService {
             @NotNull Db1_Template_LogicalDeleteUniqueData_Repository db1TemplateLogicalDeleteUniqueDataRepository,
             @NotNull Db1_Template_FkTestParent_Repository db1TemplateFkTestParentRepository,
             @NotNull Db1_Template_FkTestManyToOneChild_Repository db1TemplateFkTestManyToOneChildRepository,
-            @NotNull Db1_Template_JustBooleanTest_Repository db1TemplateJustBooleanTestRepository
+            @NotNull Db1_Template_JustBooleanTest_Repository db1TemplateJustBooleanTestRepository,
+            @NotNull Db1_Template_FkTestManyToOneChild_RepositoryDsl db1TemplateFkTestManyToOneChildRepositoryDsl,
+            @NotNull Db1_Template_FkTestParent_RepositoryDsl db1TemplateFkTestParentRepositoryDsl
     ) {
         this.activeProfile = activeProfile;
         this.customUtil = customUtil;
@@ -48,6 +52,8 @@ public class JpaTestService {
         this.db1TemplateFkTestParentRepository = db1TemplateFkTestParentRepository;
         this.db1TemplateFkTestManyToOneChildRepository = db1TemplateFkTestManyToOneChildRepository;
         this.db1TemplateJustBooleanTestRepository = db1TemplateJustBooleanTestRepository;
+        this.db1TemplateFkTestManyToOneChildRepositoryDsl = db1TemplateFkTestManyToOneChildRepositoryDsl;
+        this.db1TemplateFkTestParentRepositoryDsl = db1TemplateFkTestParentRepositoryDsl;
     }
 
     // <멤버 변수 공간>
@@ -64,6 +70,8 @@ public class JpaTestService {
     private final @NotNull Db1_Template_FkTestParent_Repository db1TemplateFkTestParentRepository;
     private final @NotNull Db1_Template_FkTestManyToOneChild_Repository db1TemplateFkTestManyToOneChildRepository;
     private final @NotNull Db1_Template_JustBooleanTest_Repository db1TemplateJustBooleanTestRepository;
+    private final @NotNull Db1_Template_FkTestManyToOneChild_RepositoryDsl db1TemplateFkTestManyToOneChildRepositoryDsl;
+    private final @NotNull Db1_Template_FkTestParent_RepositoryDsl db1TemplateFkTestParentRepositoryDsl;
 
 
     // ---------------------------------------------------------------------------------------------
@@ -1068,8 +1076,47 @@ public class JpaTestService {
     public @Nullable JpaTestController.SelectFkTableRowsWithQueryDslOutputVo selectFkTableRowsWithQueryDsl(
             @NotNull HttpServletResponse httpServletResponse
     ) {
-        // todo
-        return null;
+        @NotNull List<Db1_Template_FkTestParent> resultEntityList =
+                db1TemplateFkTestParentRepositoryDsl.findParentWithChildren();
+
+        @NotNull ArrayList<JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo> entityVoList =
+                new ArrayList<>();
+
+        for (@NotNull Db1_Template_FkTestParent resultEntity : resultEntityList) {
+            @NotNull ArrayList<JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo> childEntityVoList =
+                    new ArrayList<>();
+
+            for (@NotNull Db1_Template_FkTestManyToOneChild childEntity : resultEntity.fkTestManyToOneChildList) {
+                childEntityVoList.add(
+                        new JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo(
+                                childEntity.uid,
+                                childEntity.childName,
+                                childEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                                childEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                        )
+                );
+            }
+
+
+            entityVoList.add(
+                    new JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo(
+                            resultEntity.uid,
+                            resultEntity.parentName,
+                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            childEntityVoList
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectFkTableRowsWithQueryDslOutputVo(
+                entityVoList
+        );
     }
 
 
@@ -1080,8 +1127,47 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse,
             @NotNull String parentName
     ) {
-        // todo
-        return null;
+        @NotNull List<Db1_Template_FkTestParent> resultEntityList =
+                db1TemplateFkTestParentRepositoryDsl.findParentWithChildrenByName(parentName);
+
+        @NotNull ArrayList<JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo> entityVoList =
+                new ArrayList<>();
+
+        for (var resultEntity : resultEntityList) {
+            @NotNull ArrayList<JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo> childEntityVoList =
+                    new ArrayList<>();
+
+            for (@NotNull Db1_Template_FkTestManyToOneChild childEntity : resultEntity.fkTestManyToOneChildList) {
+                childEntityVoList.add(
+                        new JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo(
+                                childEntity.uid,
+                                childEntity.childName,
+                                childEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                                childEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                        )
+                );
+            }
+
+
+            entityVoList.add(
+                    new JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo(
+                            resultEntity.uid,
+                            resultEntity.parentName,
+                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            childEntityVoList
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo(
+                entityVoList
+        );
     }
 
 
@@ -1092,8 +1178,29 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse,
             @NotNull Long parentUid
     ) {
-        // todo
-        return null;
+        @NotNull List<Db1_Template_FkTestManyToOneChild> resultEntityList =
+                db1TemplateFkTestManyToOneChildRepositoryDsl.findChildByParentId(parentUid);
+
+        @NotNull ArrayList<JpaTestController.SelectFkTableChildListWithQueryDslOutputVo.ChildEntityVo> entityVoList =
+                new ArrayList<>();
+
+        for (@NotNull Db1_Template_FkTestManyToOneChild resultEntity : resultEntityList) {
+            entityVoList.add(
+                    new JpaTestController.SelectFkTableChildListWithQueryDslOutputVo.ChildEntityVo(
+                            resultEntity.uid,
+                            resultEntity.childName,
+                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectFkTableChildListWithQueryDslOutputVo(
+                entityVoList
+        );
     }
 
 
@@ -1104,7 +1211,18 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse,
             @NotNull Long index
     ) {
-        // todo
+        @NotNull Optional<Db1_Template_FkTestManyToOneChild> entityOpt =
+                db1TemplateFkTestManyToOneChildRepository.findById(index);
+
+        if (entityOpt.isEmpty()) {
+            httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+            httpServletResponse.setHeader("api-result-code", "1");
+            return;
+        }
+
+        db1TemplateFkTestManyToOneChildRepository.deleteById(index);
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
     }
 
 
@@ -1115,7 +1233,17 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse,
             @NotNull Long index
     ) {
-        // todo
+        @NotNull Optional<Db1_Template_FkTestParent> entityOpt = db1TemplateFkTestParentRepository.findById(index);
+
+        if (entityOpt.isEmpty()) {
+            httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+            httpServletResponse.setHeader("api-result-code", "1");
+            return;
+        }
+
+        db1TemplateFkTestParentRepository.deleteById(index);
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
     }
 
 
@@ -1125,7 +1253,27 @@ public class JpaTestService {
     public void fkTableTransactionTest(
             @NotNull HttpServletResponse httpServletResponse
     ) {
-        // todo
+        @NotNull Db1_Template_FkTestParent parentEntity = db1TemplateFkTestParentRepository.save(
+                new Db1_Template_FkTestParent(
+                        "transaction test"
+                )
+        );
+
+        db1TemplateFkTestManyToOneChildRepository.save(
+                new Db1_Template_FkTestManyToOneChild(
+                        "transaction test1",
+                        parentEntity
+                )
+        );
+
+        db1TemplateFkTestManyToOneChildRepository.save(
+                new Db1_Template_FkTestManyToOneChild(
+                        "transaction test2",
+                        parentEntity
+                )
+        );
+
+        throw new RuntimeException("Transaction Rollback Test!");
     }
 
 
@@ -1134,6 +1282,26 @@ public class JpaTestService {
     public void fkTableNonTransactionTest(
             @NotNull HttpServletResponse httpServletResponse
     ) {
-        // todo
+        @NotNull Db1_Template_FkTestParent parentEntity = db1TemplateFkTestParentRepository.save(
+                new Db1_Template_FkTestParent(
+                        "transaction test"
+                )
+        );
+
+        db1TemplateFkTestManyToOneChildRepository.save(
+                new Db1_Template_FkTestManyToOneChild(
+                        "transaction test1",
+                        parentEntity
+                )
+        );
+
+        db1TemplateFkTestManyToOneChildRepository.save(
+                new Db1_Template_FkTestManyToOneChild(
+                        "transaction test2",
+                        parentEntity
+                )
+        );
+
+        throw new RuntimeException("Transaction Rollback Test!");
     }
 }
