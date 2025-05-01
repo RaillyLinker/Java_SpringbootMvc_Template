@@ -1,6 +1,8 @@
 package com.raillylinker.jpa_beans.db1_main.repositories;
 
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_TestData;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -127,16 +129,12 @@ public interface Db1_Template_TestData_Repository extends JpaRepository<Db1_Temp
         Long getTimeDiffMicroSec();
     }
 
-//    @Valid
-//    @NotNull
-//    @org.jetbrains.annotations.NotNull
-//    Page<Db1_Template_TestData> findAllByRowDeleteDateStrOrderByRowCreateDate(
-//            @Valid @NotNull @org.jetbrains.annotations.NotNull
-//            String rowDeleteDateStr,
-//            @Valid @NotNull @org.jetbrains.annotations.NotNull
-//            Pageable pageable
-//    );
-//
+    @NotNull
+    Page<Db1_Template_TestData> findAllByRowDeleteDateStrOrderByRowCreateDate(
+            @NotNull String rowDeleteDateStr,
+            @NotNull Pageable pageable
+    );
+
 //    @Valid
 //    @NotNull
 //    @org.jetbrains.annotations.NotNull

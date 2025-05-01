@@ -10,6 +10,9 @@ import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -255,39 +258,46 @@ public class JpaTestService {
     }
 
 
-//    // ----
-//    // (DB Rows 조회 테스트 (페이징))
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-//    public @Nullable JpaTestController.SelectRowsPageSampleOutputVo selectRowsPageSample(
-//            @NotNull HttpServletResponse httpServletResponse,
-//            @NotNull Integer page,
-//            @NotNull Integer pageElementsCount
-//    ) {
-//        Pageable pageable = PageRequest.of(page - 1, pageElementsCount);
-//        Page<Db1_Template_TestData> entityList = db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/", pageable);
-//
-//        List<MyServiceTkSampleDatabaseTestController.SelectRowsPageSampleOutputVo.TestEntityVo> testEntityVoList = new ArrayList<>();
-//        for (Db1_Template_TestData entity : entityList) {
-//            testEntityVoList.add(new MyServiceTkSampleDatabaseTestController.SelectRowsPageSampleOutputVo.TestEntityVo(
-//                    entity.uid,
-//                    entity.content,
-//                    entity.randomNum,
-//                    entity.testDatetime.atZone(ZoneId.systemDefault())
-//                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    entity.rowCreateDate.atZone(ZoneId.systemDefault())
-//                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    entity.rowUpdateDate.atZone(ZoneId.systemDefault())
-//                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-//            ));
-//        }
-//
-//        httpServletResponse.setStatus(HttpStatus.OK.value());
-//        return new MyServiceTkSampleDatabaseTestController.SelectRowsPageSampleOutputVo(
-//                entityList.getTotalElements(), testEntityVoList
-//        );
-//    }
-//
-//
+    // ----
+    // (DB Rows 조회 테스트 (페이징))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectRowsPageSampleOutputVo selectRowsPageSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Integer page,
+            @NotNull Integer pageElementsCount
+    ) {
+        @NotNull Pageable pageable = PageRequest.of(page - 1, pageElementsCount);
+        @NotNull Page<Db1_Template_TestData> entityList =
+                db1TemplateTestDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate(
+                        "/",
+                        pageable
+                );
+
+        @NotNull List<JpaTestController.SelectRowsPageSampleOutputVo.TestEntityVo> testEntityVoList = new ArrayList<>();
+        for (@NotNull Db1_Template_TestData entity : entityList) {
+            testEntityVoList.add(
+                    new JpaTestController.SelectRowsPageSampleOutputVo.TestEntityVo(
+                            entity.uid,
+                            entity.content,
+                            entity.randomNum,
+                            entity.testDatetime.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            entity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            entity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectRowsPageSampleOutputVo(
+                entityList.getTotalElements(),
+                testEntityVoList
+        );
+    }
+
+
 //    // ----
 //    // (DB Rows 조회 테스트 (네이티브 쿼리 페이징))
 //    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
