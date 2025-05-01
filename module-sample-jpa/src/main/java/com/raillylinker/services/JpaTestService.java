@@ -533,32 +533,32 @@ public class JpaTestService {
     }
 
 
-//    // ----
-//    // (DB Rows 조회 테스트 (카운팅))
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-//    public @Nullable JpaTestController.SelectRowsCountSampleOutputVo selectRowsCountSample(
-//            @NotNull HttpServletResponse httpServletResponse
-//    ) {
-//        Long count = db1TemplateTestsRepository.countByRowDeleteDateStr("/");
-//
-//        httpServletResponse.setStatus(HttpStatus.OK.value());
-//        return new MyServiceTkSampleDatabaseTestController.SelectRowsCountSampleOutputVo(count);
-//    }
-//
-//
-//    // ----
-//    // (DB Rows 조회 테스트 (네이티브 카운팅))
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-//    public @Nullable JpaTestController.SelectRowsCountByNativeQuerySampleOutputVo selectRowsCountByNativeQuerySample(
-//            @NotNull HttpServletResponse httpServletResponse
-//    ) {
-//        Long count = db1NativeRepository.countFromTemplateTestDataByNotDeleted();
-//
-//        httpServletResponse.setStatus(HttpStatus.OK.value());
-//        return new MyServiceTkSampleDatabaseTestController.SelectRowsCountByNativeQuerySampleOutputVo(count);
-//    }
-//
-//
+    // ----
+    // (DB Rows 조회 테스트 (카운팅))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectRowsCountSampleOutputVo selectRowsCountSample(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        @NotNull Long count = db1TemplateTestDataRepository.countByRowDeleteDateStr("/");
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectRowsCountSampleOutputVo(count);
+    }
+
+
+    // ----
+    // (DB Rows 조회 테스트 (네이티브 카운팅))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectRowsCountByNativeQuerySampleOutputVo selectRowsCountByNativeQuerySample(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        @NotNull Long count = db1TemplateTestDataRepository.countFromTemplateTestDataByNotDeleted();
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectRowsCountByNativeQuerySampleOutputVo(count);
+    }
+
+
 //    // ----
 //    // (DB Row 조회 테스트 (네이티브))
 //    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)

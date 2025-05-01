@@ -416,14 +416,11 @@ public interface Db1_Template_TestData_Repository extends JpaRepository<Db1_Temp
     @NotNull
     Long countFromTemplateTestDataByNotDeleted();
 
-//    @Valid
-//    @NotNull
-//    @org.jetbrains.annotations.NotNull
-//    Long countByRowDeleteDateStr(
-//            @Valid @NotNull @org.jetbrains.annotations.NotNull
-//            String rowDeleteDateStr
-//    );
-//
+    @NotNull
+    Long countByRowDeleteDateStr(
+            @NotNull String rowDeleteDateStr
+    );
+
 //    @Valid
 //    @NotNull
 //    @org.jetbrains.annotations.NotNull
