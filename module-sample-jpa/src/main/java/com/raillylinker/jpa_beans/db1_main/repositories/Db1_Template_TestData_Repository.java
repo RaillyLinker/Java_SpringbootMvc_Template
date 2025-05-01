@@ -464,30 +464,70 @@ public interface Db1_Template_TestData_Repository extends JpaRepository<Db1_Temp
         LocalDateTime getRowUpdateDate();
     }
 
-//    @Valid
-//    @NotNull
-//    @org.jetbrains.annotations.NotNull
-//    List<Db1_Template_TestData> findAllByContentOrderByRowCreateDate(
-//            @Valid @NotNull @org.jetbrains.annotations.NotNull
-//            String content
-//    );
-//
-//    @Query("""
-//                SELECT
-//                template_test_data
-//                FROM
-//                Db1_Template_TestData AS template_test_data
-//                WHERE
-//                template_test_data.content = :content
-//                ORDER BY
-//                template_test_data.rowCreateDate DESC
-//            """)
-//    @Valid
-//    @NotNull
-//    @org.jetbrains.annotations.NotNull
-//    List<Db1_Template_TestData> findAllByContentOrderByRowCreateDateJpql(
-//            @Param("content")
-//            @Valid @NotNull @org.jetbrains.annotations.NotNull
-//            String content
-//    );
+    @NotNull
+    List<Db1_Template_TestData> findAllByContentOrderByRowCreateDate(
+            @NotNull String searchKeyword
+    );
+
+    @Query(
+            """
+                        SELECT 
+                        template_test_data 
+                        FROM 
+                        Db1_Template_TestData AS template_test_data 
+                        WHERE 
+                        template_test_data.content = :content 
+                        order by 
+                        template_test_data.rowCreateDate desc
+                    """
+    )
+    @NotNull
+    List<Db1_Template_TestData> findAllByContentOrderByRowCreateDateJpql(
+            @Param("content")
+            @NotNull String content
+    );
+
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT 
+                    test_data.uid AS uid, 
+                    test_data.row_create_date AS rowCreateDate, 
+                    test_data.row_update_date AS rowUpdateDate, 
+                    test_data.content AS content, 
+                    test_data.random_num AS randomNum, 
+                    test_data.test_datetime AS testDatetime 
+                    FROM 
+                    template.test_data AS test_data 
+                    WHERE 
+                    test_data.content = :content 
+                    ORDER BY 
+                    test_data.row_create_date DESC
+                    """
+    )
+    @NotNull
+    List<FindAllFromTemplateTestDataByContentOutputVo> findAllFromTemplateTestDataByContent(
+            @Param("content")
+            @NotNull String content
+    );
+
+    interface FindAllFromTemplateTestDataByContentOutputVo {
+        @NotNull
+        Long getUid();
+
+        @NotNull
+        LocalDateTime getRowCreateDate();
+
+        @NotNull
+        LocalDateTime getRowUpdateDate();
+
+        @NotNull
+        String getContent();
+
+        @NotNull
+        Integer getRandomNum();
+
+        @NotNull
+        LocalDateTime getTestDatetime();
+    }
 }

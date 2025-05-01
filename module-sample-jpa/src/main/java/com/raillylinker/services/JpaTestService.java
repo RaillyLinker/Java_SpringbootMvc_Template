@@ -908,7 +908,7 @@ public class JpaTestService {
             @NotNull Boolean inputVal
     ) {
         // boolean 값을 갖고오기 위한 테스트 테이블이 존재하지 않는다면 하나 생성하기
-        var justBooleanEntity = db1TemplateJustBooleanTestRepository.findAll();
+        @NotNull List<Db1_Template_JustBooleanTest> justBooleanEntity = db1TemplateJustBooleanTestRepository.findAll();
         if (justBooleanEntity.isEmpty()) {
             db1TemplateJustBooleanTestRepository.save(
                     new Db1_Template_JustBooleanTest(true)
@@ -935,8 +935,90 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse,
             @NotNull String searchKeyword
     ) {
-        // todo
-        return null;
+        // jpaRepository : Injection Safe
+        @NotNull List<Db1_Template_TestData> jpaRepositoryResultEntityList =
+                db1TemplateTestDataRepository.findAllByContentOrderByRowCreateDate(
+                        searchKeyword
+                );
+
+        @NotNull ArrayList<JpaTestController.SqlInjectionTestOutputVo.TestEntityVo> jpaRepositoryResultList =
+                new ArrayList<>();
+        for (@NotNull Db1_Template_TestData jpaRepositoryResultEntity : jpaRepositoryResultEntityList) {
+            jpaRepositoryResultList.add(
+                    new JpaTestController.SqlInjectionTestOutputVo.TestEntityVo(
+                            jpaRepositoryResultEntity.uid,
+                            jpaRepositoryResultEntity.content,
+                            jpaRepositoryResultEntity.randomNum,
+                            jpaRepositoryResultEntity.testDatetime.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            jpaRepositoryResultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            jpaRepositoryResultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    )
+            );
+        }
+
+        // JPQL : Injection Safe
+        @NotNull List<Db1_Template_TestData> jpqlResultEntityList =
+                db1TemplateTestDataRepository.findAllByContentOrderByRowCreateDateJpql(
+                        searchKeyword
+                );
+
+        @NotNull ArrayList<JpaTestController.SqlInjectionTestOutputVo.TestEntityVo> jpqlResultList =
+                new ArrayList<>();
+        for (@NotNull Db1_Template_TestData jpqlEntity : jpqlResultEntityList) {
+            jpqlResultList.add(
+                    new JpaTestController.SqlInjectionTestOutputVo.TestEntityVo(
+                            jpqlEntity.uid,
+                            jpqlEntity.content,
+                            jpqlEntity.randomNum,
+                            jpqlEntity.testDatetime.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            jpqlEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            jpqlEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    )
+            );
+        }
+
+        // NativeQuery : Injection Safe
+        @NotNull List<Db1_Template_TestData_Repository.FindAllFromTemplateTestDataByContentOutputVo> nativeQueryResultEntityList =
+                db1TemplateTestDataRepository.findAllFromTemplateTestDataByContent(
+                        searchKeyword
+                );
+
+        @NotNull ArrayList<JpaTestController.SqlInjectionTestOutputVo.TestEntityVo> nativeQueryResultList =
+                new ArrayList<>();
+        for (@NotNull Db1_Template_TestData_Repository.FindAllFromTemplateTestDataByContentOutputVo nativeQueryEntity : nativeQueryResultEntityList) {
+            nativeQueryResultList.add(
+                    new JpaTestController.SqlInjectionTestOutputVo.TestEntityVo(
+                            nativeQueryEntity.getUid(),
+                            nativeQueryEntity.getContent(),
+                            nativeQueryEntity.getRandomNum(),
+                            nativeQueryEntity.getTestDatetime().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            nativeQueryEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            nativeQueryEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    )
+            );
+        }
+
+        /*
+            결론 : 위 세 방식은 모두 SQL Injection 공격에서 안전합니다.
+                셋 모두 쿼리문에 직접 값을 입력하는 것이 아니며, 매개변수로 먼저 받아서 JPA 를 경유하여 입력되므로,
+                라이브러리가 자동으로 인젝션 공격을 막아주게 됩니다.
+         */
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SqlInjectionTestOutputVo(
+                jpaRepositoryResultList,
+                jpqlResultList,
+                nativeQueryResultList
+        );
     }
 
 
