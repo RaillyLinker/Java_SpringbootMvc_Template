@@ -10,9 +10,6 @@ import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +20,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class JpaTestService {
@@ -223,39 +218,43 @@ public class JpaTestService {
     }
 
 
-//    // ----
-//    // (DB 테이블의 row_create_date 컬럼 근사치 기준으로 정렬한 리스트 조회 API)
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-//    public @Nullable JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo selectRowsOrderByRowCreateDateSample(
-//            @NotNull HttpServletResponse httpServletResponse,
-//            @NotNull String dateString
-//    ) {
-//        List<Db1_Native_Repository.FindAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistanceOutputVo> foundEntityList = db1NativeRepository.findAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistance(
-//                ZonedDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-//                        .toLocalDateTime()
-//        );
-//
-//        List<MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo> testEntityVoList = new ArrayList<>();
-//        for (Db1_Native_Repository.FindAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistanceOutputVo entity : foundEntityList) {
-//            testEntityVoList.add(new MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo(
-//                    entity.getUid(),
-//                    entity.getContent(),
-//                    entity.getRandomNum(),
-//                    entity.getTestDatetime().atZone(ZoneId.systemDefault())
-//                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    entity.getRowCreateDate().atZone(ZoneId.systemDefault())
-//                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    entity.getRowUpdateDate().atZone(ZoneId.systemDefault())
-//                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    entity.getTimeDiffMicroSec()
-//            ));
-//        }
-//
-//        httpServletResponse.setStatus(HttpStatus.OK.value());
-//        return new MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRowCreateDateSampleOutputVo(testEntityVoList);
-//    }
-//
-//
+    // ----
+    // (DB 테이블의 row_create_date 컬럼 근사치 기준으로 정렬한 리스트 조회 API)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo selectRowsOrderByRowCreateDateSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull String dateString
+    ) {
+        @NotNull List<Db1_Template_TestData_Repository.FindAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistanceOutputVo> foundEntityList =
+                db1TemplateTestDataRepository.findAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistance(
+                        ZonedDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")).toLocalDateTime()
+                );
+
+        @NotNull List<JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo> testEntityVoList =
+                new ArrayList<>();
+
+        for (@NotNull Db1_Template_TestData_Repository.FindAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistanceOutputVo entity : foundEntityList) {
+            testEntityVoList.add(
+                    new JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo(
+                            entity.getUid(),
+                            entity.getContent(),
+                            entity.getRandomNum(),
+                            entity.getTestDatetime().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            entity.getRowCreateDate().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            entity.getRowUpdateDate().atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            entity.getTimeDiffMicroSec()
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo(testEntityVoList);
+    }
+
+
 //    // ----
 //    // (DB Rows 조회 테스트 (페이징))
 //    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
