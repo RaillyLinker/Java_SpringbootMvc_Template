@@ -56,19 +56,26 @@ public interface Db1_Template_TestData_Repository extends JpaRepository<Db1_Temp
     );
 
     interface FindAllFromTemplateTestDataByNotDeletedWithRandomNumDistanceOutputVo {
-        @NotNull Long getUid();
+        @NotNull
+        Long getUid();
 
-        @NotNull LocalDateTime getRowCreateDate();
+        @NotNull
+        LocalDateTime getRowCreateDate();
 
-        @NotNull LocalDateTime getRowUpdateDate();
+        @NotNull
+        LocalDateTime getRowUpdateDate();
 
-        @NotNull String getContent();
+        @NotNull
+        String getContent();
 
-        @NotNull Integer getRandomNum();
+        @NotNull
+        Integer getRandomNum();
 
-        @NotNull LocalDateTime getTestDatetime();
+        @NotNull
+        LocalDateTime getTestDatetime();
 
-        @NotNull Integer getDistance();
+        @NotNull
+        Integer getDistance();
     }
 
 //    @Valid
