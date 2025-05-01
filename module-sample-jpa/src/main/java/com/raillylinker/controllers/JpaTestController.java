@@ -666,75 +666,75 @@ public class JpaTestController {
     }
 
 
-//    ////
-//    @Operation(
-//            summary = "DB 정보 검색 테스트",
-//            description = "글 본문 내용중 searchKeyword 가 포함된 rows 를 검색하여 반환합니다."
-//    )
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description = "정상 동작"
-//                    )
-//            }
-//    )
-//    @GetMapping(
-//            path = {"/search-content"},
-//            consumes = MediaType.ALL_VALUE,
-//            produces = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    @ResponseBody
-//    public @Nullable SelectRowWhereSearchingKeywordSampleOutputVo selectRowWhereSearchingKeywordSample(
-//            @Parameter(hidden = true)
-//            @NotNull HttpServletResponse httpServletResponse,
-//            @Parameter(name = "page", description = "원하는 페이지(1 부터 시작)", example = "1")
-//            @RequestParam(value = "page")
-//            @NotNull Integer page,
-//            @Parameter(name = "pageElementsCount", description = "페이지 아이템 개수", example = "10")
-//            @RequestParam(value = "pageElementsCount")
-//            @NotNull Integer pageElementsCount,
-//            @Parameter(name = "searchKeyword", description = "검색어", example = "테스트")
-//            @RequestParam(value = "searchKeyword")
-//            @NotNull String searchKeyword
-//    ) {
-//        return service.selectRowWhereSearchingKeywordSample(httpServletResponse, page, pageElementsCount, searchKeyword);
-//    }
-//
-//    @Data
-//    public static class SelectRowWhereSearchingKeywordSampleOutputVo {
-//        @Schema(description = "아이템 전체 개수", requiredMode = Schema.RequiredMode.REQUIRED, example = "100")
-//        @JsonProperty("totalElements")
-//        private final @NotNull Long totalElements;
-//        @Schema(description = "아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
-//        @JsonProperty("testEntityVoList")
-//        private final @NotNull List<TestEntityVo> testEntityVoList;
-//
-//        @Schema(description = "아이템")
-//        @Data
-//        public static class TestEntityVo {
-//            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-//            @JsonProperty("uid")
-//            private final @NotNull Long uid;
-//            @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트입니다.")
-//            @JsonProperty("content")
-//            private final @NotNull String content;
-//            @Schema(description = "자동 생성 숫자", requiredMode = Schema.RequiredMode.REQUIRED, example = "21345")
-//            @JsonProperty("randomNum")
-//            private final @NotNull Integer randomNum;
-//            @Schema(description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//            @JsonProperty("testDatetime")
-//            private final @NotNull String testDatetime;
-//            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//            @JsonProperty("createDate")
-//            private final @NotNull String createDate;
-//            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
-//            @JsonProperty("updateDate")
-//            private final @NotNull String updateDate;
-//        }
-//    }
-//
-//
+    ////
+    @Operation(
+            summary = "DB 정보 검색 테스트",
+            description = "글 본문 내용중 searchKeyword 가 포함된 rows 를 검색하여 반환합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/search-content"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable SelectRowWhereSearchingKeywordSampleOutputVo selectRowWhereSearchingKeywordSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "page", description = "원하는 페이지(1 부터 시작)", example = "1")
+            @RequestParam(value = "page")
+            @NotNull Integer page,
+            @Parameter(name = "pageElementsCount", description = "페이지 아이템 개수", example = "10")
+            @RequestParam(value = "pageElementsCount")
+            @NotNull Integer pageElementsCount,
+            @Parameter(name = "searchKeyword", description = "검색어", example = "테스트")
+            @RequestParam(value = "searchKeyword")
+            @NotNull String searchKeyword
+    ) {
+        return service.selectRowWhereSearchingKeywordSample(httpServletResponse, page, pageElementsCount, searchKeyword);
+    }
+
+    @Data
+    public static class SelectRowWhereSearchingKeywordSampleOutputVo {
+        @Schema(description = "아이템 전체 개수", requiredMode = Schema.RequiredMode.REQUIRED, example = "100")
+        @JsonProperty("totalElements")
+        private final @NotNull Long totalElements;
+        @Schema(description = "아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("testEntityVoList")
+        private final @NotNull List<TestEntityVo> testEntityVoList;
+
+        @Schema(description = "아이템")
+        @Data
+        public static class TestEntityVo {
+            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+            @JsonProperty("uid")
+            private final @NotNull Long uid;
+            @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트입니다.")
+            @JsonProperty("content")
+            private final @NotNull String content;
+            @Schema(description = "자동 생성 숫자", requiredMode = Schema.RequiredMode.REQUIRED, example = "21345")
+            @JsonProperty("randomNum")
+            private final @NotNull Integer randomNum;
+            @Schema(description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("testDatetime")
+            private final @NotNull String testDatetime;
+            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("createDate")
+            private final @NotNull String createDate;
+            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("updateDate")
+            private final @NotNull String updateDate;
+        }
+    }
+
+
 //    ////
 //    @Operation(
 //            summary = "트랜젝션 동작 테스트",

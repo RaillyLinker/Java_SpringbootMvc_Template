@@ -1,6 +1,7 @@
 package com.raillylinker.jpa_beans.db1_main.repositories;
 
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_TestData;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -212,6 +213,63 @@ public interface Db1_Template_TestData_Repository extends JpaRepository<Db1_Temp
             @Param("testDatetime")
             @NotNull LocalDateTime testDatetime
     );
+
+
+    // like 문을 사용할 때, replace 로 검색어와 탐색 정보의 공백을 없애줌으로써 공백에 유연한 검색이 가능
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT 
+                    test_data.uid AS uid, 
+                    test_data.row_create_date AS rowCreateDate, 
+                    test_data.row_update_date AS rowUpdateDate, 
+                    test_data.content AS content, 
+                    test_data.random_num AS randomNum, 
+                    test_data.test_datetime AS testDatetime 
+                    FROM 
+                    template.test_data AS test_data 
+                    WHERE 
+                    REPLACE(test_data.content, ' ', '') LIKE REPLACE(CONCAT('%',:searchKeyword,'%'), ' ', '') AND 
+                    test_data.row_delete_date_str = '/' 
+                    ORDER BY 
+                    test_data.row_create_date DESC
+                    """,
+            countQuery = """
+                    SELECT 
+                    COUNT(*) 
+                    FROM 
+                    template.test_data AS test_data 
+                    WHERE 
+                    REPLACE(test_data.content, ' ', '') LIKE REPLACE(CONCAT('%',:searchKeyword,'%'), ' ', '') AND 
+                    test_data.row_delete_date_str = '/'
+                    """
+    )
+    @NotNull
+    Page<FindPageAllFromTemplateTestDataBySearchKeywordOutputVo> findPageAllFromTemplateTestDataBySearchKeyword(
+            @Param("searchKeyword")
+            @NotNull String searchKeyword,
+            @NotNull Pageable pageable
+    );
+
+    interface FindPageAllFromTemplateTestDataBySearchKeywordOutputVo {
+        @NotNull
+        Long getUid();
+
+        @NotNull
+        LocalDateTime getRowCreateDate();
+
+        @NotNull
+        LocalDateTime getRowUpdateDate();
+
+        @NotNull
+        String getContent();
+
+        @NotNull
+        Integer getRandomNum();
+
+        @NotNull
+        LocalDateTime getTestDatetime();
+    }
 
 //    @Valid
 //    @NotNull

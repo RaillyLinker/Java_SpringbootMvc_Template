@@ -397,37 +397,44 @@ public class JpaTestService {
     }
 
 
-//    // ----
-//    // (DB 정보 검색 테스트)
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-//    public @Nullable JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo selectRowWhereSearchingKeywordSample(
-//            @NotNull HttpServletResponse httpServletResponse,
-//            @NotNull Integer page,
-//            @NotNull Integer pageElementsCount,
-//            @NotNull String searchKeyword
-//    ) {
-//        Pageable pageable = PageRequest.of(page - 1, pageElementsCount);
-//        Page<Db1_Native_Repository.FindPageAllFromTemplateTestDataBySearchKeywordOutputVo> voList = db1NativeRepository.findPageAllFromTemplateTestDataBySearchKeyword(searchKeyword, pageable);
-//
-//        List<MyServiceTkSampleDatabaseTestController.SelectRowWhereSearchingKeywordSampleOutputVo.TestEntityVo> testEntityVoList = new ArrayList<>();
-//        for (Db1_Native_Repository.FindPageAllFromTemplateTestDataBySearchKeywordOutputVo vo : voList) {
-//            testEntityVoList.add(new MyServiceTkSampleDatabaseTestController.SelectRowWhereSearchingKeywordSampleOutputVo.TestEntityVo(
-//                    vo.getUid(),
-//                    vo.getContent(),
-//                    vo.getRandomNum(),
-//                    vo.getTestDatetime().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    vo.getRowCreateDate().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    vo.getRowUpdateDate().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-//            ));
-//        }
-//
-//        httpServletResponse.setStatus(HttpStatus.OK.value());
-//        return new MyServiceTkSampleDatabaseTestController.SelectRowWhereSearchingKeywordSampleOutputVo(
-//                voList.getTotalElements(), testEntityVoList
-//        );
-//    }
-//
-//
+    // ----
+    // (DB 정보 검색 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo selectRowWhereSearchingKeywordSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Integer page,
+            @NotNull Integer pageElementsCount,
+            @NotNull String searchKeyword
+    ) {
+        @NotNull Pageable pageable = PageRequest.of(page - 1, pageElementsCount);
+        @NotNull Page<Db1_Template_TestData_Repository.FindPageAllFromTemplateTestDataBySearchKeywordOutputVo> voList =
+                db1TemplateTestDataRepository.findPageAllFromTemplateTestDataBySearchKeyword(
+                        searchKeyword,
+                        pageable
+                );
+
+        @NotNull List<JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo.TestEntityVo> testEntityVoList = new ArrayList<>();
+        for (@NotNull Db1_Template_TestData_Repository.FindPageAllFromTemplateTestDataBySearchKeywordOutputVo vo : voList) {
+            testEntityVoList.add(
+                    new JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo.TestEntityVo(
+                            vo.getUid(),
+                            vo.getContent(),
+                            vo.getRandomNum(),
+                            vo.getTestDatetime().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            vo.getRowCreateDate().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            vo.getRowUpdateDate().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo(
+                voList.getTotalElements(),
+                testEntityVoList
+        );
+    }
+
+
 //    // ----
 //    // (트랜젝션 동작 테스트)
 //    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
