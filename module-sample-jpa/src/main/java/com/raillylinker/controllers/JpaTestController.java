@@ -735,87 +735,87 @@ public class JpaTestController {
     }
 
 
-//    ////
-//    @Operation(
-//            summary = "트랜젝션 동작 테스트",
-//            description = "정보 입력 후 Exception 이 발생했을 때 롤백되어 데이터가 저장되지 않는지를 테스트하는 API"
-//    )
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description = "정상 동작"
-//                    )
-//            }
-//    )
-//    @PostMapping(
-//            path = {"/transaction-rollback-sample"},
-//            consumes = MediaType.ALL_VALUE,
-//            produces = MediaType.ALL_VALUE
-//    )
-//    @ResponseBody
-//    public void transactionTest(
-//            @Parameter(hidden = true)
-//            @NotNull HttpServletResponse httpServletResponse
-//    ) {
-//        service.transactionTest(httpServletResponse);
-//    }
-//
-//
-//    ////
-//    @Operation(
-//            summary = "트랜젝션 비동작 테스트",
-//            description = "트랜젝션 처리를 하지 않았을 때, DB 정보 입력 후 Exception 이 발생 했을 때 의 테스트 API"
-//    )
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description = "정상 동작"
-//                    )
-//            }
-//    )
-//    @PostMapping(
-//            path = {"/no-transaction-exception-sample"},
-//            consumes = MediaType.ALL_VALUE,
-//            produces = MediaType.ALL_VALUE
-//    )
-//    @ResponseBody
-//    public void nonTransactionTest(
-//            @Parameter(hidden = true)
-//            @NotNull HttpServletResponse httpServletResponse
-//    ) {
-//        service.nonTransactionTest(httpServletResponse);
-//    }
-//
-//
-//    ////
-//    @Operation(
-//            summary = "트랜젝션 비동작 테스트(try-catch)",
-//            description = "에러 발생문이 try-catch 문 안에 있을 때, DB 정보 입력 후 Exception 이 발생 해도 트랜젝션이 동작하지 않는지에 대한 테스트 API"
-//    )
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description = "정상 동작"
-//                    )
-//            }
-//    )
-//    @PostMapping(
-//            path = {"/try-catch-no-transaction-exception-sample"},
-//            consumes = MediaType.ALL_VALUE,
-//            produces = MediaType.ALL_VALUE
-//    )
-//    @ResponseBody
-//    public void tryCatchNonTransactionTest(
-//            @Parameter(hidden = true)
-//            @NotNull HttpServletResponse httpServletResponse
-//    ) {
-//        service.tryCatchNonTransactionTest(httpServletResponse);
-//    }
-//
-//
+    ////
+    @Operation(
+            summary = "트랜젝션 동작 테스트",
+            description = "정보 입력 후 Exception 이 발생했을 때 롤백되어 데이터가 저장되지 않는지를 테스트하는 API"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/transaction-rollback-sample"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void transactionTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        service.transactionTest(httpServletResponse);
+    }
+
+
+    ////
+    @Operation(
+            summary = "트랜젝션 비동작 테스트",
+            description = "트랜젝션 처리를 하지 않았을 때, DB 정보 입력 후 Exception 이 발생 했을 때 의 테스트 API"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/no-transaction-exception-sample"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void nonTransactionTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        service.nonTransactionTest(httpServletResponse);
+    }
+
+
+    ////
+    @Operation(
+            summary = "트랜젝션 비동작 테스트(try-catch)",
+            description = "에러 발생문이 try-catch 문 안에 있을 때, DB 정보 입력 후 Exception 이 발생 해도 트랜젝션이 동작하지 않는지에 대한 테스트 API"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/try-catch-no-transaction-exception-sample"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void tryCatchNonTransactionTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        service.tryCatchNonTransactionTest(httpServletResponse);
+    }
+
+
 //    ////
 //    @Operation(
 //            summary = "DB Rows 조회 테스트 (중복 없는 네이티브 쿼리 페이징)",

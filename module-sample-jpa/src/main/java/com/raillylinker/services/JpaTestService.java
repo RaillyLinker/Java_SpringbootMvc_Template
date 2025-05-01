@@ -435,57 +435,63 @@ public class JpaTestService {
     }
 
 
-//    // ----
-//    // (트랜젝션 동작 테스트)
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-//    public void transactionTest(
-//            @NotNull HttpServletResponse httpServletResponse
-//    ) {
-//        db1TemplateTestsRepository.save(new Db1_Template_TestData(
-//                "error test",
-//                new Random().nextInt(100000000),
-//                LocalDateTime.now()
-//        ));
-//
-//        throw new RuntimeException("Transaction Rollback Test!");
-//    }
-//
-//
-//    // ----
-//    // (트랜젝션 비동작 테스트)
-//    public void nonTransactionTest(
-//            @NotNull HttpServletResponse httpServletResponse
-//    ) {
-//        db1TemplateTestsRepository.save(new Db1_Template_TestData(
-//                "error test",
-//                new Random().nextInt(100000000),
-//                LocalDateTime.now()
-//        ));
-//
-//        throw new RuntimeException("No Transaction Exception Test!");
-//    }
-//
-//
-//    // ----
-//    // (트랜젝션 비동작 테스트(try-catch))
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-//    public void tryCatchNonTransactionTest(
-//            @NotNull HttpServletResponse httpServletResponse
-//    ) {
-//        try {
-//            db1TemplateTestsRepository.save(new Db1_Template_TestData(
-//                    "error test",
-//                    new Random().nextInt(100000000),
-//                    LocalDateTime.now()
-//            ));
-//
-//            throw new Exception("Transaction Rollback Test!");
-//        } catch (Exception e) {
-//            classLogger.error("error ", e);
-//        }
-//    }
-//
-//
+    // ----
+    // (트랜젝션 동작 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public void transactionTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        db1TemplateTestDataRepository.save(
+                new Db1_Template_TestData(
+                        "error test",
+                        (int) (Math.random() * 99999999), // Random number between 0 and 99999999
+                        LocalDateTime.now()
+                )
+        );
+
+        throw new RuntimeException("Transaction Rollback Test!");
+    }
+
+
+    // ----
+    // (트랜젝션 비동작 테스트)
+    public void nonTransactionTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        db1TemplateTestDataRepository.save(
+                new Db1_Template_TestData(
+                        "error test",
+                        (int) (Math.random() * 99999999), // Random number between 0 and 99999999
+                        LocalDateTime.now()
+                )
+        );
+
+        throw new RuntimeException("No Transaction Exception Test!");
+    }
+
+
+    // ----
+    // (트랜젝션 비동작 테스트(try-catch))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public void tryCatchNonTransactionTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        try {
+            db1TemplateTestDataRepository.save(
+                    new Db1_Template_TestData(
+                            "error test",
+                            (int) (Math.random() * 99999999), // Random number between 0 and 99999999
+                            LocalDateTime.now()
+                    )
+            );
+
+            throw new Exception("Transaction Rollback Test!");
+        } catch (Exception e) {
+            classLogger.error("error ", e);
+        }
+    }
+
+
 //    // ----
 //    // (DB Rows 조회 테스트 (중복 없는 네이티브 쿼리 페이징))
 //    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
