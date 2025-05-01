@@ -1242,4 +1242,787 @@ public class JpaTestController {
     ) {
         service.deleteUniqueTestTableRowSample(httpServletResponse, index);
     }
+
+
+    ////
+    @Operation(
+            summary = "외래키 부모 테이블 Row 입력 API",
+            description = "외래키 부모 테이블에 Row 를 입력합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/fk-parent"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable InsertFkParentRowSampleOutputVo insertFkParentRowSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @RequestBody
+            @NotNull InsertFkParentRowSampleInputVo inputVo
+    ) {
+        return service.insertFkParentRowSample(httpServletResponse, inputVo);
+    }
+
+    @Data
+    public static class InsertFkParentRowSampleInputVo {
+        @Schema(description = "외래키 테이블 부모 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "홍길동")
+        @JsonProperty("fkParentName")
+        private final @NotNull String fkParentName;
+    }
+
+    @Data
+    public static class InsertFkParentRowSampleOutputVo {
+        @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+        @JsonProperty("uid")
+        private final @NotNull Long uid;
+        @Schema(description = "외래키 테이블 부모 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "홍길동")
+        @JsonProperty("fkParentName")
+        private final @NotNull String fkParentName;
+        @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("createDate")
+        private final @NotNull String createDate;
+        @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("updateDate")
+        private final @NotNull String updateDate;
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 부모 테이블 아래에 자식 테이블의 Row 입력 API",
+            description = "외래키 부모 테이블의 아래에 자식 테이블의 Row 를 입력합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "204",
+                            content = {@Content},
+                            description = "Response Body 가 없습니다.<br>" +
+                                    "Response Headers 를 확인하세요.",
+                            headers = {
+                                    @Header(
+                                            name = "api-result-code",
+                                            description = "(Response Code 반환 원인) - Required<br>" +
+                                                    "1 : parentUid 에 해당하는 데이터가 존재하지 않습니다.",
+                                            schema = @Schema(type = "string")
+                                    )
+                            }
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/fk-parent/{parentUid}"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable InsertFkChildRowSampleOutputVo insertFkChildRowSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "parentUid", description = "외래키 부모 테이블 고유번호", example = "1")
+            @PathVariable(value = "parentUid")
+            @NotNull Long parentUid,
+            @RequestBody
+            @NotNull InsertFkChildRowSampleInputVo inputVo) {
+        return service.insertFkChildRowSample(httpServletResponse, parentUid, inputVo);
+    }
+
+    @Data
+    public static class InsertFkChildRowSampleInputVo {
+        @Schema(description = "외래키 테이블 자식 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "홍길동")
+        @JsonProperty("fkChildName")
+        private final @NotNull String fkChildName;
+    }
+
+    @Data
+    public static class InsertFkChildRowSampleOutputVo {
+        @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+        @JsonProperty("uid")
+        private final @NotNull Long uid;
+        @Schema(description = "외래키 테이블 부모 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "홍길동")
+        @JsonProperty("fkParentName")
+        private final @NotNull String fkParentName;
+        @Schema(description = "외래키 테이블 자식 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "홍길동")
+        @JsonProperty("fkChildName")
+        private final @NotNull String fkChildName;
+        @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("createDate")
+        private final @NotNull String createDate;
+        @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("updateDate")
+        private final @NotNull String updateDate;
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 관련 테이블 Rows 조회 테스트",
+            description = "외래키 관련 테이블의 모든 Rows 를 반환합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/fk-table/all"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable SelectFkTestTableRowsSampleOutputVo selectFkTestTableRowsSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        return service.selectFkTestTableRowsSample(httpServletResponse);
+    }
+
+    @Data
+    public static class SelectFkTestTableRowsSampleOutputVo {
+        @Schema(description = "부모 아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("parentEntityVoList")
+        private final @NotNull List<ParentEntityVo> parentEntityVoList;
+
+        @Schema(description = "부모 아이템")
+        @Data
+        public static class ParentEntityVo {
+            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+            @JsonProperty("uid")
+            private final @NotNull Long uid;
+            @Schema(description = "부모 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+            @JsonProperty("parentName")
+            private final @NotNull String parentName;
+            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("createDate")
+            private final @NotNull String createDate;
+            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("updateDate")
+            private final @NotNull String updateDate;
+            @Schema(description = "부모 테이블에 속하는 자식 테이블 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+            @JsonProperty("childEntityList")
+            private final @NotNull List<ChildEntityVo> childEntityList;
+
+            @Schema(description = "자식 아이템")
+            @Data
+            public static class ChildEntityVo {
+                @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+                @JsonProperty("uid")
+                private final @NotNull Long uid;
+                @Schema(description = "자식 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+                @JsonProperty("childName")
+                private final @NotNull String childName;
+                @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+                @JsonProperty("createDate")
+                private final @NotNull String createDate;
+                @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+                @JsonProperty("updateDate")
+                private final @NotNull String updateDate;
+            }
+        }
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 관련 테이블 Rows 조회 테스트(Native Join)",
+            description = "외래키 관련 테이블의 모든 Rows 를 Native Query 로 Join 하여 반환합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/fk-table-native-join"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo selectFkTestTableRowsByNativeQuerySample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        return service.selectFkTestTableRowsByNativeQuerySample(httpServletResponse);
+    }
+
+    @Data
+    public static class SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo {
+        @Schema(description = "자식 아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("childEntityVoList")
+        private final @NotNull List<ChildEntityVo> childEntityVoList;
+
+        @Schema(description = "자식 아이템")
+        @Data
+        public static class ChildEntityVo {
+            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+            @JsonProperty("uid")
+            private final @NotNull Long uid;
+            @Schema(description = "자식 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+            @JsonProperty("childName")
+            private final @NotNull String childName;
+            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("createDate")
+            private final @NotNull String createDate;
+            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("updateDate")
+            private final @NotNull String updateDate;
+            @Schema(description = "부모 테이블 고유번호", requiredMode = Schema.RequiredMode.REQUIRED)
+            @JsonProperty("parentUid")
+            private final @NotNull Long parentUid;
+            @Schema(description = "부모 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED)
+            @JsonProperty("parentName")
+            private final @NotNull String parentName;
+        }
+    }
+
+
+    ////
+    @Operation(
+            summary = "Native Query 반환값 테스트",
+            description = "Native Query Select 문에서 IF, CASE 등의 문구에서 반환되는 값들을 받는 예시"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/native-query-return"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable GetNativeQueryReturnValueTestOutputVo getNativeQueryReturnValueTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "inputVal", description = "Native Query 비교문에 사용되는 파라미터", example = "true")
+            @RequestParam(value = "inputVal")
+            @NotNull Boolean inputVal
+    ) {
+        return service.getNativeQueryReturnValueTest(httpServletResponse, inputVal);
+    }
+
+    @Data
+    public static class GetNativeQueryReturnValueTestOutputVo {
+        @Schema(description = "Select 문에서 직접적으로 true 를 반환한 예시", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+        @JsonProperty("normalBoolValue")
+        private final @NotNull Boolean normalBoolValue;
+        @Schema(description = "Select 문에서 (1=1) 과 같이 비교한 결과를 반환한 예시", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+        @JsonProperty("funcBoolValue")
+        private final @NotNull Boolean funcBoolValue;
+        @Schema(description = "Select 문에서 if 문의 결과를 반환한 예시", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+        @JsonProperty("ifBoolValue")
+        private final @NotNull Boolean ifBoolValue;
+        @Schema(description = "Select 문에서 case 문의 결과를 반환한 예시", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+        @JsonProperty("caseBoolValue")
+        private final @NotNull Boolean caseBoolValue;
+        @Schema(description = "Select 문에서 테이블의 Boolean 컬럼의 결과를 반환한 예시", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+        @JsonProperty("tableColumnBoolValue")
+        private final @NotNull Boolean tableColumnBoolValue;
+    }
+
+
+    ////
+    @Operation(
+            summary = "SQL Injection 테스트",
+            description = "각 상황에서 SQL Injection 공격이 유효한지 확인하기 위한 테스트<br>" +
+                    "SELECT 문에서, WHERE 에, content = :searchKeyword 를 하여,<br>" +
+                    " 인젝션이 일어나는 키워드를 입력시 인젝션이 먹히는지를 확인할 것입니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/sql-injection-test"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable SqlInjectionTestOutputVo sqlInjectionTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "searchKeyword", description = "Select 문 검색에 사용되는 키워드", example = "test OR 1 = 1")
+            @RequestParam(value = "searchKeyword")
+            @NotNull String searchKeyword
+    ) {
+        return service.sqlInjectionTest(httpServletResponse, searchKeyword);
+    }
+
+    @Data
+    public static class SqlInjectionTestOutputVo {
+        @Schema(description = "JpaRepository 로 조회했을 때의 아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("jpaRepositoryResultList")
+        private final @NotNull List<TestEntityVo> jpaRepositoryResultList;
+
+        @Schema(description = "JPQL 로 조회했을 때의 아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("jpqlResultList")
+        private final @NotNull List<TestEntityVo> jpqlResultList;
+
+        @Schema(description = "Native Query 로 조회했을 때의 아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("nativeQueryResultList")
+        private final @NotNull List<TestEntityVo> nativeQueryResultList;
+
+        @Schema(description = "아이템")
+        @Data
+        public static class TestEntityVo {
+            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+            @JsonProperty("uid")
+            private final @NotNull Long uid;
+            @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트입니다.")
+            @JsonProperty("content")
+            private final @NotNull String content;
+            @Schema(description = "자동 생성 숫자", requiredMode = Schema.RequiredMode.REQUIRED, example = "21345")
+            @JsonProperty("randomNum")
+            private final @NotNull Integer randomNum;
+            @Schema(description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("testDatetime")
+            private final @NotNull String testDatetime;
+            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("createDate")
+            private final @NotNull String createDate;
+            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("updateDate")
+            private final @NotNull String updateDate;
+        }
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 관련 테이블 Rows 조회 (네이티브 쿼리, 부모 테이블을 자식 테이블의 가장 최근 데이터만 Join)",
+            description = "외래키 관련 테이블의 모든 Rows 를 반환합니다.<br>" +
+                    "부모 테이블을 Native Query 로 조회할 때, 부모 테이블을 가리키는 자식 테이블들 중 가장 최신 데이터만 Join 하는 예시입니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/fk-table-latest-join"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable SelectFkTableRowsWithLatestChildSampleOutputVo selectFkTableRowsWithLatestChildSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        return service.selectFkTableRowsWithLatestChildSample(httpServletResponse);
+    }
+
+    @Data
+    public static class SelectFkTableRowsWithLatestChildSampleOutputVo {
+        @Schema(description = "부모 아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("parentEntityVoList")
+        private final @NotNull List<ParentEntityVo> parentEntityVoList;
+
+        @Schema(description = "부모 아이템")
+        @Data
+        public static class ParentEntityVo {
+            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+            @JsonProperty("uid")
+            private final @NotNull Long uid;
+            @Schema(description = "부모 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+            @JsonProperty("parentName")
+            private final @NotNull String parentName;
+            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("createDate")
+            private final @NotNull String createDate;
+            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("updateDate")
+            private final @NotNull String updateDate;
+            @Schema(description = "부모 테이블에 속하는 자식 테이블들 중 가장 최신 데이터")
+            @JsonProperty("latestChildEntity")
+            private final @Nullable ChildEntityVo latestChildEntity;
+
+            @Schema(description = "자식 아이템")
+            @Data
+            public static class ChildEntityVo {
+                @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+                @JsonProperty("uid")
+                private final @NotNull Long uid;
+                @Schema(description = "자식 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+                @JsonProperty("childName")
+                private final @NotNull String childName;
+                @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+                @JsonProperty("createDate")
+                private final @NotNull String createDate;
+                @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+                @JsonProperty("updateDate")
+                private final @NotNull String updateDate;
+            }
+        }
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 관련 테이블 Rows 조회 (QueryDsl)",
+            description = "QueryDsl 을 사용하여 외래키 관련 테이블의 모든 Rows 를 반환합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/fk-table-dsl"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable SelectFkTableRowsWithQueryDslOutputVo selectFkTableRowsWithQueryDsl(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        return service.selectFkTableRowsWithQueryDsl(httpServletResponse);
+    }
+
+    @Data
+    public static class SelectFkTableRowsWithQueryDslOutputVo {
+        @Schema(description = "부모 아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("parentEntityVoList")
+        private final @NotNull List<ParentEntityVo> parentEntityVoList;
+
+        @Schema(description = "부모 아이템")
+        @Data
+        public static class ParentEntityVo {
+            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+            @JsonProperty("uid")
+            private final @NotNull Long uid;
+            @Schema(description = "부모 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+            @JsonProperty("parentName")
+            private final @NotNull String parentName;
+            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("createDate")
+            private final @NotNull String createDate;
+            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("updateDate")
+            private final @NotNull String updateDate;
+            @Schema(description = "부모 테이블에 속하는 자식 테이블들", requiredMode = Schema.RequiredMode.REQUIRED)
+            @JsonProperty("childEntityList")
+            private final @NotNull List<ChildEntityVo> childEntityList;
+
+            @Schema(description = "자식 아이템")
+            @Data
+            public static class ChildEntityVo {
+                @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+                @JsonProperty("uid")
+                private final @NotNull Long uid;
+                @Schema(description = "자식 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+                @JsonProperty("childName")
+                private final @NotNull String childName;
+                @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+                @JsonProperty("createDate")
+                private final @NotNull String createDate;
+                @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+                @JsonProperty("updateDate")
+                private final @NotNull String updateDate;
+            }
+        }
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 관련 테이블 Rows 조회 및 부모 테이블 이름으로 필터링 (QueryDsl)",
+            description = "QueryDsl 을 사용하여 외래키 관련 테이블의 모든 Rows 를 반환합니다.<br>" +
+                    "추가로, 부모 테이블에 할당된 이름으로 검색 결과를 필터링합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/fk-table-parent-name-filter-dsl"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo selectFkTableRowsByParentNameFilterWithQueryDsl(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "parentName", description = "필터링 할 parentName 변수", example = "홍길동")
+            @RequestParam(value = "parentName")
+            @NotNull String parentName
+    ) {
+        return service.selectFkTableRowsByParentNameFilterWithQueryDsl(httpServletResponse, parentName);
+    }
+
+    @Data
+    public static class SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo {
+        @Schema(description = "부모 아이템 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("parentEntityVoList")
+        private final @NotNull List<ParentEntityVo> parentEntityVoList;
+
+        @Schema(description = "부모 아이템")
+        @Data
+        public static class ParentEntityVo {
+            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+            @JsonProperty("uid")
+            private final @NotNull Long uid;
+            @Schema(description = "부모 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+            @JsonProperty("parentName")
+            private final @NotNull String parentName;
+            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("createDate")
+            private final @NotNull String createDate;
+            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("updateDate")
+            private final @NotNull String updateDate;
+            @Schema(description = "부모 테이블에 속하는 자식 테이블들", requiredMode = Schema.RequiredMode.REQUIRED)
+            @JsonProperty("childEntityList")
+            private final @NotNull List<ChildEntityVo> childEntityList;
+
+            @Schema(description = "자식 아이템")
+            @Data
+            public static class ChildEntityVo {
+                @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+                @JsonProperty("uid")
+                private final @NotNull Long uid;
+                @Schema(description = "자식 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+                @JsonProperty("childName")
+                private final @NotNull String childName;
+                @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+                @JsonProperty("createDate")
+                private final @NotNull String createDate;
+                @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+                @JsonProperty("updateDate")
+                private final @NotNull String updateDate;
+            }
+        }
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 관련 테이블 부모 테이블 고유번호로 자식 테이블 리스트 검색 (QueryDsl)",
+            description = "부모 테이블 고유번호로 자식 테이블 리스트를 검색하여 반환합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/fk-table-child-list-dsl"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable SelectFkTableChildListWithQueryDslOutputVo selectFkTableChildListWithQueryDsl(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "parentUid", description = "parent 테이블 고유번호", example = "1")
+            @RequestParam(value = "parentUid")
+            @NotNull Long parentUid
+    ) {
+        return service.selectFkTableChildListWithQueryDsl(httpServletResponse, parentUid);
+    }
+
+    @Data
+    public static class SelectFkTableChildListWithQueryDslOutputVo {
+        @Schema(description = "부모 테이블에 속하는 자식 테이블들", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("childEntityList")
+        private final @NotNull List<ChildEntityVo> childEntityList;
+
+        @Schema(description = "자식 아이템")
+        @Data
+        public static class ChildEntityVo {
+            @Schema(description = "글 고유번호", requiredMode = Schema.RequiredMode.REQUIRED, example = "1234")
+            @JsonProperty("uid")
+            private final @NotNull Long uid;
+            @Schema(description = "자식 테이블 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+            @JsonProperty("childName")
+            private final @NotNull String childName;
+            @Schema(description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("createDate")
+            private final @NotNull String createDate;
+            @Schema(description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+            @JsonProperty("updateDate")
+            private final @NotNull String updateDate;
+        }
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 자식 테이블 Row 삭제 테스트",
+            description = "외래키 자식 테이블의 Row 하나를 삭제합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "204",
+                            content = {@Content},
+                            description = "Response Body 가 없습니다.<br>" +
+                                    "Response Headers 를 확인하세요.",
+                            headers = {
+                                    @Header(
+                                            name = "api-result-code",
+                                            description = "(Response Code 반환 원인) - Required<br>" +
+                                                    "1 : index 에 해당하는 데이터가 데이터베이스에 존재하지 않습니다.",
+                                            schema = @Schema(type = "string")
+                                    )
+                            }
+                    )
+            }
+    )
+    @DeleteMapping(
+            path = {"/fk-child/{index}"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void deleteFkChildRowSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @PathVariable(value = "index")
+            @NotNull Long index
+    ) {
+        service.deleteFkChildRowSample(httpServletResponse, index);
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 부모 테이블 Row 삭제 테스트 (Cascade 기능 확인)",
+            description = "외래키 부모 테이블의 Row 하나를 삭제합니다.<br>" +
+                    "Cascade 설정을 했으므로 부모 테이블이 삭제되면 해당 부모 테이블을 참조중인 다른 모든 자식 테이블들이 삭제되어야 합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "204",
+                            content = {@Content},
+                            description = "Response Body 가 없습니다.<br>" +
+                                    "Response Headers 를 확인하세요.",
+                            headers = {
+                                    @Header(
+                                            name = "api-result-code",
+                                            description = "(Response Code 반환 원인) - Required<br>" +
+                                                    "1 : index 에 해당하는 데이터가 데이터베이스에 존재하지 않습니다.",
+                                            schema = @Schema(type = "string")
+                                    )
+                            }
+                    )
+            }
+    )
+    @DeleteMapping(
+            path = {"/fk-parent/{index}"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void deleteFkParentRowSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @PathVariable(value = "index")
+            @NotNull Long index
+    ) {
+        service.deleteFkParentRowSample(httpServletResponse, index);
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 테이블 트랜젝션 동작 테스트",
+            description = "외래키 테이블에 정보 입력 후 Exception 이 발생했을 때 롤백되어 데이터가 저장되지 않는지를 테스트하는 API"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/fk-transaction-rollback-sample"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void fkTableTransactionTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        service.fkTableTransactionTest(httpServletResponse);
+    }
+
+
+    ////
+    @Operation(
+            summary = "외래키 테이블 트랜젝션 비동작 테스트",
+            description = "외래키 테이블의 트랜젝션 처리를 하지 않았을 때, DB 정보 입력 후 Exception 이 발생 했을 때 의 테스트 API"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/fk-no-transaction-exception-sample"},
+            consumes = MediaType.ALL_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void fkTableNonTransactionTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        service.fkTableNonTransactionTest(httpServletResponse);
+    }
 }

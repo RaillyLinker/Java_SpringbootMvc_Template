@@ -25,7 +25,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class JpaTestService {
@@ -738,5 +737,163 @@ public class JpaTestService {
         db1TemplateLogicalDeleteUniqueDataRepository.save(entity);
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
+    }
+
+
+    // ----
+    // (외래키 부모 테이블 Row 입력 API)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public @Nullable JpaTestController.InsertFkParentRowSampleOutputVo insertFkParentRowSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull JpaTestController.InsertFkParentRowSampleInputVo inputVo
+    ) {
+        // todo
+        return null;
+    }
+
+
+    // ----
+    // (외래키 부모 테이블 아래에 자식 테이블의 Row 입력 API)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public @Nullable JpaTestController.InsertFkChildRowSampleOutputVo insertFkChildRowSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Long parentUid,
+            @NotNull JpaTestController.InsertFkChildRowSampleInputVo inputVo
+    ) {
+        // todo
+        return null;
+    }
+
+
+    // ----
+    // (외래키 관련 테이블 Rows 조회 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectFkTestTableRowsSampleOutputVo selectFkTestTableRowsSample(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        // todo
+        return null;
+    }
+
+
+    // ----
+    // (외래키 관련 테이블 Rows 조회 테스트(Native Join))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo selectFkTestTableRowsByNativeQuerySample(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        // todo
+        return null;
+    }
+
+
+    // ----
+    // (Native Query 반환값 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public @Nullable JpaTestController.GetNativeQueryReturnValueTestOutputVo getNativeQueryReturnValueTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Boolean inputVal
+    ) {
+        // todo
+        return null;
+    }
+
+
+    // ----
+    // (SQL Injection 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SqlInjectionTestOutputVo sqlInjectionTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull String searchKeyword
+    ) {
+        // todo
+        return null;
+    }
+
+
+    // ----
+    // (외래키 관련 테이블 Rows 조회 (네이티브 쿼리, 부모 테이블을 자식 테이블의 가장 최근 데이터만 Join))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo selectFkTableRowsWithLatestChildSample(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        // todo
+        return null;
+    }
+
+
+    // ----
+    // (외래키 관련 테이블 Rows 조회 (QueryDsl))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectFkTableRowsWithQueryDslOutputVo selectFkTableRowsWithQueryDsl(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        // todo
+        return null;
+    }
+
+
+    // ----
+    // (외래키 관련 테이블 Rows 조회 및 부모 테이블 이름으로 필터링 (QueryDsl))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo selectFkTableRowsByParentNameFilterWithQueryDsl(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull String parentName
+    ) {
+        // todo
+        return null;
+    }
+
+
+    // ----
+    // (외래키 관련 테이블 부모 테이블 고유번호로 자식 테이블 리스트 검색 (QueryDsl))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable JpaTestController.SelectFkTableChildListWithQueryDslOutputVo selectFkTableChildListWithQueryDsl(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Long parentUid
+    ) {
+        // todo
+        return null;
+    }
+
+
+    // ----
+    // (외래키 자식 테이블 Row 삭제 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public void deleteFkChildRowSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Long index
+    ) {
+        // todo
+    }
+
+
+    // ----
+    // (외래키 부모 테이블 Row 삭제 테스트 (Cascade 기능 확인))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public void deleteFkParentRowSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull Long index
+    ) {
+        // todo
+    }
+
+
+    // ----
+    // (외래키 테이블 트랜젝션 동작 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public void fkTableTransactionTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        // todo
+    }
+
+
+    // ----
+    // (외래키 테이블 트랜젝션 비동작 테스트)
+    public void fkTableNonTransactionTest(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        // todo
     }
 }
