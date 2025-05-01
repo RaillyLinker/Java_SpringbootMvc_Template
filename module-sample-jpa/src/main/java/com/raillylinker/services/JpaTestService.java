@@ -114,15 +114,13 @@ public class JpaTestService {
             @NotNull Long index,
             @NotNull Boolean deleteLogically
     ) {
-        @NotNull Optional<Db1_Template_TestData> entityOpt = db1TemplateTestDataRepository.findByUidAndRowDeleteDateStr(index, "/");
+        @Nullable Db1_Template_TestData entity = db1TemplateTestDataRepository.findByUidAndRowDeleteDateStr(index, "/");
 
-        if (entityOpt.isEmpty()) {
+        if (entity == null) {
             httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
             httpServletResponse.setHeader("api-result-code", "1");
             return;
         }
-
-        @NotNull Db1_Template_TestData entity = entityOpt.get();
 
         if (deleteLogically) {
             entity.rowDeleteDateStr =
