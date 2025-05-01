@@ -10,6 +10,7 @@ import org.jetbrains.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(
@@ -74,5 +75,5 @@ public class Db1_Template_FkTestParent {
              */
             cascade = {CascadeType.ALL}
     )
-    public @NotNull ArrayList<Db1_Template_FkTestManyToOneChild> fkTestManyToOneChildList = new ArrayList<>();
+    public @NotNull List<Db1_Template_FkTestManyToOneChild> fkTestManyToOneChildList = new ArrayList<>();
 }

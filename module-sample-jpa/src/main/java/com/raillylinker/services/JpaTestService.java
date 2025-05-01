@@ -2,8 +2,12 @@ package com.raillylinker.services;
 
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig;
 import com.raillylinker.controllers.JpaTestController;
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_FkTestManyToOneChild;
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_FkTestParent;
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_LogicalDeleteUniqueData;
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_TestData;
+import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_FkTestManyToOneChild_Repository;
+import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_FkTestParent_Repository;
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_LogicalDeleteUniqueData_Repository;
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestData_Repository;
 import com.raillylinker.util_components.CustomUtil;
@@ -25,6 +29,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class JpaTestService {
@@ -36,12 +41,16 @@ public class JpaTestService {
             @NotNull CustomUtil customUtil,
 
             @NotNull Db1_Template_TestData_Repository db1TemplateTestDataRepository,
-            @NotNull Db1_Template_LogicalDeleteUniqueData_Repository db1TemplateLogicalDeleteUniqueDataRepository
+            @NotNull Db1_Template_LogicalDeleteUniqueData_Repository db1TemplateLogicalDeleteUniqueDataRepository,
+            @NotNull Db1_Template_FkTestParent_Repository db1TemplateFkTestParentRepository,
+            @NotNull Db1_Template_FkTestManyToOneChild_Repository db1TemplateFkTestManyToOneChildRepository
     ) {
         this.activeProfile = activeProfile;
         this.customUtil = customUtil;
         this.db1TemplateTestDataRepository = db1TemplateTestDataRepository;
         this.db1TemplateLogicalDeleteUniqueDataRepository = db1TemplateLogicalDeleteUniqueDataRepository;
+        this.db1TemplateFkTestParentRepository = db1TemplateFkTestParentRepository;
+        this.db1TemplateFkTestManyToOneChildRepository = db1TemplateFkTestManyToOneChildRepository;
     }
 
     // <멤버 변수 공간>
@@ -55,6 +64,8 @@ public class JpaTestService {
 
     private final @NotNull Db1_Template_TestData_Repository db1TemplateTestDataRepository;
     private final @NotNull Db1_Template_LogicalDeleteUniqueData_Repository db1TemplateLogicalDeleteUniqueDataRepository;
+    private final @NotNull Db1_Template_FkTestParent_Repository db1TemplateFkTestParentRepository;
+    private final @NotNull Db1_Template_FkTestManyToOneChild_Repository db1TemplateFkTestManyToOneChildRepository;
 
 
     // ---------------------------------------------------------------------------------------------
@@ -747,8 +758,22 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse,
             @NotNull JpaTestController.InsertFkParentRowSampleInputVo inputVo
     ) {
-        // todo
-        return null;
+        @NotNull Db1_Template_FkTestParent result =
+                db1TemplateFkTestParentRepository.save(
+                        new Db1_Template_FkTestParent(
+                                inputVo.getFkParentName()
+                        )
+                );
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.InsertFkParentRowSampleOutputVo(
+                result.uid,
+                result.parentName,
+                result.rowCreateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                result.rowUpdateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        );
     }
 
 
@@ -760,8 +785,34 @@ public class JpaTestService {
             @NotNull Long parentUid,
             @NotNull JpaTestController.InsertFkChildRowSampleInputVo inputVo
     ) {
-        // todo
-        return null;
+        @NotNull Optional<Db1_Template_FkTestParent> parentEntityOpt = db1TemplateFkTestParentRepository.findById(parentUid);
+
+        if (parentEntityOpt.isEmpty()) {
+            httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+            httpServletResponse.setHeader("api-result-code", "1");
+            return null;
+        }
+
+        @NotNull Db1_Template_FkTestParent parentEntity = parentEntityOpt.get();
+
+        @NotNull Db1_Template_FkTestManyToOneChild result =
+                db1TemplateFkTestManyToOneChildRepository.save(
+                        new Db1_Template_FkTestManyToOneChild(
+                                inputVo.getFkChildName(),
+                                parentEntity
+                        )
+                );
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.InsertFkChildRowSampleOutputVo(
+                result.uid,
+                result.childName,
+                result.fkTestParent.parentName,
+                result.rowCreateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                result.rowUpdateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        );
     }
 
 
@@ -771,8 +822,51 @@ public class JpaTestService {
     public @Nullable JpaTestController.SelectFkTestTableRowsSampleOutputVo selectFkTestTableRowsSample(
             @NotNull HttpServletResponse httpServletResponse
     ) {
-        // todo
-        return null;
+        @NotNull List<Db1_Template_FkTestParent> resultEntityList =
+                db1TemplateFkTestParentRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/");
+
+        @NotNull List<JpaTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo> entityVoList =
+                new ArrayList<>();
+        for (@NotNull Db1_Template_FkTestParent resultEntity : resultEntityList) {
+            @NotNull List<JpaTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo.ChildEntityVo> childEntityVoList =
+                    new ArrayList<>();
+
+            @NotNull List<Db1_Template_FkTestManyToOneChild> childList =
+                    db1TemplateFkTestManyToOneChildRepository.findAllByFkTestParentAndRowDeleteDateStrOrderByRowCreateDate(
+                            resultEntity,
+                            "/"
+                    );
+
+            for (@NotNull Db1_Template_FkTestManyToOneChild childEntity : childList) {
+                childEntityVoList.add(
+                        new JpaTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo.ChildEntityVo(
+                                childEntity.uid,
+                                childEntity.childName,
+                                childEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                                childEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                        )
+                );
+            }
+
+            entityVoList.add(
+                    new JpaTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo(
+                            resultEntity.uid,
+                            resultEntity.parentName,
+                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                            childEntityVoList
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.SelectFkTestTableRowsSampleOutputVo(
+                entityVoList
+        );
     }
 
 
