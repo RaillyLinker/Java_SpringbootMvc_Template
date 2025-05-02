@@ -257,6 +257,35 @@ public class RedisTestController {
                 key
         );
     }
+
+
+    // ----
+    @Operation(
+            summary = "Redis Key-Value 모두 삭제 테스트",
+            description = "Redis Table 에 저장된 모든 Key 를 삭제합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @DeleteMapping(
+            path = {"/test-all"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.ALL_VALUE}
+    )
+    @ResponseBody
+    public void deleteAllRedisKeySample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        service.deleteAllRedisKeySample(
+                httpServletResponse
+        );
+    }
     // todo
 
 

@@ -164,6 +164,17 @@ public class RedisTestService {
         httpServletResponse.setStatus(HttpStatus.OK.value());
     }
 
+
+    // ----
+    // (Redis Key-Value 모두 삭제 테스트)
+    public void deleteAllRedisKeySample(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        redis1Test.deleteAllKeyValues();
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+    }
+
     // todo
 
 
