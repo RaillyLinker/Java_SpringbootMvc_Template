@@ -47,6 +47,10 @@ dependencies {
 
     // (OkHttp3)
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+    // (Redis)
+    // : 메모리 키 값 데이터 구조 스토어
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.3.5'
 }
 
 tasks.named('test') {
