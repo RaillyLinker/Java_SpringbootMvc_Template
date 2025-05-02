@@ -22,6 +22,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -45,7 +49,8 @@ public class JpaTestService {
             @NotNull Db1_Template_JustBooleanTest_Repository db1TemplateJustBooleanTestRepository,
             @NotNull Db1_Template_FkTestManyToOneChild_RepositoryDsl db1TemplateFkTestManyToOneChildRepositoryDsl,
             @NotNull Db1_Template_FkTestParent_RepositoryDsl db1TemplateFkTestParentRepositoryDsl,
-            @NotNull Db1_Template_DataTypeMappingTest_Repository db1TemplateDataTypeMappingTestRepository
+            @NotNull Db1_Template_DataTypeMappingTest_Repository db1TemplateDataTypeMappingTestRepository,
+            @NotNull Db1_Template_DataTypeBlobMappingTest_Repository db1TemplateDataTypeBlobMappingTestRepository
     ) {
         this.activeProfile = activeProfile;
         this.customUtil = customUtil;
@@ -57,6 +62,7 @@ public class JpaTestService {
         this.db1TemplateFkTestManyToOneChildRepositoryDsl = db1TemplateFkTestManyToOneChildRepositoryDsl;
         this.db1TemplateFkTestParentRepositoryDsl = db1TemplateFkTestParentRepositoryDsl;
         this.db1TemplateDataTypeMappingTestRepository = db1TemplateDataTypeMappingTestRepository;
+        this.db1TemplateDataTypeBlobMappingTestRepository = db1TemplateDataTypeBlobMappingTestRepository;
     }
 
     // <멤버 변수 공간>
@@ -76,6 +82,7 @@ public class JpaTestService {
     private final @NotNull Db1_Template_FkTestManyToOneChild_RepositoryDsl db1TemplateFkTestManyToOneChildRepositoryDsl;
     private final @NotNull Db1_Template_FkTestParent_RepositoryDsl db1TemplateFkTestParentRepositoryDsl;
     private final @NotNull Db1_Template_DataTypeMappingTest_Repository db1TemplateDataTypeMappingTestRepository;
+    private final @NotNull Db1_Template_DataTypeBlobMappingTest_Repository db1TemplateDataTypeBlobMappingTestRepository;
 
 
     // ---------------------------------------------------------------------------------------------
@@ -1511,5 +1518,84 @@ public class JpaTestService {
                 (short) (((result.getSampleBinary2()[0] & 0xFF) << 8) | (result.getSampleBinary2()[1] & 0xFF)),
                 (short) (((result.getSampleVarbinary2()[0] & 0xFF) << 8) | (result.getSampleVarbinary2()[1] & 0xFF))
         );
+    }
+
+
+    // ----
+    // (ORM Blob Datatype Mapping 테이블 Row 입력 테스트 API)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public void ormBlobDatatypeMappingTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull JpaTestController.OrmBlobDatatypeMappingTestInputVo inputVo
+    ) throws IOException {
+        @NotNull Db1_Template_DataTypeBlobMappingTest newDb1TemplateDataTypeBlobMappingTestRepository =
+                db1TemplateDataTypeBlobMappingTestRepository.save(
+                        Db1_Template_DataTypeBlobMappingTest.builder()
+                                .sampleTinyBlobFileName(inputVo.getSampleTinyBlob().getOriginalFilename() != null
+                                        ? inputVo.getSampleTinyBlob().getOriginalFilename()
+                                        : "unknown")
+                                .sampleTinyBlob(inputVo.getSampleTinyBlob().getBytes())
+                                .sampleBlobFileName(inputVo.getSampleBlob().getOriginalFilename() != null
+                                        ? inputVo.getSampleBlob().getOriginalFilename()
+                                        : "unknown")
+                                .sampleBlob(inputVo.getSampleBlob().getBytes())
+                                .sampleMediumBlobFileName(inputVo.getSampleTinyBlob().getOriginalFilename() != null
+                                        ? inputVo.getSampleTinyBlob().getOriginalFilename()
+                                        : "unknown")
+                                .sampleMediumBlob(inputVo.getSampleMediumBlob().getBytes())
+                                .sampleLongBlobFileName(inputVo.getSampleTinyBlob().getOriginalFilename() != null
+                                        ? inputVo.getSampleTinyBlob().getOriginalFilename()
+                                        : "unknown")
+                                .sampleLongBlob(inputVo.getSampleLongBlob().getBytes())
+                                .build()
+                );
+
+        @NotNull LocalDateTime nowDatetime = LocalDateTime.now();
+
+        // 파일 저장 기본 디렉토리 경로
+        @NotNull Path saveDirectoryPath = Paths.get("./by_product_files/sample_jpa/blob_test").toAbsolutePath().normalize();
+
+        // 파일 저장 기본 디렉토리 생성
+        Files.createDirectories(saveDirectoryPath);
+
+        @NotNull CustomUtil.FilePathParts sampleTinyBlobFileNameSplit =
+                customUtil.splitFilePath(newDb1TemplateDataTypeBlobMappingTestRepository.getSampleTinyBlobFileName());
+        Path tinyBlobDestinationFile = saveDirectoryPath.resolve(
+                sampleTinyBlobFileNameSplit.getFileName() + "(" +
+                        nowDatetime.atZone(ZoneId.systemDefault())
+                                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")) +
+                        ")(1)." + sampleTinyBlobFileNameSplit.getExtension()
+        );
+        Files.write(tinyBlobDestinationFile, newDb1TemplateDataTypeBlobMappingTestRepository.getSampleTinyBlob());
+
+        @NotNull CustomUtil.FilePathParts sampleBlobFileNameSplit =
+                customUtil.splitFilePath(newDb1TemplateDataTypeBlobMappingTestRepository.getSampleBlobFileName());
+        Path blobDestinationFile = saveDirectoryPath.resolve(
+                sampleBlobFileNameSplit.getFileName() + "(" +
+                        nowDatetime.atZone(ZoneId.systemDefault())
+                                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")) +
+                        ")(2)." + sampleBlobFileNameSplit.getExtension()
+        );
+        Files.write(blobDestinationFile, newDb1TemplateDataTypeBlobMappingTestRepository.getSampleBlob());
+
+        @NotNull CustomUtil.FilePathParts sampleMediumBlobFileNameSplit =
+                customUtil.splitFilePath(newDb1TemplateDataTypeBlobMappingTestRepository.getSampleMediumBlobFileName());
+        Path mediumBlobDestinationFile = saveDirectoryPath.resolve(
+                sampleMediumBlobFileNameSplit.getFileName() + "(" +
+                        nowDatetime.atZone(ZoneId.systemDefault())
+                                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")) +
+                        ")(3)." + sampleMediumBlobFileNameSplit.getExtension()
+        );
+        Files.write(mediumBlobDestinationFile, newDb1TemplateDataTypeBlobMappingTestRepository.getSampleMediumBlob());
+
+        @NotNull CustomUtil.FilePathParts sampleLongBlobFileNameSplit =
+                customUtil.splitFilePath(newDb1TemplateDataTypeBlobMappingTestRepository.getSampleLongBlobFileName());
+        Path longBlobDestinationFile = saveDirectoryPath.resolve(
+                sampleLongBlobFileNameSplit.getFileName() + "(" +
+                        nowDatetime.atZone(ZoneId.systemDefault())
+                                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")) +
+                        ")(4)." + sampleLongBlobFileNameSplit.getExtension()
+        );
+        Files.write(longBlobDestinationFile, newDb1TemplateDataTypeBlobMappingTestRepository.getSampleLongBlob());
     }
 }

@@ -18,7 +18,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.jetbrains.annotations.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -2353,5 +2355,54 @@ public class JpaTestController {
             @JsonProperty("point2")
             private final @NotNull PointVo point2;
         }
+    }
+
+
+    // ----
+    @Operation(
+            summary = "ORM Blob Datatype Mapping 테이블 Row 입력 테스트 API",
+            description = "ORM Blob Datatype Mapping 테이블에 값이 잘 입력되는지 테스트"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/orm-blob-datatype-mapping-test"},
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void ormBlobDatatypeMappingTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @ModelAttribute
+            @RequestBody
+            @NotNull OrmBlobDatatypeMappingTestInputVo inputVo
+    ) throws IOException {
+        service.ormBlobDatatypeMappingTest(
+                httpServletResponse,
+                inputVo
+        );
+    }
+
+    @Data
+    public static class OrmBlobDatatypeMappingTestInputVo {
+        @Schema(description = "최대 255 바이트 파일", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("sampleTinyBlob")
+        private final @NotNull MultipartFile sampleTinyBlob;
+        @Schema(description = "최대 65,535바이트 파일", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("sampleBlob")
+        private final @NotNull MultipartFile sampleBlob;
+        @Schema(description = "최대 16,777,215 바이트 파일", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("sampleMediumBlob")
+        private final @NotNull MultipartFile sampleMediumBlob;
+        @Schema(description = "최대 4,294,967,295 바이트 파일", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("sampleLongBlob")
+        private final @NotNull MultipartFile sampleLongBlob;
     }
 }
