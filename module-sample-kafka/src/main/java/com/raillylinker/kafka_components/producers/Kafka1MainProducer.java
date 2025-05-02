@@ -23,7 +23,7 @@ public class Kafka1MainProducer {
     // <멤버 변수 공간>
     private final @NotNull KafkaTemplate<String, Object> kafka1MainProducerTemplate;
 
-    private final @NotNull Logger classLogger = LoggerFactory.getLogger(RootService.class);
+    private final @NotNull Logger classLogger = LoggerFactory.getLogger(Kafka1MainProducer.class);
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>

@@ -72,7 +72,7 @@ public class JpaTestService {
     // (스웨거 문서 공개 여부 설정)
     private final @NotNull CustomUtil customUtil;
 
-    private final @NotNull Logger classLogger = LoggerFactory.getLogger(RootService.class);
+    private final @NotNull Logger classLogger = LoggerFactory.getLogger(JpaTestService.class);
 
     private final @NotNull Db1_Template_TestData_Repository db1TemplateTestDataRepository;
     private final @NotNull Db1_Template_LogicalDeleteUniqueData_Repository db1TemplateLogicalDeleteUniqueDataRepository;

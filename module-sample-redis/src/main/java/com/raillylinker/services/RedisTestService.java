@@ -42,7 +42,7 @@ public class RedisTestService {
     // <멤버 변수 공간>
     private final @NotNull String activeProfile;
 
-    private final @NotNull Logger classLogger = LoggerFactory.getLogger(RootService.class);
+    private final @NotNull Logger classLogger = LoggerFactory.getLogger(RedisTestService.class);
 
     private final @NotNull Redis1_Map_Test redis1Test;
     private final @NotNull Redis1_Lock_Test redis1LockTest;

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Kafka1MainConsumer {
     // <멤버 변수 공간>
-    private final @NotNull Logger classLogger = LoggerFactory.getLogger(RootService.class);
+    private final @NotNull Logger classLogger = LoggerFactory.getLogger(Kafka1MainConsumer.class);
 
     // !!!모듈 컨슈머 그룹 아이디!!!
     private static final String CONSUMER_GROUP_ID = "com.raillylinker.sample_kafka";

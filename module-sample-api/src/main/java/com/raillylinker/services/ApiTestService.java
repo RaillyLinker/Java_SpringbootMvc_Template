@@ -50,7 +50,7 @@ public class ApiTestService {
 
     private final @NotNull CustomUtil customUtil;
 
-    private final @NotNull Logger classLogger = LoggerFactory.getLogger(RootService.class);
+    private final @NotNull Logger classLogger = LoggerFactory.getLogger(ApiTestService.class);
 
     // (스레드 풀)
     private final @NotNull ExecutorService executorService = Executors.newCachedThreadPool();
