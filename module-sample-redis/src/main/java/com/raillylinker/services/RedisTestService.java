@@ -1,5 +1,6 @@
 package com.raillylinker.services;
 
+import com.raillylinker.abstract_classes.BasicRedisMap;
 import com.raillylinker.controllers.RedisTestController;
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_Test;
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Map_Test;
@@ -63,41 +64,58 @@ public class RedisTestService {
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    // todo
-
-
-    // (기본 요청 테스트 API)
-    public @Nullable String basicRequestTest(
-            @NotNull HttpServletResponse httpServletResponse
+    // (Redis Key-Value 입력 테스트)
+    public void insertRedisKeyValueTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull RedisTestController.InsertRedisKeyValueTestInputVo inputVo
     ) {
+        @NotNull ArrayList<Redis1_Map_Test.ValueVo.InnerVo> innerVos = new ArrayList<>();
+        innerVos.add(
+                new Redis1_Map_Test.ValueVo.InnerVo("testObject1", false)
+        );
+        innerVos.add(
+                new Redis1_Map_Test.ValueVo.InnerVo("testObject2", true)
+        );
+
+        redis1Test.saveKeyValue(
+                inputVo.getKey(),
+                new Redis1_Map_Test.ValueVo(
+                        inputVo.getContent(),
+                        new Redis1_Map_Test.ValueVo.InnerVo("testObject", true),
+                        innerVos
+                ),
+                inputVo.getExpirationMs()
+        );
+
         httpServletResponse.setStatus(HttpStatus.OK.value());
-
-        return activeProfile;
     }
 
 
     // ----
-    // (요청 Redirect 테스트)
-    public @Nullable ModelAndView redirectTest(
-            @NotNull HttpServletResponse httpServletResponse
+    // (Redis Key-Value 조회 테스트)
+    public @Nullable RedisTestController.SelectRedisValueSampleOutputVo selectRedisValueSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull String key
     ) {
-        @NotNull ModelAndView mv = new ModelAndView();
-        mv.setViewName("redirect:/api-test");
+        // 전체 조회 테스트
+        @Nullable BasicRedisMap.RedisMapDataVo<Redis1_Map_Test.ValueVo> keyValue = redis1Test.findKeyValue(key);
 
-        return mv;
+        if (keyValue == null) {
+            httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+            httpServletResponse.setHeader("api-result-code", "1");
+            return null;
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new RedisTestController.SelectRedisValueSampleOutputVo(
+                Redis1_Map_Test.MAP_NAME,
+                keyValue.getKey(),
+                keyValue.getValue().getContent(),
+                keyValue.getExpireTimeMs()
+        );
     }
 
-
-    // ----
-    // (요청 Redirect 테스트)
-    public @Nullable ModelAndView forwardTest(
-            @NotNull HttpServletResponse httpServletResponse
-    ) {
-        @NotNull ModelAndView mv = new ModelAndView();
-        mv.setViewName("forward:/api-test");
-
-        return mv;
-    }
+    // todo
 
 
     // ----

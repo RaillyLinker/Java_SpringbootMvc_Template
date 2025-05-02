@@ -34,7 +34,7 @@ public abstract class BasicRedisMap<ValueVo> {
     // (RedisMap 에 Key-Value 저장)
     public void saveKeyValue(
             @NotNull String key,
-            ValueVo value,
+            @NotNull ValueVo value,
             @Nullable Long expireTimeMs
     ) {
         // 입력 키 검증
@@ -221,8 +221,8 @@ public abstract class BasicRedisMap<ValueVo> {
     // [RedisMap 의 출력값 데이터 클래스]
     @Data
     public static class RedisMapDataVo<ValueVo> {
-        private final String key;
-        private final ValueVo value;
-        private final Long expireTimeMs;
+        private final @NotNull String key;
+        private final @NotNull ValueVo value;
+        private final @Nullable Long expireTimeMs;
     }
 }

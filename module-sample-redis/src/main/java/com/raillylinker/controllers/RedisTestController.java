@@ -52,87 +52,112 @@ public class RedisTestController {
 
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
+    @Operation(
+            summary = "Redis Key-Value 입력 테스트",
+            description = "Redis 테이블에 Key-Value 를 입력합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/test"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.ALL_VALUE
+    )
+    @ResponseBody
+    public void insertRedisKeyValueTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @RequestBody
+            @NotNull InsertRedisKeyValueTestInputVo inputVo
+    ) {
+        service.insertRedisKeyValueTest(
+                httpServletResponse,
+                inputVo
+        );
+    }
+
+    @Data
+    public static class InsertRedisKeyValueTestInputVo {
+        @Schema(description = "redis 키", requiredMode = Schema.RequiredMode.REQUIRED, example = "test_key")
+        @JsonProperty("key")
+        private final @NotNull String key;
+        @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트입니다.")
+        @JsonProperty("content")
+        private final @NotNull String content;
+        @Schema(description = "데이터 만료시간(밀리 초, null 이라면 무한정)", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "12000")
+        @JsonProperty("expirationMs")
+        private final @Nullable Long expirationMs;
+    }
+
+
+    // ----
+    @Operation(
+            summary = "Redis Key-Value 조회 테스트",
+            description = "Redis Table 에 저장된 Key-Value 를 조회합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "204",
+                            content = {@Content},
+                            description = "Response Body 가 없습니다.<br>" +
+                                    "Response Headers 를 확인하세요.",
+                            headers = {
+                                    @Header(
+                                            name = "api-result-code",
+                                            description = "(Response Code 반환 원인) - Required<br>" +
+                                                    "1 : key 에 저장된 데이터가 존재하지 않습니다.",
+                                            schema = @Schema(type = "string")
+                                    )
+                            }
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/test"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE}
+    )
+    @ResponseBody
+    public @Nullable SelectRedisValueSampleOutputVo selectRedisValueSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(name = "key", description = "redis 키", example = "test_key")
+            @RequestParam("key")
+            @NotNull String key
+    ) {
+        return service.selectRedisValueSample(
+                httpServletResponse,
+                key
+        );
+    }
+
+    @Data
+    public static class SelectRedisValueSampleOutputVo {
+        @Schema(description = "Table 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "Redis1_Test")
+        @JsonProperty("tableName")
+        private final @NotNull String tableName;
+        @Schema(description = "Key", requiredMode = Schema.RequiredMode.REQUIRED, example = "testing")
+        @JsonProperty("key")
+        private final @NotNull String key;
+        @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트입니다.")
+        @JsonProperty("content")
+        private final @NotNull String content;
+        @Schema(description = "데이터 만료시간(밀리 초, -1 이라면 무한정)", requiredMode = Schema.RequiredMode.REQUIRED, example = "12000")
+        @JsonProperty("expirationMs")
+        private final @NotNull Long expirationMs;
+    }
     // todo
-
-
-    @Operation(
-            summary = "기본 요청 테스트 API",
-            description = "이 API 를 요청하면 현재 실행중인 프로필 이름을 반환합니다."
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "정상 동작"
-                    )
-            }
-    )
-    @GetMapping(
-            path = {""},
-            consumes = {MediaType.ALL_VALUE},
-            produces = {MediaType.TEXT_PLAIN_VALUE}
-    )
-    @ResponseBody
-    public @Nullable String basicRequestTest(
-            @Parameter(hidden = true)
-            @NotNull HttpServletResponse httpServletResponse
-    ) {
-        return service.basicRequestTest(httpServletResponse);
-    }
-
-
-    // ----
-    @Operation(
-            summary = "요청 Redirect 테스트 API",
-            description = "이 API 를 요청하면 /my-service/tk/sample/request-test 로 Redirect 됩니다."
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "정상 동작"
-                    )
-            }
-    )
-    @GetMapping(
-            path = {"/redirect-to-blank"},
-            consumes = {MediaType.ALL_VALUE},
-            produces = {MediaType.ALL_VALUE}
-    )
-    @ResponseBody
-    public @Nullable ModelAndView redirectTest(
-            @Parameter(hidden = true)
-            @NotNull HttpServletResponse httpServletResponse
-    ) {
-        return service.redirectTest(httpServletResponse);
-    }
-
-
-    // ----
-    @Operation(
-            summary = "요청 Forward 테스트 API",
-            description = "이 API 를 요청하면 /my-service/tk/sample/request-test 로 Forward 됩니다."
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "정상 동작"
-                    )
-            }
-    )
-    @GetMapping(
-            path = {"/forward-to-blank"},
-            consumes = {MediaType.ALL_VALUE},
-            produces = {MediaType.ALL_VALUE}
-    )
-    @ResponseBody
-    public @Nullable ModelAndView forwardTest(
-            @Parameter(hidden = true)
-            @NotNull HttpServletResponse httpServletResponse
-    ) {
-        return service.forwardTest(httpServletResponse);
-    }
 
 
     // ----
