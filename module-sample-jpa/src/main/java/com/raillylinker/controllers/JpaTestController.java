@@ -1,6 +1,7 @@
 package com.raillylinker.controllers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_DataTypeMappingTest;
 import com.raillylinker.services.JpaTestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,7 +19,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.jetbrains.annotations.*;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
+import java.util.Set;
 
 @Tag(name = "/jpa-test APIs", description = "JPA 테스트 API 컨트롤러")
 @Controller
@@ -2024,5 +2028,330 @@ public class JpaTestController {
             @NotNull HttpServletResponse httpServletResponse
     ) {
         service.fkTableNonTransactionTest(httpServletResponse);
+    }
+
+
+    // ----
+    @Operation(
+            summary = "ORM Datatype Mapping 테이블 Row 입력 테스트 API",
+            description = "ORM Datatype Mapping 테이블에 값이 잘 입력되는지 테스트"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @PostMapping(
+            path = {"/orm-datatype-mapping-test"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public @Nullable OrmDatatypeMappingTestOutputVo ormDatatypeMappingTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @RequestBody
+            @NotNull OrmDatatypeMappingTestInputVo inputVo
+    ) {
+        return service.ormDatatypeMappingTest(
+                httpServletResponse,
+                inputVo
+        );
+    }
+
+    @Data
+    public static class OrmDatatypeMappingTestInputVo {
+        @Schema(description = "TINYINT 타입 컬럼(-128 ~ 127 정수 (1Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleTinyInt")
+        private final @NotNull Short sampleTinyInt;
+        @Schema(description = "TINYINT UNSIGNED 타입 컬럼(0 ~ 255 정수 (1Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleTinyIntUnsigned")
+        private final @NotNull Short sampleTinyIntUnsigned;
+        @Schema(description = "SMALLINT 타입 컬럼(-32,768 ~ 32,767 정수 (2Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleSmallInt")
+        private final @NotNull Short sampleSmallInt;
+        @Schema(description = "SMALLINT UNSIGNED 타입 컬럼(0 ~ 65,535 정수 (2Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleSmallIntUnsigned")
+        private final @NotNull Integer sampleSmallIntUnsigned;
+        @Schema(description = "MEDIUMINT 타입 컬럼(-8,388,608 ~ 8,388,607 정수 (3Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleMediumInt")
+        private final @NotNull Integer sampleMediumInt;
+        @Schema(description = "MEDIUMINT UNSIGNED 타입 컬럼(0 ~ 16,777,215 정수 (3Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleMediumIntUnsigned")
+        private final @NotNull Integer sampleMediumIntUnsigned;
+        @Schema(description = "INT 타입 컬럼(-2,147,483,648 ~ 2,147,483,647 정수 (4Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleInt")
+        private final @NotNull Integer sampleInt;
+        @Schema(description = "INT UNSIGNED 타입 컬럼(0 ~ 4,294,967,295 정수 (4Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleIntUnsigned")
+        private final @NotNull Long sampleIntUnsigned;
+        @Schema(description = "BIGINT 타입 컬럼(-2^63 ~ 2^63-1 정수 (8Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleBigInt")
+        private final @NotNull Long sampleBigInt;
+        @Schema(description = "BIGINT UNSIGNED 타입 컬럼(0 ~ 2^64-1 정수 (8Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleBigIntUnsigned")
+        private final @NotNull BigInteger sampleBigIntUnsigned;
+        @Schema(description = "FLOAT 타입 컬럼(-3.4E38 ~ 3.4E38 단정밀도 부동소수점 (4Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("sampleFloat")
+        private final @NotNull Float sampleFloat;
+        @Schema(description = "FLOAT UNSIGNED 타입 컬럼(0 ~ 3.402823466E+38 단정밀도 부동소수점 (4Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("sampleFloatUnsigned")
+        private final @NotNull Float sampleFloatUnsigned;
+        @Schema(description = "DOUBLE 타입 컬럼(-1.7E308 ~ 1.7E308 배정밀도 부동소수점 (8Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("sampleDouble")
+        private final @NotNull Double sampleDouble;
+        @Schema(description = "DOUBLE UNSIGNED 타입 컬럼(0 ~ 1.7976931348623157E+308 배정밀도 부동소수점 (8Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("sampleDoubleUnsigned")
+        private final @NotNull Double sampleDoubleUnsigned;
+        @Schema(description = "DECIMAL(65, 10) 타입 컬럼(p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자)", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("sampleDecimalP65S10")
+        private final @NotNull BigDecimal sampleDecimalP65S10;
+        @Schema(description = "DATE 타입 컬럼(1000-01-01 ~ 9999-12-31, yyyy_MM_dd_z, 00시 00분 00초 기준)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_KST")
+        @JsonProperty("sampleDate")
+        private final @NotNull String sampleDate;
+        @Schema(description = "DATETIME 타입 컬럼(1000-01-01 00:00:00 ~ 9999-12-31 23:59:59, yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("sampleDatetime")
+        private final @NotNull String sampleDatetime;
+        @Schema(description = "TIME 타입 컬럼(-838:59:59 ~ 838:59:59, HH_mm_ss_SSS)", requiredMode = Schema.RequiredMode.REQUIRED, example = "01_01_01_111")
+        @JsonProperty("sampleTime")
+        private final @NotNull String sampleTime;
+        @Schema(description = "TIMESTAMP 타입 컬럼(1970-01-01 00:00:01 ~ 2038-01-19 03:14:07 날짜 데이터 저장시 UTC 기준으로 저장되고, 조회시 시스템 설정에 맞게 반환, yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("sampleTimestamp")
+        private final @NotNull String sampleTimestamp;
+        @Schema(description = "YEAR 타입 컬럼(1901 ~ 2155 년도)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024")
+        @JsonProperty("sampleYear")
+        private final @NotNull Integer sampleYear;
+        @Schema(description = "CHAR(12) 타입 컬럼(12 바이트 입력 허용)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleChar12")
+        private final @NotNull String sampleChar12;
+        @Schema(description = "VARCHAR(12) 타입 컬럼(12 바이트 입력 허용)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleVarchar12")
+        private final @NotNull String sampleVarchar12;
+        @Schema(description = "TINYTEXT 타입 컬럼(가변 길이 문자열 최대 255 Byte)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleTinyText")
+        private final @NotNull String sampleTinyText;
+        @Schema(description = "TEXT 타입 컬럼(가변 길이 문자열 최대 65,535 Byte)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleText")
+        private final @NotNull String sampleText;
+        @Schema(description = "MEDIUMTEXT 타입 컬럼(가변 길이 문자열 최대 16,777,215 Byte)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleMediumText")
+        private final @NotNull String sampleMediumText;
+        @Schema(description = "LONGTEXT 타입 컬럼(가변 길이 문자열 최대 4,294,967,295 Byte)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleLongText")
+        private final @NotNull String sampleLongText;
+        @Schema(description = "1 bit 값 (Boolean 으로 사용할 수 있습니다. (1 : 참, 0 : 거짓))", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+        @JsonProperty("sampleOneBit")
+        private final @NotNull Boolean sampleOneBit;
+        @Schema(description = "6 bit 값 (bit 사이즈에 따라 변수 사이즈를 맞춰 매핑)", requiredMode = Schema.RequiredMode.REQUIRED, example = "123")
+        @JsonProperty("sample6Bit")
+        private final @NotNull Short sample6Bit;
+        @Schema(description = "JSON 타입", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        @JsonProperty("sampleJson")
+        private final @Nullable SampleJsonVo sampleJson;
+        @Schema(description = "A, B, C 중 하나", requiredMode = Schema.RequiredMode.REQUIRED, example = "A")
+        @JsonProperty("sampleEnumAbc")
+        private final @NotNull Db1_Template_DataTypeMappingTest.EnumAbc sampleEnumAbc;
+        @Schema(description = "A, B, C 중 하나 (SET)", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"A\", \"B\"]")
+        @JsonProperty("sampleSetAbc")
+        private final @Nullable Set<Db1_Template_DataTypeMappingTest.EnumAbc> sampleSetAbc;
+        @Schema(description = "GEOMETRY 타입(Point, Line, Polygon 데이터 중 어느것이라도 하나를 넣을 수 있습니다.), 여기선 Point", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("sampleGeometry")
+        private final @NotNull PointVo sampleGeometry;
+        @Schema(description = "(X, Y) 공간 좌표", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("samplePoint")
+        private final @NotNull PointVo samplePoint;
+        @Schema(description = "직선 좌표 시퀀스", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("sampleLinestring")
+        private final @NotNull LinestringVo sampleLinestring;
+        @Schema(description = "고정 길이 이진 데이터 (최대 65535 바이트), 암호화된 값, UUID, 고정 길이 해시값 등을 저장하는 역할", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleBinary2")
+        private final @NotNull Short sampleBinary2;
+        @Schema(description = "가변 길이 이진 데이터 (최대 65535 바이트), 동적 크기의 바이너리 데이터, 이미지 등을 저장하는 역할", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleVarbinary2")
+        private final @NotNull Short sampleVarbinary2;
+
+        @Schema(description = "Sample Json Value Object")
+        @Data
+        public static class SampleJsonVo {
+            @Schema(description = "json 으로 입력할 String", requiredMode = Schema.RequiredMode.REQUIRED, example = "sampleJsonStr")
+            @JsonProperty("sampleJsonStr")
+            private final @NotNull String sampleJsonStr;
+            @Schema(description = "json 으로 입력할 Int", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
+            @JsonProperty("sampleJsonInt")
+            private final @Nullable Integer sampleJsonInt;
+        }
+
+        @Schema(description = "Point Object")
+        @Data
+        public static class PointVo {
+            @Schema(description = "x value", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.3")
+            @JsonProperty("x")
+            private final @NotNull Double x;
+            @Schema(description = "y value", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "2.9")
+            @JsonProperty("y")
+            private final @NotNull Double y;
+        }
+
+        @Schema(description = "Linestring Object")
+        @Data
+        public static class LinestringVo {
+            @Schema(description = "첫번째 점", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+            @JsonProperty("point1")
+            private final @NotNull PointVo point1;
+            @Schema(description = "두번째 점", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+            @JsonProperty("point2")
+            private final @NotNull PointVo point2;
+        }
+    }
+
+    @Data
+    public static class OrmDatatypeMappingTestOutputVo {
+        @Schema(description = "TINYINT 타입 컬럼(-128 ~ 127 정수 (1Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleTinyInt")
+        private final @NotNull Short sampleTinyInt;
+        @Schema(description = "TINYINT UNSIGNED 타입 컬럼(0 ~ 255 정수 (1Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleTinyIntUnsigned")
+        private final @NotNull Short sampleTinyIntUnsigned;
+        @Schema(description = "SMALLINT 타입 컬럼(-32,768 ~ 32,767 정수 (2Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleSmallInt")
+        private final @NotNull Short sampleSmallInt;
+        @Schema(description = "SMALLINT UNSIGNED 타입 컬럼(0 ~ 65,535 정수 (2Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleSmallIntUnsigned")
+        private final @NotNull Integer sampleSmallIntUnsigned;
+        @Schema(description = "MEDIUMINT 타입 컬럼(-8,388,608 ~ 8,388,607 정수 (3Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleMediumInt")
+        private final @NotNull Integer sampleMediumInt;
+        @Schema(description = "MEDIUMINT UNSIGNED 타입 컬럼(0 ~ 16,777,215 정수 (3Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleMediumIntUnsigned")
+        private final @NotNull Integer sampleMediumIntUnsigned;
+        @Schema(description = "INT 타입 컬럼(-2,147,483,648 ~ 2,147,483,647 정수 (4Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleInt")
+        private final @NotNull Integer sampleInt;
+        @Schema(description = "INT UNSIGNED 타입 컬럼(0 ~ 4,294,967,295 정수 (4Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleIntUnsigned")
+        private final @NotNull Long sampleIntUnsigned;
+        @Schema(description = "BIGINT 타입 컬럼(-2^63 ~ 2^63-1 정수 (8Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleBigInt")
+        private final @NotNull Long sampleBigInt;
+        @Schema(description = "BIGINT UNSIGNED 타입 컬럼(0 ~ 2^64-1 정수 (8Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleBigIntUnsigned")
+        private final @NotNull BigInteger sampleBigIntUnsigned;
+        @Schema(description = "FLOAT 타입 컬럼(-3.4E38 ~ 3.4E38 단정밀도 부동소수점 (4Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("sampleFloat")
+        private final @NotNull Float sampleFloat;
+        @Schema(description = "FLOAT UNSIGNED 타입 컬럼(0 ~ 3.402823466E+38 단정밀도 부동소수점 (4Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("sampleFloatUnsigned")
+        private final @NotNull Float sampleFloatUnsigned;
+        @Schema(description = "DOUBLE 타입 컬럼(-1.7E308 ~ 1.7E308 배정밀도 부동소수점 (8Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("sampleDouble")
+        private final @NotNull Double sampleDouble;
+        @Schema(description = "DOUBLE UNSIGNED 타입 컬럼(0 ~ 1.7976931348623157E+308 배정밀도 부동소수점 (8Byte))", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("sampleDoubleUnsigned")
+        private final @NotNull Double sampleDoubleUnsigned;
+        @Schema(description = "DECIMAL(65, 10) 타입 컬럼(p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자)", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
+        @JsonProperty("sampleDecimalP65S10")
+        private final @NotNull BigDecimal sampleDecimalP65S10;
+        @Schema(description = "DATE 타입 컬럼(1000-01-01 ~ 9999-12-31, yyyy_MM_dd_z, 00시 00분 00초 기준)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_KST")
+        @JsonProperty("sampleDate")
+        private final @NotNull String sampleDate;
+        @Schema(description = "DATETIME 타입 컬럼(1000-01-01 00:00:00 ~ 9999-12-31 23:59:59, yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("sampleDatetime")
+        private final @NotNull String sampleDatetime;
+        @Schema(description = "TIME 타입 컬럼(-838:59:59 ~ 838:59:59, HH_mm_ss_SSS)", requiredMode = Schema.RequiredMode.REQUIRED, example = "01_01_01_111")
+        @JsonProperty("sampleTime")
+        private final @NotNull String sampleTime;
+        @Schema(description = "TIMESTAMP 타입 컬럼(1970-01-01 00:00:01 ~ 2038-01-19 03:14:07 날짜 데이터 저장시 UTC 기준으로 저장되고, 조회시 시스템 설정에 맞게 반환, yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024_05_02_T_15_14_49_552_KST")
+        @JsonProperty("sampleTimestamp")
+        private final @NotNull String sampleTimestamp;
+        @Schema(description = "YEAR 타입 컬럼(1901 ~ 2155 년도)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2024")
+        @JsonProperty("sampleYear")
+        private final @NotNull Integer sampleYear;
+        @Schema(description = "CHAR(12) 타입 컬럼(12 바이트 입력 허용)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleChar12")
+        private final @NotNull String sampleChar12;
+        @Schema(description = "VARCHAR(12) 타입 컬럼(12 바이트 입력 허용)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleVarchar12")
+        private final @NotNull String sampleVarchar12;
+        @Schema(description = "TINYTEXT 타입 컬럼(가변 길이 문자열 최대 255 Byte)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleTinyText")
+        private final @NotNull String sampleTinyText;
+        @Schema(description = "TEXT 타입 컬럼(가변 길이 문자열 최대 65,535 Byte)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleText")
+        private final @NotNull String sampleText;
+        @Schema(description = "MEDIUMTEXT 타입 컬럼(가변 길이 문자열 최대 16,777,215 Byte)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleMediumText")
+        private final @NotNull String sampleMediumText;
+        @Schema(description = "LONGTEXT 타입 컬럼(가변 길이 문자열 최대 4,294,967,295 Byte)", requiredMode = Schema.RequiredMode.REQUIRED, example = "test")
+        @JsonProperty("sampleLongText")
+        private final @NotNull String sampleLongText;
+        @Schema(description = "1 bit 값 (Boolean 으로 사용할 수 있습니다. (1 : 참, 0 : 거짓))", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
+        @JsonProperty("sampleOneBit")
+        private final @NotNull Boolean sampleOneBit;
+        @Schema(description = "6 bit 값 (bit 사이즈에 따라 변수 사이즈를 맞춰 매핑)", requiredMode = Schema.RequiredMode.REQUIRED, example = "123")
+        @JsonProperty("sample6Bit")
+        private final @NotNull Short sample6Bit;
+        @Schema(description = "JSON 타입", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        @JsonProperty("sampleJson")
+        private final @Nullable String sampleJson;
+        @Schema(description = "A, B, C 중 하나", requiredMode = Schema.RequiredMode.REQUIRED, example = "A")
+        @JsonProperty("sampleEnumAbc")
+        private final @NotNull Db1_Template_DataTypeMappingTest.EnumAbc sampleEnumAbc;
+        @Schema(description = "A, B, C 중 하나 (SET)", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"A\", \"B\"]")
+        @JsonProperty("sampleSetAbc")
+        private final @Nullable Set<Db1_Template_DataTypeMappingTest.EnumAbc> sampleSetAbc;
+        @Schema(description = "GEOMETRY 타입(Point, Line, Polygon 데이터 중 어느것이라도 하나를 넣을 수 있습니다.), 여기선 Point", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("sampleGeometry")
+        private final @NotNull PointVo sampleGeometry;
+        @Schema(description = "(X, Y) 공간 좌표", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("samplePoint")
+        private final @NotNull PointVo samplePoint;
+        @Schema(description = "직선 좌표 시퀀스", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("sampleLinestring")
+        private final @NotNull LinestringVo sampleLinestring;
+        @Schema(description = "폴리곤", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("samplePolygon")
+        private final @NotNull List<PointVo> samplePolygon;
+        @Schema(description = "고정 길이 이진 데이터 (최대 65535 바이트), 암호화된 값, UUID, 고정 길이 해시값 등을 저장하는 역할", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleBinary2")
+        private final @NotNull Short sampleBinary2;
+        @Schema(description = "가변 길이 이진 데이터 (최대 65535 바이트), 동적 크기의 바이너리 데이터, 이미지 등을 저장하는 역할", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+        @JsonProperty("sampleVarbinary2")
+        private final @NotNull Short sampleVarbinary2;
+
+        @Schema(description = "Sample Json Value Object")
+        @Data
+        public static class SampleJsonVo {
+            @Schema(description = "json 으로 입력할 String", requiredMode = Schema.RequiredMode.REQUIRED, example = "sampleJsonStr")
+            @JsonProperty("sampleJsonStr")
+            private final @NotNull String sampleJsonStr;
+            @Schema(description = "json 으로 입력할 Int", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
+            @JsonProperty("sampleJsonInt")
+            private final @Nullable Integer sampleJsonInt;
+        }
+
+        @Schema(description = "Point Object")
+        @Data
+        public static class PointVo {
+            @Schema(description = "x value", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.3")
+            @JsonProperty("x")
+            private final @NotNull Double x;
+            @Schema(description = "y value", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "2.9")
+            @JsonProperty("y")
+            private final @NotNull Double y;
+        }
+
+        @Schema(description = "Linestring Object")
+        @Data
+        public static class LinestringVo {
+            @Schema(description = "첫번째 점", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+            @JsonProperty("point1")
+            private final @NotNull PointVo point1;
+            @Schema(description = "두번째 점", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+            @JsonProperty("point2")
+            private final @NotNull PointVo point2;
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.raillylinker.services;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig;
 import com.raillylinker.controllers.JpaTestController;
 import com.raillylinker.jpa_beans.db1_main.entities.*;
@@ -9,6 +11,7 @@ import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_Template_FkTestP
 import com.raillylinker.util_components.CustomUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.*;
+import org.locationtech.jts.geom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,13 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class JpaTestService {
@@ -43,7 +44,8 @@ public class JpaTestService {
             @NotNull Db1_Template_FkTestManyToOneChild_Repository db1TemplateFkTestManyToOneChildRepository,
             @NotNull Db1_Template_JustBooleanTest_Repository db1TemplateJustBooleanTestRepository,
             @NotNull Db1_Template_FkTestManyToOneChild_RepositoryDsl db1TemplateFkTestManyToOneChildRepositoryDsl,
-            @NotNull Db1_Template_FkTestParent_RepositoryDsl db1TemplateFkTestParentRepositoryDsl
+            @NotNull Db1_Template_FkTestParent_RepositoryDsl db1TemplateFkTestParentRepositoryDsl,
+            @NotNull Db1_Template_DataTypeMappingTest_Repository db1TemplateDataTypeMappingTestRepository
     ) {
         this.activeProfile = activeProfile;
         this.customUtil = customUtil;
@@ -54,6 +56,7 @@ public class JpaTestService {
         this.db1TemplateJustBooleanTestRepository = db1TemplateJustBooleanTestRepository;
         this.db1TemplateFkTestManyToOneChildRepositoryDsl = db1TemplateFkTestManyToOneChildRepositoryDsl;
         this.db1TemplateFkTestParentRepositoryDsl = db1TemplateFkTestParentRepositoryDsl;
+        this.db1TemplateDataTypeMappingTestRepository = db1TemplateDataTypeMappingTestRepository;
     }
 
     // <멤버 변수 공간>
@@ -72,6 +75,7 @@ public class JpaTestService {
     private final @NotNull Db1_Template_JustBooleanTest_Repository db1TemplateJustBooleanTestRepository;
     private final @NotNull Db1_Template_FkTestManyToOneChild_RepositoryDsl db1TemplateFkTestManyToOneChildRepositoryDsl;
     private final @NotNull Db1_Template_FkTestParent_RepositoryDsl db1TemplateFkTestParentRepositoryDsl;
+    private final @NotNull Db1_Template_DataTypeMappingTest_Repository db1TemplateDataTypeMappingTestRepository;
 
 
     // ---------------------------------------------------------------------------------------------
@@ -1326,5 +1330,186 @@ public class JpaTestService {
         );
 
         throw new RuntimeException("Transaction Rollback Test!");
+    }
+
+
+    // ----
+    // (ORM Datatype Mapping 테이블 Row 입력 테스트 API)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public JpaTestController.OrmDatatypeMappingTestOutputVo ormDatatypeMappingTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull JpaTestController.OrmDatatypeMappingTestInputVo inputVo
+    ) {
+        @NotNull Gson gson = new Gson();
+
+        @NotNull String[] sampleDateParts = inputVo.getSampleDate().split("_");
+
+        @NotNull GeometryFactory geometryFactory = new GeometryFactory();
+
+        // Point 데이터
+        @NotNull Point geometryPoint = geometryFactory.createPoint(
+                new Coordinate(inputVo.getSampleGeometry().getX(), inputVo.getSampleGeometry().getY()));
+
+        @NotNull Point point = geometryFactory.createPoint(
+                new Coordinate(inputVo.getSampleGeometry().getX(), inputVo.getSampleGeometry().getY()));
+
+        // Line 데이터
+        @NotNull LineString lineString = geometryFactory.createLineString(new Coordinate[]{
+                new Coordinate(inputVo.getSampleLinestring().getPoint1().getX(), inputVo.getSampleLinestring().getPoint1().getY()),
+                new Coordinate(inputVo.getSampleLinestring().getPoint2().getX(), inputVo.getSampleLinestring().getPoint2().getY())
+        });
+
+        // Polygon 데이터
+        @NotNull Polygon geometryPolygon = geometryFactory.createPolygon(new Coordinate[]{
+                new Coordinate(1.0, 1.0),
+                new Coordinate(1.0, 5.0),
+                new Coordinate(4.0, 9.0),
+                new Coordinate(6.0, 9.0),
+                new Coordinate(9.0, 3.0),
+                new Coordinate(7.0, 2.0),
+                new Coordinate(1.0, 1.0) // 첫 번째 좌표로 돌아가야 함
+        });
+
+        @NotNull Db1_Template_DataTypeMappingTest result =
+                db1TemplateDataTypeMappingTestRepository.save(
+                        Db1_Template_DataTypeMappingTest.builder()
+                                .sampleTinyInt(inputVo.getSampleTinyInt().byteValue())
+                                .sampleTinyIntUnsigned(inputVo.getSampleTinyIntUnsigned())
+                                .sampleSmallInt(inputVo.getSampleSmallInt())
+                                .sampleSmallIntUnsigned(inputVo.getSampleSmallIntUnsigned())
+                                .sampleMediumInt(inputVo.getSampleMediumInt())
+                                .sampleMediumIntUnsigned(inputVo.getSampleMediumIntUnsigned())
+                                .sampleInt(inputVo.getSampleInt())
+                                .sampleIntUnsigned(inputVo.getSampleIntUnsigned())
+                                .sampleBigInt(inputVo.getSampleBigInt())
+                                .sampleBigIntUnsigned(inputVo.getSampleBigIntUnsigned())
+                                .sampleFloat(inputVo.getSampleFloat())
+                                .sampleFloatUnsigned(inputVo.getSampleFloatUnsigned())
+                                .sampleDouble(inputVo.getSampleDouble())
+                                .sampleDoubleUnsigned(inputVo.getSampleDoubleUnsigned())
+                                .sampleDecimalP65S10(inputVo.getSampleDecimalP65S10())
+                                .sampleDate(
+                                        ZonedDateTime.parse(
+                                                sampleDateParts[0] + "_" + sampleDateParts[1] + "_" + sampleDateParts[2] + "_T_00_00_00_000_" + sampleDateParts[3],
+                                                DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                                        ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDate()
+                                )
+                                .sampleDateTime(
+                                        ZonedDateTime.parse(
+                                                inputVo.getSampleDatetime(),
+                                                DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                                        ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+                                )
+                                .sampleTime(LocalTime.parse(inputVo.getSampleTime(), DateTimeFormatter.ofPattern("HH_mm_ss_SSS")))
+                                .sampleTimestamp(
+                                        ZonedDateTime.parse(
+                                                inputVo.getSampleTimestamp(),
+                                                DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                                        ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+                                )
+                                .sampleYear(inputVo.getSampleYear())
+                                .sampleChar12(inputVo.getSampleChar12())
+                                .sampleVarchar12(inputVo.getSampleVarchar12())
+                                .sampleTinyText(inputVo.getSampleTinyText())
+                                .sampleText(inputVo.getSampleText())
+                                .sampleMediumText(inputVo.getSampleMediumText())
+                                .sampleLongText(inputVo.getSampleLongText())
+                                .sampleOneBit(inputVo.getSampleOneBit())
+                                .sample6Bit((byte) (inputVo.getSample6Bit().intValue() & 0x3F))
+                                .sampleJson(
+                                        inputVo.getSampleJson() == null ? null :
+                                                gson.fromJson(gson.toJsonTree(inputVo.getSampleJson()),
+                                                        new TypeToken<Map<String, Object>>() {
+                                                        }.getType())
+                                )
+                                .sampleEnumAbc(inputVo.getSampleEnumAbc())
+                                .sampleSetAbc(inputVo.getSampleSetAbc())
+                                .sampleGeometry(geometryPoint)
+                                .samplePoint(point)
+                                .sampleLinestring(lineString)
+                                .samplePolygon(geometryPolygon)
+                                .sampleBinary2(
+                                        new byte[]{
+                                                (byte) (inputVo.getSampleBinary2().intValue() >> 8),
+                                                (byte) (inputVo.getSampleBinary2().intValue() & 0xFF)
+                                        }
+                                )
+                                .sampleVarbinary2(
+                                        new byte[]{
+                                                (byte) (inputVo.getSampleVarbinary2().intValue() >> 8),
+                                                (byte) (inputVo.getSampleVarbinary2().intValue() & 0xFF)
+                                        }
+                                )
+                                .build()
+                );
+
+        @NotNull List<JpaTestController.OrmDatatypeMappingTestOutputVo.PointVo> samplePolygonPoints = new ArrayList<>();
+        for (@NotNull Coordinate polygonCoord : result.getSamplePolygon().getCoordinates()) {
+            samplePolygonPoints.add(
+                    new JpaTestController.OrmDatatypeMappingTestOutputVo.PointVo(
+                            polygonCoord.getX(),
+                            polygonCoord.getY()
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new JpaTestController.OrmDatatypeMappingTestOutputVo(
+                result.getSampleTinyInt().shortValue(),
+                result.getSampleTinyIntUnsigned(),
+                result.getSampleSmallInt(),
+                result.getSampleSmallIntUnsigned(),
+                result.getSampleMediumInt(),
+                result.getSampleMediumIntUnsigned(),
+                result.getSampleInt(),
+                result.getSampleIntUnsigned(),
+                result.getSampleBigInt(),
+                result.getSampleBigIntUnsigned(),
+                result.getSampleFloat(),
+                result.getSampleFloatUnsigned(),
+                result.getSampleDouble(),
+                result.getSampleDoubleUnsigned(),
+                result.getSampleDecimalP65S10(),
+                result.getSampleDate().atStartOfDay().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_z")),
+                result.getSampleDateTime().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                result.getSampleTime().format(DateTimeFormatter.ofPattern("HH_mm_ss_SSS")),
+                result.getSampleTimestamp().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                result.getSampleYear(),
+                result.getSampleChar12(),
+                result.getSampleVarchar12(),
+                result.getSampleTinyText(),
+                result.getSampleText(),
+                result.getSampleMediumText(),
+                result.getSampleLongText(),
+                result.getSampleOneBit(),
+                result.getSample6Bit().shortValue(),
+                result.getSampleJson() == null ? null : result.getSampleJson().toString(),
+                result.getSampleEnumAbc(),
+                result.getSampleSetAbc(),
+                new JpaTestController.OrmDatatypeMappingTestOutputVo.PointVo(
+                        ((Point) result.getSampleGeometry()).getX(),
+                        ((Point) result.getSampleGeometry()).getY()
+                ),
+                new JpaTestController.OrmDatatypeMappingTestOutputVo.PointVo(
+                        result.getSamplePoint().getX(),
+                        result.getSamplePoint().getY()
+                ),
+                new JpaTestController.OrmDatatypeMappingTestOutputVo.LinestringVo(
+                        new JpaTestController.OrmDatatypeMappingTestOutputVo.PointVo(
+                                result.getSampleLinestring().getStartPoint().getX(),
+                                result.getSampleLinestring().getStartPoint().getY()
+                        ),
+                        new JpaTestController.OrmDatatypeMappingTestOutputVo.PointVo(
+                                result.getSampleLinestring().getEndPoint().getX(),
+                                result.getSampleLinestring().getEndPoint().getY()
+                        )
+                ),
+                samplePolygonPoints,
+                (short) (((result.getSampleBinary2()[0] & 0xFF) << 8) | (result.getSampleBinary2()[1] & 0xFF)),
+                (short) (((result.getSampleVarbinary2()[0] & 0xFF) << 8) | (result.getSampleVarbinary2()[1] & 0xFF))
+        );
     }
 }

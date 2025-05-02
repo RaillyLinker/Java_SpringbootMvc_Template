@@ -16,7 +16,15 @@ public class MySqlSetConverter implements AttributeConverter<Set<String>, String
     public @Nullable String convertToDatabaseColumn(
             @Nullable Set<String> attribute
     ) {
-        return (attribute == null || attribute.isEmpty()) ? null : String.join(",", attribute);
+        if (attribute == null || attribute.isEmpty()) {
+            return null;
+        }
+
+        @NotNull String attributeStr = attribute.toString();
+
+        return attributeStr.replace("[", "")
+                .replace("]", "")
+                .replace(" ", "");
     }
 
     @Override
