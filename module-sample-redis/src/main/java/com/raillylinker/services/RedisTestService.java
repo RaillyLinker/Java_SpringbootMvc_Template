@@ -111,7 +111,35 @@ public class RedisTestService {
                 Redis1_Map_Test.MAP_NAME,
                 keyValue.getKey(),
                 keyValue.getValue().getContent(),
-                keyValue.getExpireTimeMs()
+                keyValue.getExpireTimeMs() == null ? 0L : keyValue.getExpireTimeMs()
+        );
+    }
+
+
+    // ----
+    // (Redis Key-Value 모두 조회 테스트)
+    public @Nullable RedisTestController.SelectAllRedisKeyValueSampleOutputVo selectAllRedisKeyValueSample(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        // 전체 조회 테스트
+        @NotNull List<BasicRedisMap.RedisMapDataVo<Redis1_Map_Test.ValueVo>> keyValueList = redis1Test.findAllKeyValues();
+
+        @NotNull ArrayList<RedisTestController.SelectAllRedisKeyValueSampleOutputVo.KeyValueVo> testEntityListVoList =
+                new ArrayList<>();
+        for (@NotNull BasicRedisMap.RedisMapDataVo<Redis1_Map_Test.ValueVo> keyValue : keyValueList) {
+            testEntityListVoList.add(
+                    new RedisTestController.SelectAllRedisKeyValueSampleOutputVo.KeyValueVo(
+                            keyValue.getKey(),
+                            keyValue.getValue().getContent(),
+                            keyValue.getExpireTimeMs() == null ? 0L : keyValue.getExpireTimeMs()
+                    )
+            );
+        }
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return new RedisTestController.SelectAllRedisKeyValueSampleOutputVo(
+                Redis1_Map_Test.MAP_NAME,
+                testEntityListVoList
         );
     }
 

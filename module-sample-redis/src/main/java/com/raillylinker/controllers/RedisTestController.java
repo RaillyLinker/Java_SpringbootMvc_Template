@@ -157,6 +157,59 @@ public class RedisTestController {
         @JsonProperty("expirationMs")
         private final @NotNull Long expirationMs;
     }
+
+
+    // ----
+    @Operation(
+            summary = "Redis Key-Value 모두 조회 테스트",
+            description = "Redis Table 에 저장된 모든 Key-Value 를 조회합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/tests"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE}
+    )
+    @ResponseBody
+    public @Nullable SelectAllRedisKeyValueSampleOutputVo selectAllRedisKeyValueSample(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        return service.selectAllRedisKeyValueSample(
+                httpServletResponse
+        );
+    }
+
+    @Data
+    public static class SelectAllRedisKeyValueSampleOutputVo {
+        @Schema(description = "Table 이름", requiredMode = Schema.RequiredMode.REQUIRED, example = "Redis1_Test")
+        @JsonProperty("tableName")
+        private final @NotNull String tableName;
+        @Schema(description = "Key-Value 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+        @JsonProperty("keyValueList")
+        private final @NotNull List<KeyValueVo> keyValueList;
+
+        @Schema(description = "Key-Value 객체")
+        @Data
+        public static class KeyValueVo {
+            @Schema(description = "Key", requiredMode = Schema.RequiredMode.REQUIRED, example = "testing")
+            @JsonProperty("key")
+            private final @NotNull String key;
+            @Schema(description = "글 본문", requiredMode = Schema.RequiredMode.REQUIRED, example = "테스트 텍스트입니다.")
+            @JsonProperty("content")
+            private final @NotNull String content;
+            @Schema(description = "데이터 만료시간(밀리 초, -1 이라면 무한정)", requiredMode = Schema.RequiredMode.REQUIRED, example = "12000")
+            @JsonProperty("expirationMs")
+            private final @NotNull Long expirationMs;
+        }
+    }
     // todo
 
 
