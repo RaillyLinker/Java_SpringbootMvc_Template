@@ -1,7 +1,7 @@
 package com.raillylinker.controllers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.raillylinker.services.ApiTestService;
+import com.raillylinker.services.RedisTestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -20,30 +20,41 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.util.List;
 
-@Tag(name = "/api-test APIs", description = "API 요청 / 응답에 대한 테스트 컨트롤러")
+// Key - Value 형식으로 저장되는 Redis Wrapper 를 사용하여 Database 의 Row 를 모사할 수 있으며,
+// 이를 통해 데이터베이스 결과에 대한 캐싱을 구현할 수 있습니다.
+/*
+    !!!
+    테스트를 하고 싶다면, 도커를 설치하고,
+    cmd 를 열어,
+    프로젝트 폴더 내의 external_files/docker/redis_docker 로 이동 후,
+    명령어.txt 에 적힌 명령어를 입력하여 Redis 를 실행시킬 수 있습니다.
+    !!!
+ */
+@Tag(name = "/redis-test APIs", description = "Redis 테스트 API 컨트롤러")
 @Controller
-@RequestMapping("/api-test")
+@RequestMapping("/redis-test")
 @Validated
-public class ApiTestController {
-    public ApiTestController(
-            @NotNull ApiTestService service
+public class RedisTestController {
+    public RedisTestController(
+            @NotNull RedisTestService service
     ) {
         this.service = service;
     }
 
     // <멤버 변수 공간>
-    private final @NotNull ApiTestService service;
+    private final @NotNull RedisTestService service;
 
 
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
+    // todo
+
+
     @Operation(
             summary = "기본 요청 테스트 API",
             description = "이 API 를 요청하면 현재 실행중인 프로필 이름을 반환합니다."
@@ -603,481 +614,6 @@ public class ApiTestController {
 
     // ----
     @Operation(
-            summary = "Post 요청 테스트 (multipart/form-data)",
-            description = "multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트<br>" +
-                    "MultipartFile 파라미터가 null 이 아니라면 저장"
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "정상 동작"
-                    )
-            }
-    )
-    @PostMapping(
-            path = {"/post-request-multipart-form-data"},
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @ResponseBody
-    public @Nullable PostRequestTestWithMultipartFormTypeRequestBodyOutputVo postRequestTestWithMultipartFormTypeRequestBody(
-            @Parameter(hidden = true)
-            @NotNull HttpServletResponse httpServletResponse,
-            @ModelAttribute
-            @RequestBody
-            @NotNull PostRequestTestWithMultipartFormTypeRequestBodyInputVo inputVo
-    ) {
-        return service.postRequestTestWithMultipartFormTypeRequestBody(
-                httpServletResponse,
-                inputVo
-        );
-    }
-
-    @Data
-    public static class PostRequestTestWithMultipartFormTypeRequestBodyInputVo {
-        @Schema(description = "String Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
-        @JsonProperty("requestFormString")
-        private final @NotNull String requestFormString;
-        @Schema(description = "String Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "testString")
-        @JsonProperty("requestFormStringNullable")
-        private final @Nullable String requestFormStringNullable;
-        @Schema(description = "Int Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-        @JsonProperty("requestFormInt")
-        private final @NotNull Integer requestFormInt;
-        @Schema(description = "Int Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
-        @JsonProperty("requestFormIntNullable")
-        private final @Nullable Integer requestFormIntNullable;
-        @Schema(description = "Double Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
-        @JsonProperty("requestFormDouble")
-        private final @NotNull Double requestFormDouble;
-        @Schema(description = "Double Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.1")
-        @JsonProperty("requestFormDoubleNullable")
-        private final @Nullable Double requestFormDoubleNullable;
-        @Schema(description = "Boolean Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
-        @JsonProperty("requestFormBoolean")
-        private final @NotNull Boolean requestFormBoolean;
-        @Schema(description = "Boolean Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "true")
-        @JsonProperty("requestFormBooleanNullable")
-        private final @Nullable Boolean requestFormBooleanNullable;
-        @Schema(description = "StringList Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("requestFormStringList")
-        private final @NotNull List<String> requestFormStringList;
-        @Schema(description = "StringList Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("requestFormStringListNullable")
-        private final @Nullable List<String> requestFormStringListNullable;
-        @Schema(description = "멀티 파트 파일", requiredMode = Schema.RequiredMode.REQUIRED)
-        @JsonProperty("multipartFile")
-        private final @NotNull MultipartFile multipartFile;
-        @Schema(description = "멀티 파트 파일 Nullable", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        @JsonProperty("multipartFileNullable")
-        private final @Nullable MultipartFile multipartFileNullable;
-    }
-
-    @Data
-    public static class PostRequestTestWithMultipartFormTypeRequestBodyOutputVo {
-        @Schema(description = "입력한 String Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
-        @JsonProperty("requestFormString")
-        private final @NotNull String requestFormString;
-        @Schema(description = "입력한 String Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "testString")
-        @JsonProperty("requestFormStringNullable")
-        private final @Nullable String requestFormStringNullable;
-        @Schema(description = "입력한 Int Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-        @JsonProperty("requestFormInt")
-        private final @NotNull Integer requestFormInt;
-        @Schema(description = "입력한 Int Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
-        @JsonProperty("requestFormIntNullable")
-        private final @Nullable Integer requestFormIntNullable;
-        @Schema(description = "입력한 Double Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
-        @JsonProperty("requestFormDouble")
-        private final @NotNull Double requestFormDouble;
-        @Schema(description = "입력한 Double Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.1")
-        @JsonProperty("requestFormDoubleNullable")
-        private final @Nullable Double requestFormDoubleNullable;
-        @Schema(description = "입력한 Boolean Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
-        @JsonProperty("requestFormBoolean")
-        private final @NotNull Boolean requestFormBoolean;
-        @Schema(description = "입력한 Boolean Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "true")
-        @JsonProperty("requestFormBooleanNullable")
-        private final @Nullable Boolean requestFormBooleanNullable;
-        @Schema(description = "입력한 StringList Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("requestFormStringList")
-        private final @NotNull List<String> requestFormStringList;
-        @Schema(description = "입력한 StringList Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("requestFormStringListNullable")
-        private final @Nullable List<String> requestFormStringListNullable;
-    }
-
-
-    // ----
-    @Operation(
-            summary = "Post 요청 테스트2 (multipart/form-data)",
-            description = "multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트(Multipart File List)<br>" +
-                    "파일 리스트가 null 이 아니라면 저장"
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "정상 동작"
-                    )
-            }
-    )
-    @PostMapping(
-            path = {"/post-request-multipart-form-data2"},
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @ResponseBody
-    public @Nullable PostRequestTestWithMultipartFormTypeRequestBody2OutputVo postRequestTestWithMultipartFormTypeRequestBody2(
-            @Parameter(hidden = true)
-            @NotNull HttpServletResponse httpServletResponse,
-            @ModelAttribute
-            @RequestBody
-            @NotNull PostRequestTestWithMultipartFormTypeRequestBody2InputVo inputVo
-    ) throws IOException {
-        return service.postRequestTestWithMultipartFormTypeRequestBody2(
-                httpServletResponse,
-                inputVo
-        );
-    }
-
-    @Data
-    public static class PostRequestTestWithMultipartFormTypeRequestBody2InputVo {
-        @Schema(description = "String Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
-        @JsonProperty("requestFormString")
-        private final @NotNull String requestFormString;
-        @Schema(description = "String Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "testString")
-        @JsonProperty("requestFormStringNullable")
-        private final @Nullable String requestFormStringNullable;
-        @Schema(description = "Int Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-        @JsonProperty("requestFormInt")
-        private final @NotNull Integer requestFormInt;
-        @Schema(description = "Int Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
-        @JsonProperty("requestFormIntNullable")
-        private final @Nullable Integer requestFormIntNullable;
-        @Schema(description = "Double Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
-        @JsonProperty("requestFormDouble")
-        private final @NotNull Double requestFormDouble;
-        @Schema(description = "Double Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.1")
-        @JsonProperty("requestFormDoubleNullable")
-        private final @Nullable Double requestFormDoubleNullable;
-        @Schema(description = "Boolean Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
-        @JsonProperty("requestFormBoolean")
-        private final @NotNull Boolean requestFormBoolean;
-        @Schema(description = "Boolean Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "true")
-        @JsonProperty("requestFormBooleanNullable")
-        private final @Nullable Boolean requestFormBooleanNullable;
-        @Schema(description = "StringList Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("requestFormStringList")
-        private final @NotNull List<String> requestFormStringList;
-        @Schema(description = "StringList Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("requestFormStringListNullable")
-        private final @Nullable List<String> requestFormStringListNullable;
-        @Schema(description = "멀티 파트 파일", requiredMode = Schema.RequiredMode.REQUIRED)
-        @JsonProperty("multipartFileList")
-        private final @NotNull List<MultipartFile> multipartFileList;
-        @Schema(description = "멀티 파트 파일 Nullable", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        @JsonProperty("multipartFileNullableList")
-        private final @Nullable List<MultipartFile> multipartFileNullableList;
-    }
-
-    @Data
-    public static class PostRequestTestWithMultipartFormTypeRequestBody2OutputVo {
-        @Schema(description = "입력한 String Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
-        @JsonProperty("requestFormString")
-        private final @NotNull String requestFormString;
-        @Schema(description = "입력한 String Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "testString")
-        @JsonProperty("requestFormStringNullable")
-        private final @Nullable String requestFormStringNullable;
-        @Schema(description = "입력한 Int Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-        @JsonProperty("requestFormInt")
-        private final @NotNull Integer requestFormInt;
-        @Schema(description = "입력한 Int Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
-        @JsonProperty("requestFormIntNullable")
-        private final @Nullable Integer requestFormIntNullable;
-        @Schema(description = "입력한 Double Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
-        @JsonProperty("requestFormDouble")
-        private final @NotNull Double requestFormDouble;
-        @Schema(description = "입력한 Double Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.1")
-        @JsonProperty("requestFormDoubleNullable")
-        private final @Nullable Double requestFormDoubleNullable;
-        @Schema(description = "입력한 Boolean Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
-        @JsonProperty("requestFormBoolean")
-        private final @NotNull Boolean requestFormBoolean;
-        @Schema(description = "입력한 Boolean Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "true")
-        @JsonProperty("requestFormBooleanNullable")
-        private final @Nullable Boolean requestFormBooleanNullable;
-        @Schema(description = "입력한 StringList Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("requestFormStringList")
-        private final @NotNull List<String> requestFormStringList;
-        @Schema(description = "입력한 StringList Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("requestFormStringListNullable")
-        private final @Nullable List<String> requestFormStringListNullable;
-    }
-
-
-    // ----
-    @Operation(
-            summary = "Post 요청 테스트 (multipart/form-data - JsonString)",
-            description = "multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트<br>" +
-                    "Form Data 의 Input Body 에는 Object 리스트 타입은 사용 불가능입니다.<br>" +
-                    "Object 리스트 타입을 사용한다면, Json String 타입으로 객체를 받아서 파싱하여 사용하는 방식을 사용합니다.<br>" +
-                    "아래 예시에서는 모두 JsonString 형식으로 만들었지만, ObjectList 타입만 이런식으로 처리하세요."
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "정상 동작"
-                    )
-            }
-    )
-    @PostMapping(
-            path = {"/post-request-multipart-form-data-json"},
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @ResponseBody
-    public @Nullable PostRequestTestWithMultipartFormTypeRequestBody3OutputVo postRequestTestWithMultipartFormTypeRequestBody3(
-            @Parameter(hidden = true)
-            @NotNull HttpServletResponse httpServletResponse,
-            @ModelAttribute
-            @RequestBody
-            @NotNull PostRequestTestWithMultipartFormTypeRequestBody3InputVo inputVo
-    ) {
-        return service.postRequestTestWithMultipartFormTypeRequestBody3(
-                httpServletResponse,
-                inputVo
-        );
-    }
-
-    @Data
-    public static class PostRequestTestWithMultipartFormTypeRequestBody3InputVo {
-        @Schema(
-                description = "json 형식의 문자열<br>" +
-                        """
-                                            data class InputJsonObject(<br>
-                                            @Schema(description = "String Form 파라미터", required = true, example = "testString")<br>
-                                            @JsonProperty("requestFormString")<br>
-                                            val requestFormString: String,<br>
-                                            @Schema(description = "String Nullable Form 파라미터", required = false, example = "testString")<br>
-                                            @JsonProperty("requestFormStringNullable")<br>
-                                            val requestFormStringNullable: String?,<br>
-                                            @Schema(description = "Int Form 파라미터", required = true, example = "1")<br>
-                                            @JsonProperty("requestFormInt")<br>
-                                            val requestFormInt: Int,<br>
-                                            @Schema(description = "Int Nullable Form 파라미터", required = false, example = "1")<br>
-                                            @JsonProperty("requestFormIntNullable")<br>
-                                            val requestFormIntNullable: Int?,<br>
-                                            @Schema(description = "Double Form 파라미터", required = true, example = "1.1")<br>
-                                            @JsonProperty("requestFormDouble")<br>
-                                            val requestFormDouble: Double,<br>
-                                            @Schema(description = "Double Nullable Form 파라미터", required = false, example = "1.1")<br>
-                                            @JsonProperty("requestFormDoubleNullable")<br>
-                                            val requestFormDoubleNullable: Double?,<br>
-                                            @Schema(description = "Boolean Form 파라미터", required = true, example = "true")<br>
-                                            @JsonProperty("requestFormBoolean")<br>
-                                            val requestFormBoolean: Boolean,<br>
-                                            @Schema(description = "Boolean Nullable Form 파라미터", required = false, example = "true")<br>
-                                            @JsonProperty("requestFormBooleanNullable")<br>
-                                            val requestFormBooleanNullable: Boolean?,<br>
-                                            @Schema(description = "StringList Form 파라미터", required = true, example = "["testString1", "testString2"]")<br>
-                                            @JsonProperty("requestFormStringList")<br>
-                                            val requestFormStringList: List<String>,<br>
-                                            @Schema(<br>
-                                                description = "StringList Nullable Form 파라미터",<br>
-                                                required = false,<br>
-                                                example = "["testString1", "testString2"]"<br>
-                                            )<br>
-                                            @JsonProperty("requestFormStringListNullable")<br>
-                                            val requestFormStringListNullable: List<String>?<br>
-                                        )
-                                """,
-                requiredMode = Schema.RequiredMode.REQUIRED,
-                example = """
-                        {
-                          "requestFormString": "testString",
-                          "requestFormStringNullable": null,
-                          "requestFormInt": 1,
-                          "requestFormIntNullable": null,
-                          "requestFormDouble": 1.1,
-                          "requestFormDoubleNullable": null,
-                          "requestFormBoolean": true,
-                          "requestFormBooleanNullable": null,
-                          "requestFormStringList": [
-                            "testString1",
-                            "testString2"
-                          ],
-                          "requestFormStringListNullable": null
-                        }
-                        """
-        )
-        @JsonProperty("jsonString")
-        private final @NotNull String jsonString;
-        @Schema(description = "멀티 파트 파일", requiredMode = Schema.RequiredMode.REQUIRED)
-        @JsonProperty("multipartFile")
-        private final @NotNull MultipartFile multipartFile;
-        @Schema(description = "멀티 파트 파일 Nullable", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        @JsonProperty("multipartFileNullable")
-        private final @Nullable MultipartFile multipartFileNullable;
-
-        @Schema(description = "Json String Object")
-        @Data
-        public static class InputJsonObject {
-            @Schema(description = "String Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
-            @JsonProperty("requestFormString")
-            private final @NotNull String requestFormString;
-            @Schema(description = "String Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "testString")
-            @JsonProperty("requestFormStringNullable")
-            private final @Nullable String requestFormStringNullable;
-            @Schema(description = "Int Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-            @JsonProperty("requestFormInt")
-            private final @NotNull Integer requestFormInt;
-            @Schema(description = "Int Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
-            @JsonProperty("requestFormIntNullable")
-            private final @Nullable Integer requestFormIntNullable;
-            @Schema(description = "Double Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
-            @JsonProperty("requestFormDouble")
-            private final @NotNull Double requestFormDouble;
-            @Schema(description = "Double Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.1")
-            @JsonProperty("requestFormDoubleNullable")
-            private final @Nullable Double requestFormDoubleNullable;
-            @Schema(description = "Boolean Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
-            @JsonProperty("requestFormBoolean")
-            private final @NotNull Boolean requestFormBoolean;
-            @Schema(description = "Boolean Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "true")
-            @JsonProperty("requestFormBooleanNullable")
-            private final @Nullable Boolean requestFormBooleanNullable;
-            @Schema(description = "StringList Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
-            @JsonProperty("requestFormStringList")
-            private final @NotNull List<String> requestFormStringList;
-            @Schema(description = "StringList Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
-            @JsonProperty("requestFormStringListNullable")
-            private final @Nullable List<String> requestFormStringListNullable;
-            @Schema(description = "멀티 파트 파일", requiredMode = Schema.RequiredMode.REQUIRED)
-            @JsonProperty("multipartFile")
-            private final @NotNull MultipartFile multipartFile;
-            @Schema(description = "멀티 파트 파일 Nullable", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-            @JsonProperty("multipartFileNullable")
-            private final @Nullable MultipartFile multipartFileNullable;
-        }
-    }
-
-    @Data
-    public static class PostRequestTestWithMultipartFormTypeRequestBody3OutputVo {
-        @Schema(description = "입력한 String Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
-        @JsonProperty("requestFormString")
-        private final @NotNull String requestFormString;
-        @Schema(description = "입력한 String Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "testString")
-        @JsonProperty("requestFormStringNullable")
-        private final @Nullable String requestFormStringNullable;
-        @Schema(description = "입력한 Int Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-        @JsonProperty("requestFormInt")
-        private final @NotNull Integer requestFormInt;
-        @Schema(description = "입력한 Int Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
-        @JsonProperty("requestFormIntNullable")
-        private final @Nullable Integer requestFormIntNullable;
-        @Schema(description = "입력한 Double Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
-        @JsonProperty("requestFormDouble")
-        private final @NotNull Double requestFormDouble;
-        @Schema(description = "입력한 Double Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.1")
-        @JsonProperty("requestFormDoubleNullable")
-        private final @Nullable Double requestFormDoubleNullable;
-        @Schema(description = "입력한 Boolean Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
-        @JsonProperty("requestFormBoolean")
-        private final @NotNull Boolean requestFormBoolean;
-        @Schema(description = "입력한 Boolean Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "true")
-        @JsonProperty("requestFormBooleanNullable")
-        private final @Nullable Boolean requestFormBooleanNullable;
-        @Schema(description = "입력한 StringList Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("requestFormStringList")
-        private final @NotNull List<String> requestFormStringList;
-        @Schema(description = "입력한 StringList Nullable Form 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("requestFormStringListNullable")
-        private final @Nullable List<String> requestFormStringListNullable;
-    }
-
-
-    // ----
-    @Operation(
-            summary = "Post 요청 테스트 (multipart/form-data - ObjectList)",
-            description = "multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트<br>" +
-                    "Form Data 의 Input Body 에는 Object 리스트 타입은 Swagger 테스터에서는 사용 불가능입니다.<br>" +
-                    "테스트 시에는 postman 과 같은 테스터에서 inputObjectList[0].requestFormString 이렇게 하여 값을 입력하면 됩니다."
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "정상 동작"
-                    )
-            }
-    )
-    @PostMapping(
-            path = {"/post-request-multipart-form-data-object-list"},
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @ResponseBody
-    public @Nullable PostRequestTestWithMultipartFormTypeRequestBody4OutputVo postRequestTestWithMultipartFormTypeRequestBody4(
-            @Parameter(hidden = true)
-            @NotNull HttpServletResponse httpServletResponse,
-            @ModelAttribute
-            @RequestBody
-            @NotNull PostRequestTestWithMultipartFormTypeRequestBody4InputVo inputVo
-    ) {
-        return service.postRequestTestWithMultipartFormTypeRequestBody4(
-                httpServletResponse,
-                inputVo
-        );
-    }
-
-    @Data
-    public static class PostRequestTestWithMultipartFormTypeRequestBody4InputVo {
-        @Schema(description = "Object List", requiredMode = Schema.RequiredMode.REQUIRED)
-        @JsonProperty("inputObjectList")
-        private final @NotNull List<InputObject> inputObjectList;
-        @Schema(description = "멀티 파트 파일", requiredMode = Schema.RequiredMode.REQUIRED)
-        @JsonProperty("multipartFile")
-        private final @NotNull MultipartFile multipartFile;
-        @Schema(description = "멀티 파트 파일 Nullable", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        @JsonProperty("multipartFileNullable")
-        private final @Nullable MultipartFile multipartFileNullable;
-
-        @Schema(description = "InputObject")
-        @Data
-        public static class InputObject {
-            @Schema(description = "입력한 String Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
-            @JsonProperty("requestFormString")
-            private final @NotNull String requestFormString;
-            @Schema(description = "입력한 Int Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-            @JsonProperty("requestFormInt")
-            private final @NotNull Integer requestFormInt;
-        }
-    }
-
-    @Data
-    public static class PostRequestTestWithMultipartFormTypeRequestBody4OutputVo {
-        @Schema(description = "Object List", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        @JsonProperty("inputObjectList")
-        private final @Nullable List<InputObject> inputObjectList;
-
-        @Schema(description = "InputObject")
-        @Data
-        public static class InputObject {
-            @Schema(description = "입력한 String Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
-            @JsonProperty("requestFormString")
-            private final @NotNull String requestFormString;
-            @Schema(description = "입력한 Int Form 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-            @JsonProperty("requestFormInt")
-            private final @NotNull Integer requestFormInt;
-        }
-    }
-
-
-    // ----
-    @Operation(
             summary = "인위적 에러 발생 테스트",
             description = "요청 받으면 인위적인 서버 에러를 발생시킵니다.(Http Response Status 500)"
     )
@@ -1353,43 +889,6 @@ public class ApiTestController {
 
 
     // ----
-    @Operation(
-            summary = "비동기 처리 결과 반환 샘플",
-            description = "API 호출시 함수 내에서 별도 스레드로 작업을 수행하고,<br>" +
-                    "비동기 작업 완료 후 그 처리 결과가 반환됨"
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "정상 동작"
-                    )
-            }
-    )
-    @GetMapping(
-            path = {"/async-result"},
-            consumes = {MediaType.ALL_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE}
-    )
-    @ResponseBody
-    public @Nullable DeferredResult<AsynchronousResponseTestOutputVo> asynchronousResponseTest(
-            @Parameter(hidden = true)
-            @NotNull HttpServletResponse httpServletResponse
-    ) {
-        return service.asynchronousResponseTest(
-                httpServletResponse
-        );
-    }
-
-    @Data
-    public static class AsynchronousResponseTestOutputVo {
-        @Schema(description = "결과 메세지", requiredMode = Schema.RequiredMode.REQUIRED, example = "n 초 경과 후 반환했습니다.")
-        @JsonProperty("resultMessage")
-        private final @NotNull String resultMessage;
-    }
-
-
-    // ----
     /*
          결론적으로 아래 파라미터는, Query Param 의 경우는 리스트 입력이 ?stringList=string&stringList=string 이런식이므로,
          리스트 파라미터가 Not NULL 이라면 빈 리스트를 보낼 수 없으며,
@@ -1444,53 +943,6 @@ public class ApiTestController {
         @Schema(description = "입력한 StringList Body 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
         @JsonProperty("requestBodyStringList")
         private final @NotNull List<String> requestBodyStringList;
-    }
-
-
-    // ----
-    @Operation(
-            summary = "by_product_files 폴더로 파일 업로드",
-            description = "multipart File 을 하나 업로드하여 서버의 by_product_files 폴더에 저장"
-    )
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "정상 동작"
-                    )
-            }
-    )
-    @PostMapping(
-            path = {"/upload-to-server"},
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @ResponseBody
-    public @Nullable UploadToServerTestOutputVo uploadToServerTest(
-            @Parameter(hidden = true)
-            @NotNull HttpServletResponse httpServletResponse,
-            @ModelAttribute
-            @RequestBody
-            @NotNull UploadToServerTestInputVo inputVo
-    ) {
-        return service.uploadToServerTest(
-                httpServletResponse,
-                inputVo
-        );
-    }
-
-    @Data
-    public static class UploadToServerTestInputVo {
-        @Schema(description = "업로드 파일", requiredMode = Schema.RequiredMode.REQUIRED)
-        @JsonProperty("multipartFile")
-        private final @NotNull MultipartFile multipartFile;
-    }
-
-    @Data
-    public static class UploadToServerTestOutputVo {
-        @Schema(description = "파일 다운로드 경로", requiredMode = Schema.RequiredMode.REQUIRED, example = "http://127.0.0.1:8080/service1/tk/v1/file-test/download-from-server/file.txt")
-        @JsonProperty("fileDownloadFullUrl")
-        private final @NotNull String fileDownloadFullUrl;
     }
 
 
