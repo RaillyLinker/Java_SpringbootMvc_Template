@@ -9,6 +9,9 @@ include 'module-template'
 // API 테스트 샘플 (12006)
 include 'module-sample-api'
 
+// Redis 테스트 샘플 (12008)
+include 'module-sample-redis'
+
 // JPA 테스트 샘플 (12010)
 include 'module-sample-jpa'
 

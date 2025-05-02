@@ -1,0 +1,5 @@
+[ls] [2025_05_02_T_17_29_57_679_KST] [INFO ] [Starting ModuleTest using Java 21.0.7 with PID 15784 (started by raill in C:\dev\springboot\Java_SpringbootMvc_Template\module-sample-redis)] [le]
+[ls] [2025_05_02_T_17_29_57_689_KST] [INFO ] [No active profile set, falling back to 3 default profiles: "local12008", "local", "port12008"] [le]
+[ls] [2025_05_02_T_17_30_00_542_KST] [INFO ] [Exposing 14 endpoints beneath base path '/actuator'] [le]
+[ls] [2025_05_02_T_17_30_00_615_KST] [INFO ] [Started ModuleTest in 3.409 seconds (process running for 4.632)] [le]
+[ls] [2025_05_02_T_17_30_01_371_KST] [INFO ] [test] [le]
