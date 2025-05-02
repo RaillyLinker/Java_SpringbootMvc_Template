@@ -83,26 +83,29 @@ public class JpaTestService {
             @NotNull JpaTestController.InsertDataSampleInputVo inputVo
     ) {
         @NotNull Db1_Template_TestData result = db1TemplateTestDataRepository.save(
-                new Db1_Template_TestData(
-                        inputVo.getContent(),
-                        (int) (Math.random() * 99999999), // Random number between 0 and 99999999
-                        ZonedDateTime.parse(inputVo.getDateString(), DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                                .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
-                )
+                Db1_Template_TestData.builder()
+                        .content(inputVo.getContent())
+                        .randomNum((int) (Math.random() * 99999999))
+                        .testDatetime(
+                                ZonedDateTime.parse(inputVo.getDateString(), DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                                        .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+                        )
+                        .rowDeleteDateStr("/")
+                        .build()
         );
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return new JpaTestController.InsertDataSampleOutputVo(
-                result.uid,
-                result.content,
-                result.randomNum,
-                result.testDatetime.atZone(ZoneId.systemDefault())
+                result.getUid(),
+                result.getContent(),
+                result.getRandomNum(),
+                result.getTestDatetime().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                result.rowCreateDate.atZone(ZoneId.systemDefault())
+                result.getRowCreateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                result.rowUpdateDate.atZone(ZoneId.systemDefault())
+                result.getRowUpdateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                result.rowDeleteDateStr
+                result.getRowDeleteDateStr()
         );
     }
 
@@ -117,9 +120,10 @@ public class JpaTestService {
         if (deleteLogically) {
             @NotNull List<Db1_Template_TestData> entityList = db1TemplateTestDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/");
             for (@NotNull Db1_Template_TestData entity : entityList) {
-                entity.rowDeleteDateStr =
+                entity.setRowDeleteDateStr(
                         LocalDateTime.now().atZone(ZoneId.systemDefault())
-                                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"));
+                                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                );
                 db1TemplateTestDataRepository.save(entity);
             }
         } else {
@@ -147,8 +151,10 @@ public class JpaTestService {
         }
 
         if (deleteLogically) {
-            entity.rowDeleteDateStr =
-                    LocalDateTime.now().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"));
+            entity.setRowDeleteDateStr(
+                    LocalDateTime.now().atZone(ZoneId.systemDefault())
+                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+            );
             db1TemplateTestDataRepository.save(entity);
         } else {
             db1TemplateTestDataRepository.deleteById(index);
@@ -169,16 +175,16 @@ public class JpaTestService {
         @NotNull List<JpaTestController.SelectRowsSampleOutputVo.TestEntityVo> entityVoList = new ArrayList<>();
         for (@NotNull Db1_Template_TestData resultEntity : resultEntityList) {
             entityVoList.add(new JpaTestController.SelectRowsSampleOutputVo.TestEntityVo(
-                    resultEntity.uid,
-                    resultEntity.content,
-                    resultEntity.randomNum,
-                    resultEntity.testDatetime.atZone(ZoneId.systemDefault())
+                    resultEntity.getUid(),
+                    resultEntity.getContent(),
+                    resultEntity.getRandomNum(),
+                    resultEntity.getTestDatetime().atZone(ZoneId.systemDefault())
                             .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                    resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                    resultEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                             .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                    resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                    resultEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                             .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                    resultEntity.rowDeleteDateStr
+                    resultEntity.getRowDeleteDateStr()
             ));
         }
 
@@ -187,16 +193,16 @@ public class JpaTestService {
         @NotNull List<JpaTestController.SelectRowsSampleOutputVo.TestEntityVo> logicalDeleteVoList = new ArrayList<>();
         for (@NotNull Db1_Template_TestData resultEntity : logicalDeleteEntityVoList) {
             logicalDeleteVoList.add(new JpaTestController.SelectRowsSampleOutputVo.TestEntityVo(
-                    resultEntity.uid,
-                    resultEntity.content,
-                    resultEntity.randomNum,
-                    resultEntity.testDatetime.atZone(ZoneId.systemDefault())
+                    resultEntity.getUid(),
+                    resultEntity.getContent(),
+                    resultEntity.getRandomNum(),
+                    resultEntity.getTestDatetime().atZone(ZoneId.systemDefault())
                             .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                    resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                    resultEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                             .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                    resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                    resultEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                             .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                    resultEntity.rowDeleteDateStr
+                    resultEntity.getRowDeleteDateStr()
             ));
         }
 
@@ -300,14 +306,14 @@ public class JpaTestService {
         for (@NotNull Db1_Template_TestData entity : entityList) {
             testEntityVoList.add(
                     new JpaTestController.SelectRowsPageSampleOutputVo.TestEntityVo(
-                            entity.uid,
-                            entity.content,
-                            entity.randomNum,
-                            entity.testDatetime.atZone(ZoneId.systemDefault())
+                            entity.getUid(),
+                            entity.getContent(),
+                            entity.getRandomNum(),
+                            entity.getTestDatetime().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            entity.rowCreateDate.atZone(ZoneId.systemDefault())
+                            entity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            entity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                            entity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                     )
             );
@@ -374,20 +380,22 @@ public class JpaTestService {
             return null;
         }
 
-        oldEntity.content = inputVo.getContent();
-        oldEntity.testDatetime = ZonedDateTime.parse(inputVo.getDateString(), DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+        oldEntity.setContent(inputVo.getContent());
+        oldEntity.setTestDatetime(
+                ZonedDateTime.parse(inputVo.getDateString(), DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                        .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+        );
 
         @NotNull Db1_Template_TestData result = db1TemplateTestDataRepository.save(oldEntity);
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return new JpaTestController.UpdateRowSampleOutputVo(
-                result.uid,
-                result.content,
-                result.randomNum,
-                result.testDatetime.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                result.rowCreateDate.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                result.rowUpdateDate.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                result.getUid(),
+                result.getContent(),
+                result.getRandomNum(),
+                result.getTestDatetime().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                result.getRowCreateDate().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                result.getRowUpdateDate().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
         );
     }
 
@@ -464,11 +472,12 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse
     ) {
         db1TemplateTestDataRepository.save(
-                new Db1_Template_TestData(
-                        "error test",
-                        (int) (Math.random() * 99999999), // Random number between 0 and 99999999
-                        LocalDateTime.now()
-                )
+                Db1_Template_TestData.builder()
+                        .content("error test")
+                        .randomNum((int) (Math.random() * 99999999))
+                        .testDatetime(LocalDateTime.now())
+                        .rowDeleteDateStr("/")
+                        .build()
         );
 
         throw new RuntimeException("Transaction Rollback Test!");
@@ -481,11 +490,12 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse
     ) {
         db1TemplateTestDataRepository.save(
-                new Db1_Template_TestData(
-                        "error test",
-                        (int) (Math.random() * 99999999), // Random number between 0 and 99999999
-                        LocalDateTime.now()
-                )
+                Db1_Template_TestData.builder()
+                        .content("error test")
+                        .randomNum((int) (Math.random() * 99999999))
+                        .testDatetime(LocalDateTime.now())
+                        .rowDeleteDateStr("/")
+                        .build()
         );
 
         throw new RuntimeException("No Transaction Exception Test!");
@@ -500,11 +510,12 @@ public class JpaTestService {
     ) {
         try {
             db1TemplateTestDataRepository.save(
-                    new Db1_Template_TestData(
-                            "error test",
-                            (int) (Math.random() * 99999999), // Random number between 0 and 99999999
-                            LocalDateTime.now()
-                    )
+                    Db1_Template_TestData.builder()
+                            .content("error test")
+                            .randomNum((int) (Math.random() * 99999999))
+                            .testDatetime(LocalDateTime.now())
+                            .rowDeleteDateStr("/")
+                            .build()
             );
 
             throw new Exception("Transaction Rollback Test!");
@@ -620,20 +631,21 @@ public class JpaTestService {
             @NotNull JpaTestController.InsertUniqueTestTableRowSampleInputVo inputVo
     ) {
         @NotNull Db1_Template_LogicalDeleteUniqueData result = db1TemplateLogicalDeleteUniqueDataRepository.save(
-                new Db1_Template_LogicalDeleteUniqueData(
-                        inputVo.getUniqueValue()
-                )
+                Db1_Template_LogicalDeleteUniqueData.builder()
+                        .uniqueValue(inputVo.getUniqueValue())
+                        .rowDeleteDateStr("/")
+                        .build()
         );
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return new JpaTestController.InsertUniqueTestTableRowSampleOutputVo(
-                result.uid,
-                result.uniqueValue,
-                result.rowCreateDate.atZone(ZoneId.systemDefault())
+                result.getUid(),
+                result.getUniqueValue(),
+                result.getRowCreateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                result.rowUpdateDate.atZone(ZoneId.systemDefault())
+                result.getRowUpdateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                result.rowDeleteDateStr
+                result.getRowDeleteDateStr()
         );
     }
 
@@ -650,13 +662,13 @@ public class JpaTestService {
         for (@NotNull Db1_Template_LogicalDeleteUniqueData resultEntity : resultEntityList) {
             entityVoList.add(
                     new JpaTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo(
-                            resultEntity.uid,
-                            resultEntity.uniqueValue,
-                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getUid(),
+                            resultEntity.getUniqueValue(),
+                            resultEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            resultEntity.rowDeleteDateStr
+                            resultEntity.getRowDeleteDateStr()
                     )
             );
         }
@@ -667,13 +679,13 @@ public class JpaTestService {
         for (@NotNull Db1_Template_LogicalDeleteUniqueData resultEntity : logicalDeleteEntityVoList) {
             logicalDeleteVoList.add(
                     new JpaTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo(
-                            resultEntity.uid,
-                            resultEntity.uniqueValue,
-                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getUid(),
+                            resultEntity.getUniqueValue(),
+                            resultEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            resultEntity.rowDeleteDateStr
+                            resultEntity.getRowDeleteDateStr()
                     )
             );
         }
@@ -715,18 +727,18 @@ public class JpaTestService {
             return null;
         }
 
-        oldEntity.uniqueValue = inputVo.getUniqueValue();
+        oldEntity.setUniqueValue(inputVo.getUniqueValue());
 
         @NotNull Db1_Template_LogicalDeleteUniqueData result =
                 db1TemplateLogicalDeleteUniqueDataRepository.save(oldEntity);
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return new JpaTestController.UpdateUniqueTestTableRowSampleOutputVo(
-                result.uid,
-                result.uniqueValue,
-                result.rowCreateDate.atZone(ZoneId.systemDefault())
+                result.getUid(),
+                result.getUniqueValue(),
+                result.getRowCreateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                result.rowUpdateDate.atZone(ZoneId.systemDefault())
+                result.getRowUpdateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
         );
     }
@@ -748,9 +760,10 @@ public class JpaTestService {
             return;
         }
 
-        entity.rowDeleteDateStr =
+        entity.setRowDeleteDateStr(
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"));
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        );
         db1TemplateLogicalDeleteUniqueDataRepository.save(entity);
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
@@ -766,18 +779,19 @@ public class JpaTestService {
     ) {
         @NotNull Db1_Template_FkTestParent result =
                 db1TemplateFkTestParentRepository.save(
-                        new Db1_Template_FkTestParent(
-                                inputVo.getFkParentName()
-                        )
+                        Db1_Template_FkTestParent.builder()
+                                .parentName(inputVo.getFkParentName())
+                                .rowDeleteDateStr("/")
+                                .build()
                 );
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return new JpaTestController.InsertFkParentRowSampleOutputVo(
-                result.uid,
-                result.parentName,
-                result.rowCreateDate.atZone(ZoneId.systemDefault())
+                result.getUid(),
+                result.getParentName(),
+                result.getRowCreateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                result.rowUpdateDate.atZone(ZoneId.systemDefault())
+                result.getRowUpdateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
         );
     }
@@ -803,20 +817,21 @@ public class JpaTestService {
 
         @NotNull Db1_Template_FkTestManyToOneChild result =
                 db1TemplateFkTestManyToOneChildRepository.save(
-                        new Db1_Template_FkTestManyToOneChild(
-                                inputVo.getFkChildName(),
-                                parentEntity
-                        )
+                        Db1_Template_FkTestManyToOneChild.builder()
+                                .childName(inputVo.getFkChildName())
+                                .fkTestParent(parentEntity)
+                                .rowDeleteDateStr("/")
+                                .build()
                 );
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return new JpaTestController.InsertFkChildRowSampleOutputVo(
-                result.uid,
-                result.childName,
-                result.fkTestParent.parentName,
-                result.rowCreateDate.atZone(ZoneId.systemDefault())
+                result.getUid(),
+                result.getChildName(),
+                result.getFkTestParent().getParentName(),
+                result.getRowCreateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                result.rowUpdateDate.atZone(ZoneId.systemDefault())
+                result.getRowUpdateDate().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
         );
     }
@@ -846,11 +861,11 @@ public class JpaTestService {
             for (@NotNull Db1_Template_FkTestManyToOneChild childEntity : childList) {
                 childEntityVoList.add(
                         new JpaTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo.ChildEntityVo(
-                                childEntity.uid,
-                                childEntity.childName,
-                                childEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                childEntity.getUid(),
+                                childEntity.getChildName(),
+                                childEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                                childEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                childEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                         )
                 );
@@ -858,11 +873,11 @@ public class JpaTestService {
 
             entityVoList.add(
                     new JpaTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo(
-                            resultEntity.uid,
-                            resultEntity.parentName,
-                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getUid(),
+                            resultEntity.getParentName(),
+                            resultEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
                             childEntityVoList
                     )
@@ -920,7 +935,9 @@ public class JpaTestService {
         @NotNull List<Db1_Template_JustBooleanTest> justBooleanEntity = db1TemplateJustBooleanTestRepository.findAll();
         if (justBooleanEntity.isEmpty()) {
             db1TemplateJustBooleanTestRepository.save(
-                    new Db1_Template_JustBooleanTest(true)
+                    Db1_Template_JustBooleanTest.builder()
+                            .boolValue(true)
+                            .build()
             );
         }
 
@@ -955,14 +972,14 @@ public class JpaTestService {
         for (@NotNull Db1_Template_TestData jpaRepositoryResultEntity : jpaRepositoryResultEntityList) {
             jpaRepositoryResultList.add(
                     new JpaTestController.SqlInjectionTestOutputVo.TestEntityVo(
-                            jpaRepositoryResultEntity.uid,
-                            jpaRepositoryResultEntity.content,
-                            jpaRepositoryResultEntity.randomNum,
-                            jpaRepositoryResultEntity.testDatetime.atZone(ZoneId.systemDefault())
+                            jpaRepositoryResultEntity.getUid(),
+                            jpaRepositoryResultEntity.getContent(),
+                            jpaRepositoryResultEntity.getRandomNum(),
+                            jpaRepositoryResultEntity.getTestDatetime().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            jpaRepositoryResultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                            jpaRepositoryResultEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            jpaRepositoryResultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                            jpaRepositoryResultEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                     )
             );
@@ -979,14 +996,14 @@ public class JpaTestService {
         for (@NotNull Db1_Template_TestData jpqlEntity : jpqlResultEntityList) {
             jpqlResultList.add(
                     new JpaTestController.SqlInjectionTestOutputVo.TestEntityVo(
-                            jpqlEntity.uid,
-                            jpqlEntity.content,
-                            jpqlEntity.randomNum,
-                            jpqlEntity.testDatetime.atZone(ZoneId.systemDefault())
+                            jpqlEntity.getUid(),
+                            jpqlEntity.getContent(),
+                            jpqlEntity.getRandomNum(),
+                            jpqlEntity.getTestDatetime().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            jpqlEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                            jpqlEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            jpqlEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                            jpqlEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                     )
             );
@@ -1086,14 +1103,14 @@ public class JpaTestService {
             @NotNull ArrayList<JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo> childEntityVoList =
                     new ArrayList<>();
 
-            for (@NotNull Db1_Template_FkTestManyToOneChild childEntity : resultEntity.fkTestManyToOneChildList) {
+            for (@NotNull Db1_Template_FkTestManyToOneChild childEntity : resultEntity.getFkTestManyToOneChildList()) {
                 childEntityVoList.add(
                         new JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo(
-                                childEntity.uid,
-                                childEntity.childName,
-                                childEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                childEntity.getUid(),
+                                childEntity.getChildName(),
+                                childEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                                childEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                childEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                         )
                 );
@@ -1102,11 +1119,11 @@ public class JpaTestService {
 
             entityVoList.add(
                     new JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo(
-                            resultEntity.uid,
-                            resultEntity.parentName,
-                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getUid(),
+                            resultEntity.getParentName(),
+                            resultEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
                             childEntityVoList
                     )
@@ -1137,14 +1154,14 @@ public class JpaTestService {
             @NotNull ArrayList<JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo> childEntityVoList =
                     new ArrayList<>();
 
-            for (@NotNull Db1_Template_FkTestManyToOneChild childEntity : resultEntity.fkTestManyToOneChildList) {
+            for (@NotNull Db1_Template_FkTestManyToOneChild childEntity : resultEntity.getFkTestManyToOneChildList()) {
                 childEntityVoList.add(
                         new JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo(
-                                childEntity.uid,
-                                childEntity.childName,
-                                childEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                                childEntity.getUid(),
+                                childEntity.getChildName(),
+                                childEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                                childEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                                childEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                         )
                 );
@@ -1153,11 +1170,11 @@ public class JpaTestService {
 
             entityVoList.add(
                     new JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo(
-                            resultEntity.uid,
-                            resultEntity.parentName,
-                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getUid(),
+                            resultEntity.getParentName(),
+                            resultEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
                             childEntityVoList
                     )
@@ -1187,11 +1204,11 @@ public class JpaTestService {
         for (@NotNull Db1_Template_FkTestManyToOneChild resultEntity : resultEntityList) {
             entityVoList.add(
                     new JpaTestController.SelectFkTableChildListWithQueryDslOutputVo.ChildEntityVo(
-                            resultEntity.uid,
-                            resultEntity.childName,
-                            resultEntity.rowCreateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getUid(),
+                            resultEntity.getChildName(),
+                            resultEntity.getRowCreateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                            resultEntity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                            resultEntity.getRowUpdateDate().atZone(ZoneId.systemDefault())
                                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                     )
             );
@@ -1254,23 +1271,26 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse
     ) {
         @NotNull Db1_Template_FkTestParent parentEntity = db1TemplateFkTestParentRepository.save(
-                new Db1_Template_FkTestParent(
-                        "transaction test"
-                )
+                Db1_Template_FkTestParent.builder()
+                        .parentName("transaction test")
+                        .rowDeleteDateStr("/")
+                        .build()
         );
 
         db1TemplateFkTestManyToOneChildRepository.save(
-                new Db1_Template_FkTestManyToOneChild(
-                        "transaction test1",
-                        parentEntity
-                )
+                Db1_Template_FkTestManyToOneChild.builder()
+                        .childName("transaction test1")
+                        .fkTestParent(parentEntity)
+                        .rowDeleteDateStr("/")
+                        .build()
         );
 
         db1TemplateFkTestManyToOneChildRepository.save(
-                new Db1_Template_FkTestManyToOneChild(
-                        "transaction test2",
-                        parentEntity
-                )
+                Db1_Template_FkTestManyToOneChild.builder()
+                        .childName("transaction test2")
+                        .fkTestParent(parentEntity)
+                        .rowDeleteDateStr("/")
+                        .build()
         );
 
         throw new RuntimeException("Transaction Rollback Test!");
@@ -1283,23 +1303,26 @@ public class JpaTestService {
             @NotNull HttpServletResponse httpServletResponse
     ) {
         @NotNull Db1_Template_FkTestParent parentEntity = db1TemplateFkTestParentRepository.save(
-                new Db1_Template_FkTestParent(
-                        "transaction test"
-                )
+                Db1_Template_FkTestParent.builder()
+                        .parentName("transaction test")
+                        .rowDeleteDateStr("/")
+                        .build()
         );
 
         db1TemplateFkTestManyToOneChildRepository.save(
-                new Db1_Template_FkTestManyToOneChild(
-                        "transaction test1",
-                        parentEntity
-                )
+                Db1_Template_FkTestManyToOneChild.builder()
+                        .childName("transaction test1")
+                        .fkTestParent(parentEntity)
+                        .rowDeleteDateStr("/")
+                        .build()
         );
 
         db1TemplateFkTestManyToOneChildRepository.save(
-                new Db1_Template_FkTestManyToOneChild(
-                        "transaction test2",
-                        parentEntity
-                )
+                Db1_Template_FkTestManyToOneChild.builder()
+                        .childName("transaction test2")
+                        .fkTestParent(parentEntity)
+                        .rowDeleteDateStr("/")
+                        .build()
         );
 
         throw new RuntimeException("Transaction Rollback Test!");
