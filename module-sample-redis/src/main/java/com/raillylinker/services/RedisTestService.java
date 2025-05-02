@@ -160,4 +160,32 @@ public class RedisTestService {
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
     }
+
+
+    // ----
+    // (Redis Lock 테스트)
+    public @Nullable RedisTestController.TryRedisLockSampleOutputVo tryRedisLockSample(
+            @NotNull HttpServletResponse httpServletResponse
+    ) {
+        @Nullable String lockKey = redis1LockTest.tryLock("test", 100000L);
+        if (lockKey == null) {
+            httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+            httpServletResponse.setHeader("api-result-code", "1");
+            return null;
+        } else {
+            httpServletResponse.setStatus(HttpStatus.OK.value());
+            return new RedisTestController.TryRedisLockSampleOutputVo(lockKey);
+        }
+    }
+
+
+    // ----
+    // (Redis unLock 테스트)
+    public void unLockRedisLockSample(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull String lockKey
+    ) {
+        redis1LockTest.unlock("test", lockKey);
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+    }
 }
