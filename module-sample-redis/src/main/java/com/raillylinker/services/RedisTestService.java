@@ -143,38 +143,28 @@ public class RedisTestService {
         );
     }
 
-    // todo
-
 
     // ----
-    // (Get 요청 테스트 (Query Parameter))
-    public @Nullable RedisTestController.GetRequestTestOutputVo getRequestTest(
+    // (Redis Key-Value 삭제 테스트)
+    public void deleteRedisKeySample(
             @NotNull HttpServletResponse httpServletResponse,
-            @NotNull String queryParamString,
-            @Nullable String queryParamStringNullable,
-            @NotNull Integer queryParamInt,
-            @Nullable Integer queryParamIntNullable,
-            @NotNull Double queryParamDouble,
-            @Nullable Double queryParamDoubleNullable,
-            @NotNull Boolean queryParamBoolean,
-            @Nullable Boolean queryParamBooleanNullable,
-            @NotNull List<String> queryParamStringList,
-            @Nullable List<String> queryParamStringListNullable
+            @NotNull String key
     ) {
+        // 전체 조회 테스트
+        @Nullable BasicRedisMap.RedisMapDataVo<Redis1_Map_Test.ValueVo> keyValue = redis1Test.findKeyValue(key);
+
+        if (keyValue == null) {
+            httpServletResponse.setStatus(HttpStatus.NO_CONTENT.value());
+            httpServletResponse.setHeader("api-result-code", "1");
+            return;
+        }
+
+        redis1Test.deleteKeyValue(key);
+
         httpServletResponse.setStatus(HttpStatus.OK.value());
-        return new RedisTestController.GetRequestTestOutputVo(
-                queryParamString,
-                queryParamStringNullable,
-                queryParamInt,
-                queryParamIntNullable,
-                queryParamDouble,
-                queryParamDoubleNullable,
-                queryParamBoolean,
-                queryParamBooleanNullable,
-                queryParamStringList,
-                queryParamStringListNullable
-        );
     }
+
+    // todo
 
 
     // ----

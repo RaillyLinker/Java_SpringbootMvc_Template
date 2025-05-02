@@ -210,110 +210,54 @@ public class RedisTestController {
             private final @NotNull Long expirationMs;
         }
     }
-    // todo
 
 
     // ----
     @Operation(
-            summary = "Get 요청 테스트 (Query Parameter)",
-            description = "Query Parameter 를 받는 Get 메소드 요청 테스트"
+            summary = "Redis Key-Value 삭제 테스트",
+            description = "Redis Table 에 저장된 Key 를 삭제합니다."
     )
     @ApiResponses(
             value = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "204",
+                            content = {@Content},
+                            description = "Response Body 가 없습니다.<br>" +
+                                    "Response Headers 를 확인하세요.",
+                            headers = {
+                                    @Header(
+                                            name = "api-result-code",
+                                            description = "(Response Code 반환 원인) - Required<br>" +
+                                                    "1 : key 에 저장된 데이터가 존재하지 않습니다.",
+                                            schema = @Schema(type = "string")
+                                    )
+                            }
                     )
             }
     )
-    @GetMapping(
-            path = {"/get-request"},
+    @DeleteMapping(
+            path = {"/test"},
             consumes = {MediaType.ALL_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE}
+            produces = {MediaType.ALL_VALUE}
     )
     @ResponseBody
-    public @Nullable GetRequestTestOutputVo getRequestTest(
+    public void deleteRedisKeySample(
             @Parameter(hidden = true)
             @NotNull HttpServletResponse httpServletResponse,
-            @Parameter(name = "queryParamString", description = "String Query 파라미터", example = "testString")
-            @RequestParam(value = "queryParamString")
-            @NotNull String queryParamString,
-            @Parameter(name = "queryParamStringNullable", description = "String Query 파라미터 Nullable", example = "testString")
-            @RequestParam(value = "queryParamStringNullable", required = false)
-            @Nullable String queryParamStringNullable,
-            @Parameter(name = "queryParamInt", description = "Int Query 파라미터", example = "1")
-            @RequestParam(value = "queryParamInt")
-            @NotNull Integer queryParamInt,
-            @Parameter(name = "queryParamIntNullable", description = "Int Query 파라미터 Nullable", example = "1")
-            @RequestParam(value = "queryParamIntNullable", required = false)
-            @Nullable Integer queryParamIntNullable,
-            @Parameter(name = "queryParamDouble", description = "Double Query 파라미터", example = "1.1")
-            @RequestParam(value = "queryParamDouble")
-            @NotNull Double queryParamDouble,
-            @Parameter(name = "queryParamDoubleNullable", description = "Double Query 파라미터 Nullable", example = "1.1")
-            @RequestParam(value = "queryParamDoubleNullable", required = false)
-            @Nullable Double queryParamDoubleNullable,
-            @Parameter(name = "queryParamBoolean", description = "Boolean Query 파라미터", example = "true")
-            @RequestParam(value = "queryParamBoolean")
-            @NotNull Boolean queryParamBoolean,
-            @Parameter(name = "queryParamBooleanNullable", description = "Boolean Query 파라미터 Nullable", example = "true")
-            @RequestParam(value = "queryParamBooleanNullable", required = false)
-            @Nullable Boolean queryParamBooleanNullable,
-            @Parameter(name = "queryParamStringList", description = "StringList Query 파라미터", example = "[\"testString1\", \"testString2\"]")
-            @RequestParam(value = "queryParamStringList")
-            @NotNull List<String> queryParamStringList,
-            @Parameter(name = "queryParamStringListNullable", description = "StringList Query 파라미터 Nullable", example = "[\"testString1\", \"testString2\"]")
-            @RequestParam(value = "queryParamStringListNullable", required = false)
-            @Nullable List<String> queryParamStringListNullable
+            @Parameter(name = "key", description = "redis 키", example = "test_key")
+            @RequestParam("key")
+            @NotNull String key
     ) {
-        return service.getRequestTest(
+        service.deleteRedisKeySample(
                 httpServletResponse,
-                queryParamString,
-                queryParamStringNullable,
-                queryParamInt,
-                queryParamIntNullable,
-                queryParamDouble,
-                queryParamDoubleNullable,
-                queryParamBoolean,
-                queryParamBooleanNullable,
-                queryParamStringList,
-                queryParamStringListNullable
+                key
         );
     }
-
-    @Data
-    public static class GetRequestTestOutputVo {
-        @Schema(description = "입력한 String Query 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "testString")
-        @JsonProperty("queryParamString")
-        private final @NotNull String queryParamString;
-        @Schema(description = "입력한 String Nullable Query 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "testString")
-        @JsonProperty("queryParamStringNullable")
-        private final @Nullable String queryParamStringNullable;
-        @Schema(description = "입력한 Int Query 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-        @JsonProperty("queryParamInt")
-        private final @NotNull Integer queryParamInt;
-        @Schema(description = "입력한 Int Nullable Query 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
-        @JsonProperty("queryParamIntNullable")
-        private final @Nullable Integer queryParamIntNullable;
-        @Schema(description = "입력한 Double Query 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "1.1")
-        @JsonProperty("queryParamDouble")
-        private final @NotNull Double queryParamDouble;
-        @Schema(description = "입력한 Double Nullable Query 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1.1")
-        @JsonProperty("queryParamDoubleNullable")
-        private final @Nullable Double queryParamDoubleNullable;
-        @Schema(description = "입력한 Boolean Query 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
-        @JsonProperty("queryParamBoolean")
-        private final @NotNull Boolean queryParamBoolean;
-        @Schema(description = "입력한 Boolean Nullable Query 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "true")
-        @JsonProperty("queryParamBooleanNullable")
-        private final @Nullable Boolean queryParamBooleanNullable;
-        @Schema(description = "입력한 StringList Query 파라미터", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("queryParamStringList")
-        private final @NotNull List<String> queryParamStringList;
-        @Schema(description = "입력한 StringList Nullable Query 파라미터", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "[\"testString1\", \"testString2\"]")
-        @JsonProperty("queryParamStringListNullable")
-        private final @Nullable List<String> queryParamStringListNullable;
-    }
+    // todo
 
 
     // ----
