@@ -86,4 +86,52 @@ public class SecurityService {
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return "Member No.$memberUid : Test Success";
     }
+
+
+    // ----
+    // (ADMIN 권한 진입 테스트 <'ADMIN'>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable String adminAccessTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull String authorization
+    ) throws Exception {
+        @NotNull Long memberUid = jwtTokenUtil.getMemberUid(
+                authorization.split(" ")[1].trim(),
+                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+        );
+
+        // 멤버 데이터 조회
+        @NotNull Db1_RaillyLinkerCompany_TotalAuthMember memberEntity =
+                Objects.requireNonNull(db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/"));
+
+        classLogger.info("Member Id : {}", memberEntity.getAccountId());
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return "Member No.$memberUid : Test Success";
+    }
+
+
+    // ----
+    // (Developer 권한 진입 테스트 <'ADMIN' or 'Developer'>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable String developerAccessTest(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull String authorization
+    ) throws Exception {
+        @NotNull Long memberUid = jwtTokenUtil.getMemberUid(
+                authorization.split(" ")[1].trim(),
+                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+        );
+
+        // 멤버 데이터 조회
+        @NotNull Db1_RaillyLinkerCompany_TotalAuthMember memberEntity =
+                Objects.requireNonNull(db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/"));
+
+        classLogger.info("Member Id : {}", memberEntity.getAccountId());
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return "Member No.$memberUid : Test Success";
+    }
 }

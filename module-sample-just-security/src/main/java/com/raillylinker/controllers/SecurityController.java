@@ -95,4 +95,86 @@ public class SecurityController {
     ) throws Exception {
         return service.loggedInAccessTest(httpServletResponse, Objects.requireNonNull(authorization));
     }
+
+
+    // ----
+    @Operation(
+            summary = "ADMIN 권한 진입 테스트 <'ADMIN'>",
+            description = "ADMIN 권한이 있어야 진입 가능"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = {@Content},
+                            description = "인증되지 않은 접근입니다."
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            content = {@Content},
+                            description = "인가되지 않은 접근입니다."
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/for-admin"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.TEXT_PLAIN_VALUE}
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    public @Nullable String adminAccessTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(hidden = true)
+            @RequestHeader(value = "Authorization", required = false)
+            @Nullable String authorization
+    ) throws Exception {
+        return service.adminAccessTest(httpServletResponse, Objects.requireNonNull(authorization));
+    }
+
+
+    // ----
+    @Operation(
+            summary = "Developer 권한 진입 테스트 <'ADMIN' or 'Developer'>",
+            description = "Developer 권한이 있어야 진입 가능"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = {@Content},
+                            description = "인증되지 않은 접근입니다."
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            content = {@Content},
+                            description = "인가되지 않은 접근입니다."
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/for-developer"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.TEXT_PLAIN_VALUE}
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_DEVELOPER') or hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    public @Nullable String developerAccessTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(hidden = true)
+            @RequestHeader(value = "Authorization", required = false)
+            @Nullable String authorization
+    ) throws Exception {
+        return service.developerAccessTest(httpServletResponse, Objects.requireNonNull(authorization));
+    }
 }
