@@ -82,4 +82,17 @@ public class CustomUtil {
 
         return savedFileName;
     }
+
+
+    // ----
+    // (byteArray 를 Hex String 으로 반환)
+    public @NotNull String bytesToHex(
+            @NotNull byte[] bytes
+    ) {
+        @NotNull StringBuilder builder = new StringBuilder();
+        for (byte b : bytes) {
+            builder.append(String.format("%02x", b));
+        }
+        return builder.toString();
+    }
 }
