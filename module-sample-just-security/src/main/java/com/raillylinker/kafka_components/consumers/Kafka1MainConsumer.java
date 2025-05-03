@@ -1,6 +1,7 @@
 package com.raillylinker.kafka_components.consumers;
 
 import com.google.gson.Gson;
+import com.raillylinker.configurations.jpa_configs.Db1MainConfig;
 import com.raillylinker.configurations.kafka_configs.Kafka1MainConfig;
 import lombok.Data;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 // kafka 토픽은 Producer 에서 결정합니다.
 // _ 로 구분하며, {모듈 고유값}_{Topic 고유값} 의 형태로 정합니다.
@@ -22,68 +24,32 @@ public class Kafka1MainConsumer {
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    // (testTopic1 에 대한 리스너)
+    // (Auth 모듈의 통합 멤버 정보 삭제 이벤트에 대한 리스너)
+    // 이와 연관된 데이터 삭제 및 기타 처리
     @KafkaListener(
-            topics = {"sample-kafka_test-topic1"},
+            topics = {"auth_member-deleted"},
             groupId = CONSUMER_GROUP_ID,
             containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )
-    public void testTopic1Group0Listener(
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    public void fromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMemberListener(
             @NotNull ConsumerRecord<String, String> data
     ) {
         classLogger.info("KafkaConsumerLog>>\n{{\n\"data\": {{\n\"{}\"\n}}\n}}", data);
 
         // JSON 문자열을 객체로 변환
-        @NotNull TestTopic1Group0ListenerInputVo inputVo = new Gson().fromJson(data.value(), TestTopic1Group0ListenerInputVo.class);
+        @NotNull FromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMemberListenerInputVo inputVo =
+                new Gson().fromJson(
+                        data.value(),
+                        FromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMemberListenerInputVo.class
+                );
         classLogger.info(">> testTopic1Group0ListenerInputVo : {}", inputVo);
+
+        // !!!멤버 테이블을 조회중인 테이블이 있을 경우 회원 탈퇴에 따른 처리를 이곳에 작성하세요.!!!
     }
 
     @Data
-    public static class TestTopic1Group0ListenerInputVo {
-        private final @NotNull String test;
-        private final @NotNull Integer test1;
-    }
-
-
-    // ----
-    // (testTopic2 에 대한 리스너)
-    @KafkaListener(
-            topics = {"sample-kafka_test-topic2"},
-            groupId = CONSUMER_GROUP_ID,
-            containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
-    )
-    public void testTopic2Group0Listener(
-            @NotNull ConsumerRecord<String, String> data
-    ) {
-        classLogger.info("KafkaConsumerLog>>\n{{\n\"data\": {{\n\"{}\"\n}}\n}}", data);
-    }
-
-
-    // ----
-    // (testTopic2 에 대한 동일 그룹 테스트 리스너)
-    // 동일 topic 에 동일 group 을 설정할 경우, 리스너는 한개만을 선택하고 다른 하나는 침묵합니다.
-    @KafkaListener(
-            topics = {"sample-kafka_test-topic2"},
-            groupId = CONSUMER_GROUP_ID,
-            containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
-    )
-    public void testTopic2Group0Listener2(
-            @NotNull ConsumerRecord<String, String> data
-    ) {
-        classLogger.info("KafkaConsumerLog>>\n{{\n\"data\": {{\n\"{}\"\n}}\n}}", data);
-    }
-
-
-    // ----
-    // (testTopic2 에 대한 리스너 - 그룹 변경)
-    @KafkaListener(
-            topics = {"sample-kafka_test-topic2"},
-            groupId = CONSUMER_GROUP_ID + "_2",
-            containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
-    )
-    public void testTopic2Group1Listener(
-            @NotNull ConsumerRecord<String, String> data
-    ) {
-        classLogger.info("KafkaConsumerLog>>\n{{\n\"data\": {{\n\"{}\"\n}}\n}}", data);
+    public static class FromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMemberListenerInputVo {
+        private final @NotNull Long deletedMemberUid;
     }
 }
