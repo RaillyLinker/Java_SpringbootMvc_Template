@@ -12,16 +12,16 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(
-        name = "test_data",
-        catalog = "template"
+        name = "total_auth_member_profile",
+        catalog = "railly_linker_company"
 )
-@Comment("테스트 정보 테이블(논리적 삭제 적용)")
+@Comment("통합 로그인 계정 회원 프로필 정보 테이블")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Db1_Template_TestData {
+public class Db1_RaillyLinkerCompany_TotalAuthMemberProfile {
     // [기본 입력값이 존재하는 변수들]
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,17 +47,18 @@ public class Db1_Template_TestData {
     @Comment("행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)")
     private @NotNull String rowDeleteDateStr;
 
-    @Column(name = "content", nullable = false, columnDefinition = "VARCHAR(255)")
-    @Comment("테스트 본문")
-    private @NotNull String content;
+    @ManyToOne
+    @JoinColumn(name = "total_auth_member_uid", nullable = false)
+    @Comment("멤버 고유번호(railly_linker_company.total_auth_member.uid)")
+    private @NotNull Db1_RaillyLinkerCompany_TotalAuthMember totalAuthMember;
 
-    @Column(name = "random_num", nullable = false, columnDefinition = "INT")
-    @Comment("테스트 랜덤 번호")
-    private @NotNull Integer randomNum;
+    @Column(name = "image_full_url", nullable = false, columnDefinition = "VARCHAR(200)")
+    @Comment("프로필 이미지 Full URL")
+    private @NotNull String imageFullUrl;
 
-    @Column(name = "test_datetime", nullable = false, columnDefinition = "DATETIME(3)")
-    @Comment("테스트용 일시 데이터")
-    private @NotNull LocalDateTime testDatetime;
+    @Column(name = "priority", nullable = false, columnDefinition = "MEDIUMINT UNSIGNED")
+    @Comment("가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)")
+    private @NotNull Integer priority;
 
 
     // ---------------------------------------------------------------------------------------------

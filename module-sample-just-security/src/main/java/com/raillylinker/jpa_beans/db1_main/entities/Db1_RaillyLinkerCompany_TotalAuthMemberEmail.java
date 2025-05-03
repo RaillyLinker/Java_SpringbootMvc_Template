@@ -10,29 +10,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 
-/*
-     - 본 테이블은 논리적 삭제를 적용한 테이블에 Unique 변수를 적용하는 방법을 설명하기 위한 샘플입니다.
-         논리적 삭제시, 데이터에서 행이 삭제될 일은 없다고 보면 되므로,
-         변수에 단순하게 unique 를 걸어둔다면, 해당 행이 비활성 상태일 때에도, 새로운 행으로 동일한 값을 가질 수 없게 됩니다.
-         이에, unique 를 적용할 변수와 더불어, 행의 삭제일을 나타내는 row_delete_date_str 변수를 같이 묶어 unique 를 걸어둠으로써,
-         삭제시에는 row_delete_date_str 가 현재 시간으로 매번 달라지기에 문제가 없고,
-         생성시에는 기존 행들 중, 행 활성화 상태를 뜻하는 row_delete_date_str 가 "/" 인 경우가 없다면 문제가 없게 됩니다.
- */
 @Entity
 @Table(
-        name = "logical_delete_unique_data",
-        catalog = "template",
+        name = "total_auth_member_email",
+        catalog = "railly_linker_company",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"unique_value", "row_delete_date_str"})
+                @UniqueConstraint(columnNames = {"email_address", "row_delete_date_str"})
         }
 )
-@Comment("논리적 삭제 유니크 제약 테스트 테이블")
+@Comment("통합 로그인 계정 회원 이메일 정보 테이블")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Db1_Template_LogicalDeleteUniqueData {
+public class Db1_RaillyLinkerCompany_TotalAuthMemberEmail {
     // [기본 입력값이 존재하는 변수들]
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,9 +50,18 @@ public class Db1_Template_LogicalDeleteUniqueData {
     @Comment("행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)")
     private @NotNull String rowDeleteDateStr;
 
-    @Column(name = "unique_value", nullable = false, columnDefinition = "INT")
-    @Comment("유니크 값")
-    private @NotNull Integer uniqueValue;
+    @ManyToOne
+    @JoinColumn(name = "total_auth_member_uid", nullable = false)
+    @Comment("멤버 고유번호(railly_linker_company.total_auth_member.uid)")
+    private @NotNull Db1_RaillyLinkerCompany_TotalAuthMember totalAuthMember;
+
+    @Column(name = "email_address", nullable = false, columnDefinition = "VARCHAR(100)")
+    @Comment("이메일 주소 (중복 비허용)")
+    private @NotNull String emailAddress;
+
+    @Column(name = "priority", nullable = false, columnDefinition = "MEDIUMINT UNSIGNED")
+    @Comment("가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)")
+    private @NotNull Integer priority;
 
 
     // ---------------------------------------------------------------------------------------------
