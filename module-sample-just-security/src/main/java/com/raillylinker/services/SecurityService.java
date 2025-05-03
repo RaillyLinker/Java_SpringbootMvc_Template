@@ -6,6 +6,7 @@ import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_Tota
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMember_Repository;
 import com.raillylinker.util_components.CustomUtil;
 import com.raillylinker.util_components.JwtTokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,5 +134,35 @@ public class SecurityService {
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
         return "Member No.$memberUid : Test Success";
+    }
+
+
+    // ----
+    // (로그인 / 비로그인 진입 테스트 <>?)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    public @Nullable String optionalLoggedInAccessTest(
+            @NotNull HttpServletRequest httpServletRequest,
+            @NotNull HttpServletResponse httpServletResponse,
+            @Nullable String authorization
+    ) throws Exception {
+        boolean notLoggedIn = authTokenFilterTotalAuth.checkRequestAuthorization(httpServletRequest) == null;
+
+        @Nullable Db1_RaillyLinkerCompany_TotalAuthMember memberEntity;
+        if (notLoggedIn || authorization == null) {
+            memberEntity = null;
+        } else {
+            @NotNull Long memberUid = jwtTokenUtil.getMemberUid(
+                    authorization.split(" ")[1].trim(),
+                    authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                    authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+            );
+            memberEntity = db1RaillyLinkerCompanyTotalAuthMemberRepository
+                    .findByUidAndRowDeleteDateStr(memberUid, "/");
+        }
+
+        classLogger.info("Member Id : {}", memberEntity != null ? memberEntity.getAccountId() : null);
+
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        return "Member No." + (memberEntity != null ? memberEntity.getUid() : null) + " : Test Success";
     }
 }

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -176,5 +177,37 @@ public class SecurityController {
             @Nullable String authorization
     ) throws Exception {
         return service.developerAccessTest(httpServletResponse, Objects.requireNonNull(authorization));
+    }
+
+
+    // ----
+    @Operation(
+            summary = "로그인 / 비로그인 진입 테스트 <>?",
+            description = "로그인 / 비로그인 되어 있을 때의 처리가 달라집니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "정상 동작"
+                    )
+            }
+    )
+    @GetMapping(
+            path = {"/for-optional-logged-in"},
+            consumes = {MediaType.ALL_VALUE},
+            produces = {MediaType.TEXT_PLAIN_VALUE}
+    )
+    @ResponseBody
+    public @Nullable String optionalLoggedInAccessTest(
+            @Parameter(hidden = true)
+            @NotNull HttpServletRequest httpServletRequest,
+            @Parameter(hidden = true)
+            @NotNull HttpServletResponse httpServletResponse,
+            @Parameter(hidden = true)
+            @RequestHeader(value = "Authorization", required = false)
+            @Nullable String authorization
+    ) throws Exception {
+        return service.optionalLoggedInAccessTest(httpServletRequest, httpServletResponse, authorization);
     }
 }
