@@ -85,7 +85,7 @@ public class SecurityService {
         classLogger.info("Member Id : {}", memberEntity.getAccountId());
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
-        return "Member No.$memberUid : Test Success";
+        return "Member No." + memberEntity.getUid() + " : Test Success";
     }
 
 
@@ -109,7 +109,7 @@ public class SecurityService {
         classLogger.info("Member Id : {}", memberEntity.getAccountId());
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
-        return "Member No.$memberUid : Test Success";
+        return "Member No." + memberEntity.getUid() + " : Test Success";
     }
 
 
@@ -133,7 +133,7 @@ public class SecurityService {
         classLogger.info("Member Id : {}", memberEntity.getAccountId());
 
         httpServletResponse.setStatus(HttpStatus.OK.value());
-        return "Member No.$memberUid : Test Success";
+        return "Member No." + memberEntity.getUid() + " : Test Success";
     }
 
 
