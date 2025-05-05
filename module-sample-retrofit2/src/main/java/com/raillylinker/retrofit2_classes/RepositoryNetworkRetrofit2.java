@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RepositoryNetworkRetrofit2 {
     // <멤버 변수 공간>
-    private static final @NotNull RepositoryNetworkRetrofit2 instance = new RepositoryNetworkRetrofit2();
+    public static final @NotNull RepositoryNetworkRetrofit2 instance = new RepositoryNetworkRetrofit2();
 
     // (Network Request Api 객체들)
     // !!!요청을 보낼 서버 위치 경로별 RequestApi 객체를 생성하기!!!
