@@ -7,16 +7,16 @@ import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Table(
-        name = "just_boolean_test",
-        catalog = "template"
+        name = "BATCH_JOB_EXECUTION_SEQ",
+        catalog = "batch_metadata"
 )
-@Comment("Boolean 값 반환 예시만을 위한 테이블")
+@Comment("BATCH_JOB_EXECUTION_SEQ")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Db1_Template_JustBooleanTest {
+public class Db1_BatchMetadata_BATCH_JOB_EXECUTION_SEQ {
     // [기본 입력값이 존재하는 변수들]
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +27,13 @@ public class Db1_Template_JustBooleanTest {
 
     // ---------------------------------------------------------------------------------------------
     // [입력값 수동 입력 변수들]
-    @Column(name = "bool_value", nullable = false, columnDefinition = "BIT(1)")
-    @Comment("bool 값")
-    private @NotNull Boolean boolValue;
+    @Column(name = "ID", nullable = false, columnDefinition = "BIGINT")
+    @Comment("ID")
+    private @NotNull Long id;
+
+    @Column(name = "UNIQUE_KEY", nullable = false, columnDefinition = "CHAR(1)", unique = true)
+    @Comment("UNIQUE_KEY")
+    private @NotNull Character uniqueKey;
 
 
     // ---------------------------------------------------------------------------------------------
