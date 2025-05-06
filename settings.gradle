@@ -21,6 +21,9 @@ include 'module-sample-retrofit2'
 // Redis 테스트 샘플 (12008)
 include 'module-sample-redis'
 
+// Mongodb 테스트 샘플 (12009)
+include 'module-sample-mongodb'
+
 // JPA 테스트 샘플 (12010)
 include 'module-sample-jpa'
 
